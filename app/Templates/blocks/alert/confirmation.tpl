@@ -1,1 +1,1 @@
-<small>Please confirm your account by follow link<br/> that you receive after registering.</small><br/><br/><a href='/auth/reconfirmation' class='btn btn-main btn-mini'>Dont get the confirmation email?</a>
+<small>Please confirm your account by follow link<br/> that you receive after registering.</small><br/><br/><a href='/auth/reconfirmation' class='btn btn-main btn-mini'>Did not get the confirmation email?</a>
