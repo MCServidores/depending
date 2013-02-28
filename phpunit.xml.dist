@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit 
+	bootstrap="tests/bootstrap.php"
+	colors="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	stopOnError="false"
+	stopOnFailure="false"
+	stopOnIncomplete="false"
+	stopOnSkipped="false">
+	<php>
+		<const name="APPLICATION_PATH" value="app"/>
+		<const name="ASSET_PATH" value="public"/>
+		<const name="CONFIG_PATH" value="conf"/>
+	</php>
+	<testsuites>
+		<testsuite name="Depending Test Suite">
+			<directory suffix="Test.php">tests</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+        <blacklist>
+			<directory suffix=".php">vendor</directory>
+		</blacklist>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">app</directory>
+			<exclude>
+		      <directory suffix=".php">app/Model/Orm</directory>
+		      <file>app/Controller/ControllerSandbox.php</file>
+		    </exclude>
+		</whitelist>
+	</filter>
+</phpunit>
