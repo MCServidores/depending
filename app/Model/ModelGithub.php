@@ -24,12 +24,14 @@ class ModelGithub extends ModelBase
     protected $clientSecret = '4c34311721e46c38c342420b5d101dd5670f16f6';
     protected $scope = 'user:email,public_repo';
     protected $accessToken = '';
+    protected $redirectUrl = '';
 
     /**
      * Constructor
      */
     public function __construct(Parameter $params) {
-        $this->accessToken = $params->get('GithubToken');
+        $this->accessToken = $params->get('githubToken');
+        $this->redirectUrl = $params->get('redirectUrl');
     }
 
     /**
@@ -57,13 +59,14 @@ class ModelGithub extends ModelBase
     }
 
     /**
-     * Retrieve access parameter
+     * Retrieve access parameter from code
+     * @param string Code
      */
-    public function getAccessToken($code, $currentUrl) {
+    public function getAccessToken($code) {
         $params = array(
             'client_id' => $this->clientId,
             'client_secret' => $this->clientSecret,
-            'redirect_uri' => $currentUrl,
+            'redirect_uri' => $this->redirectUrl,
             'code' => $code,
         );
 
@@ -86,6 +89,7 @@ class ModelGithub extends ModelBase
         $params = array(
             'client_id' => $this->clientId,
             'scope' => $this->scope,
+            'redirect_uri' => $this->redirectUrl,
         );
 
         return self::AUTHORIZE_URL.'?'.http_build_query($params);

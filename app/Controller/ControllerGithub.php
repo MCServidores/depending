@@ -23,7 +23,8 @@ class ControllerGithub extends ControllerBase
 	 * Handler untuk GET/POST /home/index
 	 */
 	public function actionIndex() {
-		
+		// Set redirectUrl
+		$redirectUrl = $this->data->get('baseUrl').$this->data->get('currentUrl');
 
 		if ($this->request->server->get('code') || $this->data->get('getData[code]',NULL,true)) {
 			$body = '';
@@ -34,8 +35,8 @@ class ControllerGithub extends ControllerBase
 			}
 
 			// Create a authentification request to github
-			$accessToken = ModelBase::factory('Github', new Parameter())
-							->getAccessToken($code, 'http://dev.depending.in'.$this->data->get('currentUrl'));
+			$accessToken = ModelBase::factory('Github', new Parameter(compact('redirectUrl')))
+							->getAccessToken($code);
 
 			if ( ! $accessToken) {
 				// Try until die!
@@ -49,18 +50,21 @@ class ControllerGithub extends ControllerBase
 		}
 		
 		// authorize
-		return $this->redirect(ModelBase::factory('Github', new Parameter())->getLoginUrl());
+		return $this->redirect(ModelBase::factory('Github', new Parameter(compact('redirectUrl')))->getLoginUrl());
 	}
 
 	/**
 	 * Handler untuk GET/POST /github/update
 	 */
 	public function actionUpdate() {
-		$params = new Parameter(array('GithubToken' => $this->session->get('GithubToken')));
+		// Set redirectUrl
+		$redirectUrl = $this->data->get('baseUrl').$this->data->get('currentUrl');
+		$githubToken = $this->session->get('GithubToken');
+		$params = new Parameter(compact('redirectUrl','githubToken'));
 		$user = ModelBase::factory('Github', $params)->getUser();
 
 		if ( ! $user instanceof Parameter) {
-			return $this->redirect(ModelBase::factory('Github', new Parameter())->getLoginUrl());
+			return $this->redirect(ModelBase::factory('Github', new Parameter(compact('redirectUrl','githubToken')))->getLoginUrl());
 		}
 
 		// @codeCoverageIgnoreStart
@@ -88,7 +92,7 @@ class ControllerGithub extends ControllerBase
 			}
 
 		} else {
-			return $this->redirect($this->sessin->get('redirectAfterAuthenticated','/home'));
+			return $this->redirect($this->session->get('redirectAfterAuthenticated','/home'));
 		}
 		// @codeCoverageIgnoreEnd
 	}
