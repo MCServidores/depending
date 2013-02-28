@@ -1,0 +1,20 @@
+{
+    "autoload": {
+        "psr-0": {"app": "."}
+    },
+
+    "require": {
+        "doctrine/annotations": "v1.0",
+        "doctrine/cache": "v1.0",
+        "symfony/http-kernel": "v2.1.7",
+        "symfony/routing": "v2.1.7",
+        "propel/propel1": "1.6.7",
+        "twig/twig": "v1.12.1",
+        "kriswallsmith/assetic": "v1.0.4",
+        "toopay/assetic-minifier": "v0.0.1",
+        "leafo/lessphp": "v0.3.8",
+        "phpunit/phpunit": "3.7.13",
+        "phpunit/phpunit-selenium": "1.2.11",
+        "swiftmailer/swiftmailer": "v4.3.0"
+    }
+}
