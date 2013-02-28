@@ -5,7 +5,11 @@
 {% block title %} {{title}} {% endblock %}
 
 {######################## MODULES ########################}
-{% block modules %} {% include "blocks/modules.tpl" %} {% endblock %}
+{% block modules %}
+	{% if acl.isLogin == false %}
+		{% include "blocks/modules.tpl" %} 
+	{% endif %}
+{% endblock %}
 
 {######################## Content ########################}
 {% block content %} {{ content }} {% endblock %}
