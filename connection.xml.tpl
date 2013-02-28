@@ -6,8 +6,7 @@
         <adapter>mysql</adapter>
         <connection>
           <dsn>mysql:host=localhost;dbname=depending</dsn>
-          <user>depending_user</user>
-          <password>depending_password</password>
+          <user>travis</user>
         </connection>
       </datasource>
     </datasources>

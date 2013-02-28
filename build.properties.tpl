@@ -5,8 +5,7 @@ propel.database = mysql
 
 # PDO DSN
 propel.database.url = mysql:dbname=depending
-propel.database.user = depending_user
-propel.database.password = depending_password
+propel.database.user = travis
 
 # Environment
 propel.namespace.autoPackage = true
