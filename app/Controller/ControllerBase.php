@@ -146,6 +146,7 @@ class ControllerBase {
 			}
 
 			// Set common URL variable
+			$this->data->set('baseUrl','http://'.$this->request->server->get('HTTP_HOST'));
 			$this->data->set('currentUrl', $currentUrl);
 			$this->data->set('currentQueryUrl', $currentQueryUrl);
 		}
