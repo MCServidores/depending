@@ -43,7 +43,7 @@ class ControllerBase {
 
 		// TODO : More filtering
 		if (strpos($userAgent, 'curl') !== FALSE) {
-			passthru('cd ../../depending;git checkout master;git fetch origin;git merge origin/develop;git push origin master');
+			passthru('cd ../../depending;git checkout master;git fetch origin;git merge origin/develop;git checkout master');
 		}
 
 		return $this->render('OK' . "\n");
