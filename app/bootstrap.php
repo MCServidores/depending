@@ -34,7 +34,7 @@ use app\Controller\ControllerBase;
 include 'routes.php';
 
 // Setting Propel
-Propel::init(str_replace('app', 'conf', APPLICATION_PATH) . DIRECTORY_SEPARATOR . 'connection.php');
+Propel::init(realpath(APPLICATION_PATH.'/../') . DIRECTORY_SEPARATOR . 'conf/connection.php');
 
 // Setting Doctrine Component
 AnnotationRegistry::registerAutoloadNamespace('app', realpath(__DIR__.'/../'));
