@@ -136,10 +136,10 @@ class ControllerAuth extends ControllerBase
 
 				if ($sent) {
 					// Redirect ke halaman utama
-					$this->setAlert('info', $message ,2000,true);
+					$this->setAlert('info', 'Reset password link sent!' ,2000,true);
 					return $this->redirect('/home');
 				} else {
-					$resetResult->set('error', 'Email yang anda masukan belum terdaftar!');
+					$resetResult->set('error', 'email not found!');
 				}
 			}
 
@@ -166,7 +166,7 @@ class ControllerAuth extends ControllerBase
 			$authResult = ModelBase::factory('Auth')->confirm($token);
 
 			if ($authResult->get('success') == false) {
-				throw new \InvalidArgumentException('Token reset tidak valid!');
+				throw new \InvalidArgumentException('Invalid reset token!');
 			} 
 
 			// Login
@@ -205,11 +205,10 @@ class ControllerAuth extends ControllerBase
 		$confirmationResult = ModelBase::factory('Auth')->confirm($token);
 
 		if ($confirmationResult->get('success') == false) {
-			throw new \InvalidArgumentException('Token konfirmasi tidak valid!');
+			throw new \InvalidArgumentException('Invalid confirmation token!');
 		} else {
-			$message = 'Konfirmasi akun anda berhasil';
-			$alert = ModelBase::factory('Template')->render('blocks/alert/success.tpl', compact('message'));
-			$this->setAlert('info', $alert,5000,true);
+			$message = 'Your account successfully confirmed!';
+			$this->setAlert('info', $message,5000,true);
 
 			// Login jika belum
 			$this->setLogin($confirmationResult->get('data'));
