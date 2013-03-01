@@ -70,14 +70,14 @@ class ModelAuth extends ModelBase
 
 		// Inspect the data
 		$this->inspector->setSubstance($userData);
-		$this->inspector->ensure('username')->notEmpty('username harus diisi')
+		$this->inspector->ensure('username')->notEmpty('username cannot empty')
 		                                    ->isValidUsername('username not found');
-		$this->inspector->ensure('password')->notEmpty('password harus diisi')
-		                                    ->isValidPassword('password tidak cocok');
+		$this->inspector->ensure('password')->notEmpty('password cannot empty')
+		                                    ->isValidPassword('password did not match');
 
 		if ($this->inspector->hasErrors() || ! $this->inspector->hasProperty('validUser')) {
 			// Data tidak valid
-			$result->set('error', $this->inspector->compileErrors('Data tidak valid', '<br/>', true));
+			$result->set('error', $this->inspector->compileErrors('Invalid Data!', '<br/>', true));
 		} else {
 			$validUser = $this->inspector->validUser;
 			$result->set('success', true);
