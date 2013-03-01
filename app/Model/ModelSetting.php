@@ -26,7 +26,7 @@ class ModelSetting extends ModelBase
      */
     public function handleInfo(Parameter $data) {
         $content = new Parameter(array(
-            'title' => 'Informasi',
+            'title' => 'Information',
         ));
 
         // Get user data and handle any POST data if exists
@@ -70,14 +70,14 @@ class ModelSetting extends ModelBase
                 'type' => 'text',
                 'size' => '4',
                 'name' => 'fullname',
-                'placeholder' => 'Nama lengkap',
+                'placeholder' => 'Full Name',
                 'value' => $fullName,
             )),
             new Parameter(array(
                 'type' => 'textarea',
                 'size' => '4',
                 'name' => 'signature',
-                'placeholder' => 'Tentang anda',
+                'placeholder' => 'About you',
                 'value' => $signature,
             )),
         );
@@ -96,7 +96,7 @@ class ModelSetting extends ModelBase
      */
     public function handleMail(Parameter $data) {
         $content = new Parameter(array(
-            'title' => 'Akun Email',
+            'title' => 'Email Account',
         ));
 
         // Get user data and handle any POST data if exists
@@ -119,7 +119,7 @@ class ModelSetting extends ModelBase
                     $user = $updated;
                 }
             } else {
-                $content->set('error', 'Email tidak valid!');
+                $content->set('error', 'Invalid email!');
             }
         }
         // @codeCoverageIgnoreEnd
@@ -133,7 +133,7 @@ class ModelSetting extends ModelBase
                 'type' => 'text',
                 'size' => '4',
                 'name' => 'email',
-                'placeholder' => 'Email yang dipakai akun ini',
+                'placeholder' => 'Email that used by this account',
                 'value' => $email,
             )),
         );
@@ -152,7 +152,7 @@ class ModelSetting extends ModelBase
      */
     public function handlePassword(Parameter $data) {
         $content = new Parameter(array(
-            'title' => 'Akun Password',
+            'title' => 'Password Account',
         ));
 
         // Get user data and handle any POST data if exists
@@ -166,9 +166,9 @@ class ModelSetting extends ModelBase
             $cpassword = $post->get('cpassword');
 
             if (empty($password) || empty($cpassword)) {
-                $content->set('error', 'Isi password dan konfirmasi password!');
+                $content->set('error', 'Fill password and confirmation password fields!');
             } elseif ($password != $cpassword) {
-                $content->set('error', 'Password dan konfirmasi password tidak cocok!');
+                $content->set('error', 'Password and its confirmation missmatch!');
             } else {
                 $uid = $user->get('Uid');
 
@@ -191,14 +191,14 @@ class ModelSetting extends ModelBase
                 'type' => 'password',
                 'size' => '4',
                 'name' => 'password',
-                'placeholder' => 'Password baru',
+                'placeholder' => 'New Password',
                 'value' => '',
             )),
             new Parameter(array(
                 'type' => 'password',
                 'size' => '4',
                 'name' => 'cpassword',
-                'placeholder' => 'Konfirmasi password baru',
+                'placeholder' => 'Password confirmation',
                 'value' => '',
             )),
         );
