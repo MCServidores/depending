@@ -60,7 +60,7 @@ class ControllerSettingTest extends DependingInTestCase {
 		// Fail on non-login user
 		$request = Request::create('/setting');
 
-		$this->setExpectedException('BadMethodCallException', 'Anda harus login untuk melanjutkan!');
+		$this->setExpectedException('BadMethodCallException', 'You must login to continue!');
 		
 		$controllerSetting = new ControllerSetting($request);
 	}
