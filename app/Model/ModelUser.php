@@ -250,7 +250,7 @@ class ModelUser extends ModelBase
 			// Now write back
 			$additionalData = unserialize($userDataSerialized);
 			$userData->set('AdditionalData', $additionalData);
-			$userData->set('Fullname', isset($additionalData['fullname']) ? $additionalData['fullname'] : '-');
+			$userData->set('Fullname', isset($additionalData['name']) ? $additionalData['name'] : '-');
 		}
 		// @codeCoverageIgnoreEnd
 

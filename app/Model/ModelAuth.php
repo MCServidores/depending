@@ -101,7 +101,7 @@ class ModelAuth extends ModelBase
 		$parameter = new Parameter($githubData);
 
 		// Get username/email
-		$username = $parameter->get('username', '');
+		$username = $parameter->get('login', '');
 		$email = $parameter->get('email', '');
 
 		if ( ! empty($username) || ! empty($email)) {

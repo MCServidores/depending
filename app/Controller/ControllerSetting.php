@@ -22,7 +22,7 @@ class ControllerSetting extends ControllerBase
 
 		// All setting actions only accessible from logged-in user
 		if ( ! $this->acl->isLogin()) {
-			throw new \BadMethodCallException('Anda harus login untuk melanjutkan!');
+			throw new \BadMethodCallException('You must login to continue!');
 		}
 	}
 
@@ -44,7 +44,27 @@ class ControllerSetting extends ControllerBase
 	public function actionInfo() {
 		$content = ModelBase::factory('Setting')->handleInfo($this->data);
 
-		if ($content->get('updated')) $this->setAlert('info', 'Informasi terupdate!');
+		if ($content->get('updated')) $this->setAlert('info', 'Information updated!');
+
+		// Template configuration
+		$this->layout = 'modules/setting/index.tpl';
+		$data = ModelBase::factory('Template')->getSettingData(compact('content'));
+
+		// Render
+		return $this->render($data);
+	}
+
+	/**
+	 * Handler untuk GET/POST /setting/github
+	 */
+	public function actionGithub() {
+		$content = ModelBase::factory('Setting')->handleGithub($this->data);
+
+		if ($content->get('updated')) {
+			$this->session->set('redirectAfterAuthenticated',$this->data->get('currentUrl'));
+
+			return $this->redirect('/github');
+		}
 
 		// Template configuration
 		$this->layout = 'modules/setting/index.tpl';
@@ -60,7 +80,7 @@ class ControllerSetting extends ControllerBase
 	public function actionMail() {
 		$content = ModelBase::factory('Setting')->handleMail($this->data);
 
-		if ($content->get('updated')) $this->setAlert('info', 'Email terupdate!');
+		if ($content->get('updated')) $this->setAlert('info', 'Email updated!');
 
 		// Template configuration
 		$this->layout = 'modules/setting/index.tpl';
@@ -76,7 +96,7 @@ class ControllerSetting extends ControllerBase
 	public function actionPassword() {
 		$content = ModelBase::factory('Setting')->handlePassword($this->data);
 
-		if ($content->get('updated')) $this->setAlert('info', 'Password terupdate!');
+		if ($content->get('updated')) $this->setAlert('info', 'Password updated!');
 
 		// Template configuration
 		$this->layout = 'modules/setting/index.tpl';

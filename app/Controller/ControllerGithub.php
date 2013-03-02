@@ -92,7 +92,17 @@ class ControllerGithub extends ControllerBase
 			}
 
 		} else {
-			return $this->redirect($this->session->get('redirectAfterAuthenticated','/home'));
+			// Update github data
+			ModelBase::factory('Auth')->loginGithub($user->all(), $this->session->get('GithubToken'));
+
+			// Clean up
+			$redirectAfterAuthenticated = $this->session->get('redirectAfterAuthenticated','/home');
+			$this->session->set('redirectAfterAuthenticated',NULL);
+
+			// Set notification
+			$this->setAlert('info', 'Gihub account updated!');
+
+			return $this->redirect($redirectAfterAuthenticated);
 		}
 		// @codeCoverageIgnoreEnd
 	}

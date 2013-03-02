@@ -137,6 +137,12 @@ class ModelTemplate extends ModelBase
                 )),
                 new Parameter(array(
                     'liClass' => '',
+                    'text' => 'Github',
+                    'link' => '/setting/github',
+                    'icon' => 'icon-github-alt',
+                )),
+                new Parameter(array(
+                    'liClass' => '',
                     'text' => 'Email',
                     'link' => '/setting/mail',
                     'icon' => 'icon-envelope',

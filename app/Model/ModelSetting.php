@@ -39,7 +39,7 @@ class ModelSetting extends ModelBase
 
             if ($post->get('fullname')) {
                 // Update custom data
-                $updated = ModelBase::factory('User')->updateUserData($uid, array('fullname' => $post->get('fullname')));
+                $updated = ModelBase::factory('User')->updateUserData($uid, array('name' => $post->get('fullname')));
 
                 if ( ! empty($updated)) {
                     $content->set('updated', true);
@@ -60,7 +60,7 @@ class ModelSetting extends ModelBase
         }
         // @codeCoverageIgnoreEnd
 
-        $fullName = str_replace('-', '', $user->get('Fullname'));
+        $fullName = str_replace('-', '', $user->get('AdditionalData[name]','',true));
         $signature = $user->get('Signature');
 
        
@@ -83,6 +83,42 @@ class ModelSetting extends ModelBase
         );
 
         $content->set('inputs', $inputs);
+
+        return $content;
+    }
+
+    /**
+     * Handle github
+     *
+     * @param Parameter $data 
+     *
+     * @return Parameter $content
+     */
+    public function handleGithub(Parameter $data) {
+        $content = new Parameter(array(
+            'title' => 'Github Account',
+        ));
+
+        $user = $data->get('user');
+        $post = new Parameter($data->get('postData', array()));
+
+        if ($post->get('update') == $user->get('AdditionalData[login]','',true)) {
+            $content->set('updated', true);
+        }
+
+        $github = $user->get('AdditionalData[login]','',true);
+       
+        // Build inputs
+        $input = new Parameter(array(
+                'type' => 'submit',
+                'class' => 'icon icon-github-alt',
+                'name' => 'update',
+                'placeholder' => 'Github username that used by this account',
+                'value' => $github,
+                'text' => 'Update Github Data',
+        ));
+
+        $content->set('otherInput', $input);
 
         return $content;
     }
