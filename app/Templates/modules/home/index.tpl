@@ -12,4 +12,8 @@
 {% endblock %}
 
 {######################## Content ########################}
-{% block content %} {{ content }} {% endblock %}
+{% block content %}
+	{% if user is not empty %}
+		{% include "blocks/import.tpl" %} 
+	{% endif %}
+{% endblock %}
