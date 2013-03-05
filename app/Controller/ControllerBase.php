@@ -53,14 +53,18 @@ class ControllerBase {
 			
 			// Generate ORM
 			try {
-			$propelPath = str_replace('app', 'vendor', APPLICATION_PATH).DIRECTORY_SEPARATOR.'propel/propel1/generator/build.xml';
-			$args = array(
-					'-f',
-					$propelPath,
-					'-Dusing.propel-gen=true',
-					'-Dproject.dir='.str_replace('app','',APPLICATION_PATH),
-					'om'
+				$propelPath = str_replace('app', 'vendor', APPLICATION_PATH).DIRECTORY_SEPARATOR.'propel/propel1/generator/build.xml';
+				$projectPath = str_replace('app','',APPLICATION_PATH);
+				$args = array(
+						'-f',
+						$propelPath,
+						'-Dusing.propel-gen=true',
+						'-Dproject.dir='.$projectPath,
+						'om',
+						'diff',
+						'migrate',
 				);
+
 				Phing::startup();
 				Phing::fire($args);
 
