@@ -251,6 +251,7 @@ class ModelUser extends ModelBase
 			$additionalData = unserialize($userDataSerialized);
 			$userData->set('AdditionalData', $additionalData);
 			$userData->set('Fullname', isset($additionalData['name']) ? $additionalData['name'] : '-');
+			$userData->set('GithubToken', isset($additionalData['github_access_token']) ? $additionalData['github_access_token'] : NULL);
 		}
 		// @codeCoverageIgnoreEnd
 
