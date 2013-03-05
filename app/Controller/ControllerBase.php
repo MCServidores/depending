@@ -53,8 +53,8 @@ class ControllerBase {
 			
 			// Generate ORM
 			try {
-				$propelPath = str_replace('app', 'vendor', APPLICATION_PATH).DIRECTORY_SEPARATOR.'propel/propel1/generator/build.xml';
-				$projectPath = str_replace('app','',APPLICATION_PATH);
+				$propelPath = str_replace('depending.in/app', 'depending.in/vendor', APPLICATION_PATH).DIRECTORY_SEPARATOR.'propel/propel1/generator/build.xml';
+				$projectPath = str_replace('depending.in/app','depending.in',APPLICATION_PATH);
 				$args = array(
 						'-f',
 						$propelPath,
