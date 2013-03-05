@@ -261,7 +261,12 @@ class ControllerBase {
 		$token = $this->data->get('getData[token]','',true);
 		
 		if (empty($token)) {
-			throw new \InvalidArgumentException('Token not found!');
+			// Try to see the session if login
+			if ($this->session->get('login') && $this->session->get('githubToken')) {
+				$token = $this->session->get('githubToken');
+			} else {
+				throw new \InvalidArgumentException('Token not found!');
+			}
 		}
 
 		return $token;
@@ -279,9 +284,12 @@ class ControllerBase {
 		$currentUser->setLogin(time());
 		$currentUser->save();
 
+		$currentUser = ModelBase::factory('User')->getUser($id);
+
 		// Set login status
 		$this->session->set('login', true);
-		$this->session->set('userId', $id);
+		$this->session->set('userId', $currentUser->get('Uid'));
+		$this->session->set('githubToken', $currentUser->get('GithubToken'));
 		$this->session->set('role', 'member');
 	}
 
@@ -353,6 +361,21 @@ class ControllerBase {
 	 */
 	public function redirect($url = '', $status = 302, $headers = array()) {
 		return new RedirectResponse($url, $status, $headers);
+	}
+
+	/**
+	 * Render JSON response.
+	 *
+	 * @param array $data A Response data
+	 * @param int $status HTTP status code
+	 *
+	 * @return Response A Response instance
+	 */
+	public function renderJson($data = array(), $status = 200) {
+		$jsonData = json_encode($data);
+		$jsonHeader = array('Content-Type' => 'application/json');
+
+		return $this->render($jsonData, $status, $jsonHeader);
 	}
 
 	/**
