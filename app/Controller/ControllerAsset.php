@@ -167,6 +167,7 @@ class ControllerAsset extends ControllerBase
 		$lastModified->setTimestamp($this->modelAsset->getLastModified());
 		$etag = '"'.md5($this->assetFile.''.$this->modelAsset->getLastModified()).'"';
 
+		// @codeCoverageIgnoreStart
 		// Check for request parameters
 		if($this->request->server->get('HTTP_IF_MODIFIED_SINCE') || $this->request->server->get('HTTP_IF_NONE_MATCH')) {
 			$reqLastModified = $this->request->server->get('HTTP_IF_MODIFIED_SINCE');
@@ -181,6 +182,7 @@ class ControllerAsset extends ControllerBase
 				return $this->notModified();
 			}
 		}
+		// @codeCoverageIgnoreEnd
 
 		// Generate asset
 		if ($content instanceof File) {

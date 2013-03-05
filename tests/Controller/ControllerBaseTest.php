@@ -13,6 +13,29 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class ControllerBaseTest extends DependingInTestCase {
 
+	protected $request;
+
+	/**
+	 * Set up
+	 */
+	public function before() {
+		// Emulate logged in user
+		$session = new AppSession();
+
+		$session->start();
+
+		$sessionId = $session->getName();
+		$cookies = array($sessionId => TRUE);
+		$request = Request::create('/setting', 'GET', array(), $cookies);
+
+		if ( ! $request->hasPreviousSession()) {
+			$request->setSession($session);
+		} 
+
+		$request->getSession()->set('login', true);
+		$this->request = $request;
+	}
+
 	/**
 	 * Cek konsistensi controller base instance
 	 */
@@ -44,6 +67,18 @@ class ControllerBaseTest extends DependingInTestCase {
 
 		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\RedirectResponse', $response);
 		$this->assertEquals(302, $response->getStatusCode());
+	}
+
+	/**
+	 * Cek renderJson
+	 */
+	public function testCekRenderJsonAppControllerBase() {
+		$request = Request::create('/home/index');
+		$controllerBase = new ControllerBase($request);
+		$response = $controllerBase->renderJson(array('success' => true));
+
+		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
+		$this->assertEquals(200, $response->getStatusCode());
 	}
 
 	/**
@@ -107,11 +142,17 @@ class ControllerBaseTest extends DependingInTestCase {
 	 * Cek token
 	 */
 	public function testCekTokenAppControllerBase() {
-		// Token exists
+		// Token exists from GET
 		$request = Request::create('/confirmation');
 		$controllerBase = new ControllerBase($request);
 		$getData = array('token' => 'somehashtoken');
 		$controllerBase->getData()->set('getData', $getData);
+		$this->assertEquals('somehashtoken', $controllerBase->getToken());
+
+		// Token exists from SESSION
+		$request = $this->request;
+		$request->getSession()->set('githubToken', 'somehashtoken');
+		$controllerBase = new ControllerBase($request);
 		$this->assertEquals('somehashtoken', $controllerBase->getToken());
 
 		$request = Request::create('/confirmation');
