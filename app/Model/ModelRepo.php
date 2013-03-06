@@ -235,6 +235,10 @@ class ModelRepo extends ModelBase
 					'githubToken' => $accessToken,
 					)))->getHookData($r->full_name);
 
+				if ($status instanceof Parameter) {
+					$status = true;
+				}
+
 				// Update the repo data
 				$repoData = array(
 					'name' => $r->name,

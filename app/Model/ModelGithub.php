@@ -135,7 +135,7 @@ class ModelGithub extends ModelBase
 
         foreach ($hooks as $hook) {
             if ($hook->name == 'web' && strpos($hook->config->url, 'depending.in') !== false) {
-                $success = true;
+                $success = new Parameter((array) $hook);
                 break;
             }
         }
