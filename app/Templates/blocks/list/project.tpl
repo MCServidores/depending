@@ -4,7 +4,7 @@
 
 	<tbody>
 	<tr>
-		<td><i class="icon icon-github-sign"></i> <a href="{{ repo.UrlHtml }}" target="_blank"><strong>{{ repo.FullName }}</strong></a></td>
+		<td><i class="icon icon-github-sign"></i> <a href="/{{ repo.FullName }}"  class="btn-link"><strong>{{ repo.FullName }}</strong></a></td>
 		<td class="span3">
 			<a href="/{{ repo.FullName }}"><img src="/{{ repo.FullName }}.png" /></a>
 		</td>
