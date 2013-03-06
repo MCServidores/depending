@@ -8,6 +8,7 @@
 
 namespace app\Model;
 
+use app\Model\Orm\Repos;
 use app\Model\Orm\Users;
 use app\Parameter;
 
@@ -250,6 +251,18 @@ class ModelRepo extends ModelBase
 				$this->updateRepo($repoId, $repoData);
 			}
 		}
+	}
+
+	/**
+	 * Get the final status of a repo object
+	 *
+	 * @param Repos $repo
+	 * @return string $status
+	 */
+	public function getStatus(Repos $repo) {
+		$status = 'unknown';
+
+		return $status;
 	}
 
 	/**

@@ -98,6 +98,23 @@ class ModelTemplate extends ModelBase
         return $this->prepareData($data, $otherData);
     }
 
+    /**
+     * Provider for template Repo
+     *
+     * @param array $otherData Data dari model lain
+     *
+     * @return array $finalData
+     * @see ModelTemplate::finalData
+     */
+    public function getRepoData($otherData = array()) {
+        $data = array(
+            'title' => 'Repository',
+            'content' => NULL,
+        );
+
+        return $this->prepareData($data, $otherData);
+    }
+
      /**
      * Provider untuk template Setting
      *

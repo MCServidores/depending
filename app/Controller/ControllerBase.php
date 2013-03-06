@@ -211,6 +211,25 @@ class ControllerBase {
 	 * @return Response
 	 */
 	public function handleException() {
+		// Try looking for valid repository
+		$pathInfo = $this->request->getPathInfo();
+		$candidate = substr($pathInfo, 1);
+		$isImage = strpos($candidate, '.png') !== false;
+
+		if ($isImage) $candidate = str_replace('.png', '', $candidate);
+
+		$validRepo = ModelBase::factory('Repo')->getQuery()->findOneByFullName($candidate);
+
+		if ($validRepo) {
+			$request = clone $this->request;
+			$request->query->set('exception', NULL);
+			$request->attributes->set('id', $candidate);
+
+			$proxyHandler = new ControllerRepo($request);
+
+		    return ($isImage) ? $proxyHandler->actionStatus() : $proxyHandler->actionDetail();
+		}
+
 		$e = $this->request->get('exception');
 
 		if (empty($e) || ! $e instanceof FlattenException) $e = new FlattenException();
