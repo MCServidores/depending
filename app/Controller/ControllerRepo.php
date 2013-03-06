@@ -61,8 +61,8 @@ class ControllerRepo extends ControllerBase
 			$lastLog = end($repoLogs);
 			reset($repoLogs);
 			$repoLogsArray = $repoLogs->getData();
-			ksort($repoLogsArray);
-			$repoLogs = $repoLogsArray;
+			krsort($repoLogsArray);
+			$repoLogs = array_values($repoLogsArray);
 		}
 
 		// Inisialisasi build tab
