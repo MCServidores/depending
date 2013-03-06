@@ -59,6 +59,10 @@ class ControllerRepo extends ControllerBase
 
 		if ( ! empty($repoLogs)) {
 			$lastLog = end($repoLogs);
+			reset($repoLogs);
+			$repoLogsArray = $repoLogs->getData();
+			krsort($repoLogsArray);
+			$repoLogs = $repoLogsArray;
 		}
 
 		// Inisialisasi build tab
