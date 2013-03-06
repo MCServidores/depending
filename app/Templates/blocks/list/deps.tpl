@@ -4,7 +4,7 @@
 	{% for dep in deps %}
 
 	<tr>
-		<td><i class="icon icon-inbox"></i> <a href="{{ dep.vendor|toPackagist }}" target="_blank" class="btn-link"><strong>{{ dep.vendor }}</strong></a></td>
+		<td><i class="icon {{ dep.vendor|toVendorIcon }}"></i> <a href="{{ dep.vendor|toPackagist }}" target="_blank" class="btn-link"><strong>{{ dep.vendor }}</strong></a></td>
 		<td class="span1">
 			<label class="label label-info">{{ dep.version }}</label>
 		</td>

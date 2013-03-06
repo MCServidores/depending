@@ -52,6 +52,7 @@ class ModelTemplate extends ModelBase
             new Twig_SimpleFilter('toPackagist', array(__CLASS__, 'setPackagistUrl')),
             new Twig_SimpleFilter('toStatus', array(__CLASS__, 'setStatusMarkdown')),
             new Twig_SimpleFilter('toIcon', array(__CLASS__,'setProjectIcon')),
+            new Twig_SimpleFilter('toVendorIcon', array(__CLASS__,'setVendorIcon')),
         );
 
         // Register filter
@@ -262,6 +263,13 @@ class ModelTemplate extends ModelBase
      */
     public function setProjectIcon($isPackage) {
         return $isPackage == 1 ? 'icon-inbox' : 'icon-github-sign';
+    }
+
+    /**
+     * Custom Twig filter for translating vendor name into appropriate icon
+     */
+    public function setVendorIcon($name) {
+        return strtolower($name) == 'php' ? 'icon-cogs' : 'icon-inbox';
     }
 
     /**
