@@ -12,6 +12,7 @@
     <column name="status" phpName="Status" type="TINYINT" required="true" defaultValue="0"/>
     <column name="created" phpName="Created" type="INTEGER" required="true" defaultValue="0"/>
     <column name="executed" phpName="Executed" type="INTEGER" required="true" defaultValue="0"/>
+    <column name="data" phpName="Data" type="BLOB" required="false"/>
   </table>
   <table name="repos" phpName="Repos" idMethod="native">
     <column name="rid" phpName="Rid" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" required="true" defaultValue="0"/>
