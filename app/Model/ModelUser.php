@@ -8,6 +8,7 @@
 
 namespace app\Model;
 
+use app\Model\ModelTemplate;
 use app\Model\Orm\Users;
 use app\Parameter;
 
@@ -196,6 +197,29 @@ class ModelUser extends ModelBase
 	}
 
 	/**
+	 * Build project tab
+	 *
+	 * @param Parameter $user
+	 * @param Parameter $data
+	 * @return String 
+	 */
+	public function buildProjectTab(Parameter $user,Parameter $data) {
+		$projectTab = NULL;
+
+		// Get related repos
+		$repos = ModelBase::factory('User')->getQuery()->findPK($user->get('Uid'))->getReposs();
+
+		// @codeCoverageIgnoreStart
+		if ( ! empty($repos)) {
+			$projectTab = ModelTemplate::render('blocks/list/project.tpl', compact('repos'));
+		}
+		// @codeCoverageIgnoreEnd
+		
+
+		return $projectTab;
+	}
+
+	/**
 	 * Build tabs data
 	 *
 	 * @param id $uid
@@ -209,16 +233,16 @@ class ModelUser extends ModelBase
 			new Parameter(array(
 				'id' => 'projects', 
 				'link' => 'All Projects', 
-				'liClass' => empty($projectTab) ? 'active' : ' ', 
-				'tabClass' => empty($projectTab) ? 'active in' : ' ', 
+				'liClass' => !empty($projectTab) ? 'active' : ' ', 
+				'tabClass' => !empty($projectTab) ? 'active in' : ' ', 
 				'data' => empty($projectTab) ? '' : $projectTab)),
 
 			// Artikel tab
 			new Parameter(array(
 				'id' => 'packages', 
 				'link' => 'All Packages', 
-				'liClass' => !empty($packageTab) ? 'active' : ' ', 
-				'tabClass' => !empty($packageTab) ? 'active in' : ' ', 
+				'liClass' => !empty($packageTab) && empty($projectTab) ? 'active' : ' ', 
+				'tabClass' => !empty($packageTab) && empty($projectTab) ? 'active in' : ' ', 
 				'data' => empty($packageTab) ? '' : $packageTab)),
 		);
 

@@ -265,16 +265,16 @@ class ModelRepo extends ModelBase
 			new Parameter(array(
 				'id' => 'deps', 
 				'link' => 'All Dependencies', 
-				'liClass' => empty($depsTab) ? 'active' : ' ', 
-				'tabClass' => empty($depsTab) ? 'active in' : ' ', 
-				'data' => empty($depsTab) ? '' : $depsTab)),
+				'liClass' => !empty($depsTab) ? 'active' : ' ', 
+				'tabClass' => !empty($depsTab) ? 'active in' : ' ', 
+				'data' => !empty($depsTab) ? '' : $depsTab)),
 
 			// Artikel tab
 			new Parameter(array(
 				'id' => 'builds', 
 				'link' => 'All Builds', 
-				'liClass' => !empty($buildTab) ? 'active' : ' ', 
-				'tabClass' => !empty($buildTab) ? 'active in' : ' ', 
+				'liClass' => !empty($buildTab) && empty($depsTab) ? 'active' : ' ', 
+				'tabClass' => !empty($buildTab) && empty($depsTab) ? 'active in' : ' ', 
 				'data' => empty($buildTab) ? '' : $buildTab)),
 		);
 
