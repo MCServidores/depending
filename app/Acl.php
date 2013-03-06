@@ -106,6 +106,18 @@ class Acl implements AclInterface
 	}
 
 	/**
+	 * Check if the current user is match with given UID
+	 *
+	 * @param $uid User id
+	 * @return bool
+	 */
+	public function isMe($uid) {
+		if ( ! $this->isLogin()) return false;
+
+		return $this->session->get('userId',0) == $uid;
+	}
+
+	/**
 	 * isLogin
 	 *
 	 * Mengecek apakah user sedang login

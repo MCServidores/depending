@@ -97,11 +97,14 @@ class ControllerRepo extends ControllerBase
 		// Finalisasi tabs
 		$tabs = ModelBase::factory('Repo')->buildTabs($repo->get('rid'),$buildTab,$depsTab);
 
-		// Adding tab option to fetch the latest commits manually
-		$tabOption = array(
-			'href' => $this->data->get('currentUrl').'?synchronize=1', 
-			'text' => '<i class="icon icon-refresh"></i> Refresh'
-		);
+		// Adding tab option to fetch the latest commits manually, for the owner
+		if ($this->acl->isMe($owner->getUid())) {
+			$tabOption = array(
+				'href' => $this->data->get('currentUrl').'?synchronize=1', 
+				'text' => '<i class="icon icon-refresh"></i> Refresh'
+			);
+		}
+		
 
 		// Template configuration
 		$this->layout = 'modules/repo/index.tpl';
