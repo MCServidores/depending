@@ -252,6 +252,36 @@ class ModelRepo extends ModelBase
 	}
 
 	/**
+	 * Build tabs data
+	 *
+	 * @param id $rid
+	 * @param string $buildTab
+	 * @param string $depsTab
+	 * @return Parameter 
+	 */
+	public function buildTabs($rid = NULL,$buildTab = NULL, $depsTab = NULL) {
+		$tabs = array(
+			// Aktifitas tab
+			new Parameter(array(
+				'id' => 'deps', 
+				'link' => 'All Dependencies', 
+				'liClass' => empty($depsTab) ? 'active' : ' ', 
+				'tabClass' => empty($depsTab) ? 'active in' : ' ', 
+				'data' => empty($depsTab) ? '' : $depsTab)),
+
+			// Artikel tab
+			new Parameter(array(
+				'id' => 'builds', 
+				'link' => 'All Builds', 
+				'liClass' => !empty($buildTab) ? 'active' : ' ', 
+				'tabClass' => !empty($buildTab) ? 'active in' : ' ', 
+				'data' => empty($buildTab) ? '' : $buildTab)),
+		);
+
+		return $tabs;
+	}
+
+	/**
 	 * Get the final status of a repo object
 	 *
 	 * @param Repos $repo

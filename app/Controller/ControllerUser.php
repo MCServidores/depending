@@ -82,14 +82,14 @@ class ControllerUser extends ControllerBase
 		}
 		// @codeCoverageIgnoreEnd
 
-		// Inisialisasi article tab
-		$articleTab = NULL;
+		// Project tab data
+		$projectTab = NULL;
 
-		// Inisialisasi activity tab
-		$activityTab = NULL;
+		// Package tab data
+		$packageTab = NULL;
 
 		// Finalisasi tabs
-		$tabs = ModelBase::factory('User')->buildTabs($item->get('id'),$activityTab,$articleTab);
+		$tabs = ModelBase::factory('User')->buildTabs($item->get('id'),$projectTab,$packageTab);
 
 		// Template configuration
 		$title = $item->get('Name');

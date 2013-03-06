@@ -11,5 +11,5 @@
 		{% endif %}
 	</ul>
 	<hr/>
-	Depedencies
+	{% include "blocks/tab.tpl" %}
 </div>

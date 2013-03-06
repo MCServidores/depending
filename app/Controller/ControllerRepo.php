@@ -59,9 +59,18 @@ class ControllerRepo extends ControllerBase
 			$lastLog = end($repoLogs);
 		}
 
+		// Inisialisasi build tab
+		$buildTab = NULL;
+
+		// Inisialisasi deps tab
+		$depsTab = NULL;
+
+		// Finalisasi tabs
+		$tabs = ModelBase::factory('Repo')->buildTabs($repo->get('rid'),$buildTab,$depsTab);
+
 		// Template configuration
 		$this->layout = 'modules/repo/index.tpl';
-		$data = ModelBase::factory('Template')->getRepoData(compact('repo','title','lastLog'));
+		$data = ModelBase::factory('Template')->getRepoData(compact('repo','title','lastLog','tabs'));
 
 		// Render
 		return $this->render($data);
