@@ -50,6 +50,33 @@ class ControllerHome extends ControllerBase
 	}
 
 	/**
+	 * Handler for GET/POST /home/work
+	 *
+	 * This is main log consumer, that either run by cron or by regular request
+	 */
+	public function actionWork() {
+		// Get the latest un-processed log and its repository
+		$latestLog = ModelBase::factory('Log')->getQuery()->orderByCreated()->findOneByStatus(0);
+
+		// Only work on something!
+		if ( ! empty($latestLog)) {
+			try {
+				$success = ModelBase::factory('Worker')->run($latestLog);
+
+				$statusCode = 200;
+				$statusText = 'OK';
+			} catch (\RuntimeException $e) {
+				$statusCode = 500;
+				$statusText = 'FAIL. Reason :'.$e->getMessage();
+			}
+
+			return $this->render($statusText, $statusCode);
+		}
+
+		return $this->notModified();
+	}
+
+	/**
 	 * Handler for GET/POST /home/accept
 	 *
 	 * This is main payload handler, that accept Json data from Github
@@ -65,31 +92,7 @@ class ControllerHome extends ControllerBase
 
 		// Out of control
 		if (empty($payloadObject)) {
-			// @codeCoverageIgnoreStart
-			switch (json_last_error()) {
-				case JSON_ERROR_NONE:
-					$possibleCause = 'No errors';
-					break;
-				case JSON_ERROR_DEPTH:
-					$possibleCause = 'Maximum stack depth exceeded';
-					break;
-				case JSON_ERROR_STATE_MISMATCH:
-					$possibleCause = 'Underflow or the modes mismatch';
-					break;
-				case JSON_ERROR_CTRL_CHAR:
-					$possibleCause = 'Unexpected control character found';
-					break;
-				case JSON_ERROR_SYNTAX:
-					$possibleCause = 'Syntax error, malformed JSON';
-					break;
-				case JSON_ERROR_UTF8:
-					$possibleCause = 'Malformed UTF-8 characters, possibly incorrectly encoded';
-					break;
-				default:
-					$possibleCause = 'Unknown error';
-					break;
-			}
-			// @codeCoverageIgnoreEnd
+			$possibleCause = ModelBase::factory('Worker')->getLastJsonError();
 
 			throw new \InvalidArgumentException('Error Processing JSON Request. Possible cause : '.$possibleCause);
 		}
