@@ -58,7 +58,7 @@ class ControllerHome extends ControllerBase
 		$payload = $this->request->getContent();
 
 		// Log the payload for further inspection 
-		file_put_contents(APPLICATION_PATH.'/cache/payload_'.time().'.log', $payload);
+		file_put_contents(CACHE_PATH.'/payload_'.time().'.log', $payload);
 
 		// Wrap the payload
 		$payloadObject = json_decode($payload);
