@@ -49,6 +49,7 @@ class ModelTemplate extends ModelBase
             new Twig_SimpleFilter('limitHash', array(__CLASS__, 'setLimitHash')),
             new Twig_SimpleFilter('translateToLogText', array(__CLASS__, 'setLogText')),
             new Twig_SimpleFilter('translateToSuccessText', array(__CLASS__, 'setSuccessText')),
+            new Twig_SimpleFilter('toPackagist', array(__CLASS__, 'setPackagistUrl')),
         );
 
         // Register filter
@@ -235,6 +236,13 @@ class ModelTemplate extends ModelBase
      */
     public function setSuccessText($status) {
         return ((int)$status) == 1 ? 'success' : 'warning';
+    }
+
+    /**
+     * Custom Twig filter for translating vendor into packagist url
+     */
+    public function setPackagistUrl($vendor) {
+        return 'https://packagist.org/packages/'.$vendor;
     }
 
     /**
