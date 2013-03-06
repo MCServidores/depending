@@ -266,7 +266,7 @@ class ModelRepo extends ModelBase
 		$buildTab = NULL;
 
 		// @codeCoverageIgnoreStart
-		if ( ! empty($repoLogs)) {
+		if ( ! empty($repoLogs) && count($repoLogs) > 0) {
 			$buildTab = ModelTemplate::render('blocks/list/log.tpl', array('logs' => $repoLogs));
 		}
 		// @codeCoverageIgnoreEnd
