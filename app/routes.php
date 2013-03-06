@@ -36,6 +36,8 @@ $routes->add('default', new Route('/', array(Route::HANDLER => array(Route::HAND
 
 $routes->add('travis_sync', new Route('/synchronize', array(Route::HANDLER => array(Route::HANDLER_CLASS => 'base', Route::HANDLER_ACTION => 'synchronize'))));
 
+$routes->add('github_hook', new Route('/hook', array(Route::HANDLER => array(Route::HANDLER_CLASS => 'home', Route::HANDLER_ACTION => 'accept'))));
+
 $routes->add('asset', new Route('/{controller}/{action}/{id}', array('controller' => 'asset', 'action' => '(js|css|img|font)', 'id' => '[a-zA-Z\.\-]+')));
 
 $routes->add('asset_subfolder', new Route('/{controller}/{action}/{subfolder}/{id}', array('controller' => 'asset', 'action' => '(js|css|img|font)', 'subfolder' => '[0-9a-zA-Z\_\-]+','id' => '[0-9a-zA-Z\.\-]+')));

@@ -93,6 +93,7 @@ class ModelSetting extends ModelBase
      * @param Parameter $data 
      *
      * @return Parameter $content
+     * @codeCoverageIgnore
      */
     public function handleGithub(Parameter $data) {
         $content = new Parameter(array(

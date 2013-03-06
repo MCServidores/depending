@@ -101,7 +101,7 @@ class ModelGithub extends ModelBase
             )
         );
 
-        $response = $this->postJsonData(self::API_URL.'repos/'.$repo.'/hooks?access_token='.$this->accessToken, $hook);
+        $response = $this->postJsonData(self::API_URL.'repos/'.$repo.'/hooks?access_token='.$this->accessToken, json_encode($hook));
 
         if (strpos($response->get('result'),'Not Found') !== false || $response->get('head[http_code]',500,true) !== 201) {
             return false;
@@ -224,7 +224,7 @@ class ModelGithub extends ModelBase
      * @return Parameter
      * @throws RuntimeException
      */
-    public function postJsonData($url, $data) {
+    public function postJsonData($url, $jsonData) {
          try {
             // Start output buffer
             ob_start();
@@ -237,7 +237,7 @@ class ModelGithub extends ModelBase
             curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($request, CURLOPT_FOLLOWLOCATION, TRUE);
             curl_setopt($request, CURLOPT_VERBOSE, TRUE);
-            curl_setopt($request, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt($request, CURLOPT_POSTFIELDS, $jsonData);
             curl_setopt($request, CURLOPT_POST, 1); 
 
             //execute post

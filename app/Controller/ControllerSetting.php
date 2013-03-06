@@ -57,6 +57,8 @@ class ControllerSetting extends ControllerBase
 
 	/**
 	 * Handler untuk GET/POST /setting/github
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function actionGithub() {
 		$content = ModelBase::factory('Setting')->handleGithub($this->data);
@@ -116,8 +118,7 @@ class ControllerSetting extends ControllerBase
 			throw new \RangeException('You seems trying to access a different side of this app. Please stop.');
 		}
 
-		// Just for the sake of jQuery ajax delay
-		sleep(1);
+		// @codeCoverageIgnoreStart
 
 		// Initialize result
 		$success = false;
@@ -142,7 +143,11 @@ class ControllerSetting extends ControllerBase
 			$success = $hookSetup;
 		}
 
+		// Just for the sake of jQuery ajax delay
+		sleep(1);
+
 		return $this->renderJson(compact('success'));
+		// @codeCoverageIgnoreEnd
 	}
 
 	/**
@@ -154,8 +159,7 @@ class ControllerSetting extends ControllerBase
 			throw new \RangeException('You seems trying to access a different side of this app. Please stop.');
 		}
 
-		// Just for the sake of jQuery ajax delay
-		sleep(1);
+		// @codeCoverageIgnoreStart
 
 		// Initialize result
 		$success = false;
@@ -180,6 +184,10 @@ class ControllerSetting extends ControllerBase
 			$success = $hookSetup;
 		}
 
+		// Just for the sake of jQuery ajax delay
+		sleep(1);
+
 		return $this->renderJson(compact('success'));
+		// @codeCoverageIgnoreEnd
 	}
 }

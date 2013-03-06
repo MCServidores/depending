@@ -9,7 +9,6 @@
 namespace app\Model;
 
 use app\Model\Orm\Repos;
-use app\Model\Orm\Users;
 use app\Parameter;
 
 /**
@@ -29,7 +28,7 @@ class ModelRepo extends ModelBase
 	 * @param int Pagination
 	 * @param array Filter
 	 *
-	 * @return array Array of user object wrapped in ParameterBag
+	 * @return array Array of repo object wrapped in ParameterBag
 	 */
 	public function getAllRepo($limit = 0, $page = 1, $filter = array()) {
 		// Inisialisasi
@@ -211,7 +210,6 @@ class ModelRepo extends ModelBase
 	 * @param int User UID
 	 * @param string Github AccessToken
 	 * @param Parameter An array containing all of user's repos
-	 * @return bool
 	 */
 	public function updateUserRepositories($uid, $accessToken, Parameter $repositories) {
 		$user = ModelBase::factory('User')->getQuery()->findPK($uid);

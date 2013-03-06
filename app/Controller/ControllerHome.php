@@ -20,7 +20,7 @@ use app\Model\ModelTemplate;
 class ControllerHome extends ControllerBase
 {
 	/**
-	 * Handler untuk GET/POST /home/index
+	 * Handler for GET/POST /home/index
 	 */
 	public function actionIndex() {
 		// @codeCoverageIgnoreStart
@@ -50,7 +50,73 @@ class ControllerHome extends ControllerBase
 	}
 
 	/**
-	 * Handler untuk GET/POST /home/import
+	 * Handler for GET/POST /home/accept
+	 *
+	 * This is main payload handler, that accept Json data from Github
+	 */
+	public function actionAccept() {
+		$payload = $this->request->getContent();
+
+		// Wrap the payload
+		$payloadObject = json_decode($payload);
+
+		// Out of control
+		if (empty($payloadObject)) {
+			// @codeCoverageIgnoreStart
+			switch (json_last_error()) {
+				case JSON_ERROR_NONE:
+					$possibleCause = 'No errors';
+					break;
+				case JSON_ERROR_DEPTH:
+					$possibleCause = 'Maximum stack depth exceeded';
+					break;
+				case JSON_ERROR_STATE_MISMATCH:
+					$possibleCause = 'Underflow or the modes mismatch';
+					break;
+				case JSON_ERROR_CTRL_CHAR:
+					$possibleCause = 'Unexpected control character found';
+					break;
+				case JSON_ERROR_SYNTAX:
+					$possibleCause = 'Syntax error, malformed JSON';
+					break;
+				case JSON_ERROR_UTF8:
+					$possibleCause = 'Malformed UTF-8 characters, possibly incorrectly encoded';
+					break;
+				default:
+					$possibleCause = 'Unknown error';
+					break;
+			}
+			// @codeCoverageIgnoreEnd
+
+			throw new \InvalidArgumentException('Error Processing JSON Request. Possible cause : '.$possibleCause);
+		}
+
+		// @codeCoverageIgnoreStart
+		$payloadParam = new Parameter((array) $payloadObject);
+
+		// Findout the payload owner
+		$repo = $payloadParam->get('repository');
+		$repoName = $repo->url;
+
+		if (preg_match('%^((https?://)|(www\.))([a-z0-9-].?)+(:[0-9]+)?(/.*)?$%i', $repoName, $matches) && count($matches) > 3) {
+			$protocol = $matches[1];
+			$repoName = str_replace($protocol.'github.com/', '', $repoName);
+		}
+
+		$existsRepo = ModelBase::factory('Repo')->getQuery()->findOneByFullName($repoName);
+
+		if ($existsRepo) {
+			ModelBase::factory('Log')->updateRepoLogs($existsRepo->getRid(), $payloadParam);
+
+			return $this->render('OK', 201);
+		} else {
+			return $this->render('Requested repository could not be found', 404);
+		}
+		// @codeCoverageIgnoreEnd
+	}
+
+	/**
+	 * Handler for GET/POST /home/import
 	 */
 	public function actionImport() {
 		// For AJAX call only

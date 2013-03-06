@@ -211,6 +211,7 @@ class ControllerBase {
 	 * @return Response
 	 */
 	public function handleException() {
+		// @codeCoverageIgnoreStart
 		// Try looking for valid repository
 		$pathInfo = $this->request->getPathInfo();
 		$candidate = substr($pathInfo, 1);
@@ -229,6 +230,7 @@ class ControllerBase {
 
 		    return ($isImage) ? $proxyHandler->actionStatus() : $proxyHandler->actionDetail();
 		}
+		// @codeCoverageIgnoreEnd
 
 		$e = $this->request->get('exception');
 
