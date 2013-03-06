@@ -62,7 +62,7 @@ class ControllerRepo extends ControllerBase
 		}
 
 		// Inisialisasi build tab
-		$buildTab = NULL;
+		$buildTab = ModelBase::factory('Repo')->buildBuildTab($repoLogs, $this->data);
 
 		// Inisialisasi deps tab
 		$depsTab = NULL;

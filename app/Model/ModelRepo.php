@@ -256,6 +256,26 @@ class ModelRepo extends ModelBase
 	}
 
 	/**
+	 * Build Build tab
+	 *
+	 * @param mixed $repoLogs
+	 * @param Parameter $data
+	 * @return String 
+	 */
+	public function buildBuildTab($repoLogs,Parameter $data) {
+		$buildTab = NULL;
+
+		// @codeCoverageIgnoreStart
+		if ( ! empty($repoLogs)) {
+			$buildTab = ModelTemplate::render('blocks/list/log.tpl', array('logs' => $repoLogs));
+		}
+		// @codeCoverageIgnoreEnd
+		
+
+		return $buildTab;
+	}
+
+	/**
 	 * Build tabs data
 	 *
 	 * @param id $rid

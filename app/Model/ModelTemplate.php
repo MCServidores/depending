@@ -46,7 +46,9 @@ class ModelTemplate extends ModelBase
 
         // Filter declaration
         $filters = array(
-            /* new Twig_SimpleFilter('filterName', array(__CLASS__, 'filterFunction')), */
+            new Twig_SimpleFilter('limitHash', array(__CLASS__, 'setLimitHash')),
+            new Twig_SimpleFilter('translateToLogText', array(__CLASS__, 'setLogText')),
+            new Twig_SimpleFilter('translateToSuccessText', array(__CLASS__, 'setSuccessText')),
         );
 
         // Register filter
@@ -212,6 +214,27 @@ class ModelTemplate extends ModelBase
      */
     public function getDefaultData() {
         return $this->defaultData;
+    }
+
+    /**
+     * Custom Twig filter for limiting hash length
+     */
+    public function setLimitHash($hash) {
+        return substr($hash, 0, 7).'...';
+    }
+
+    /**
+     * Custom Twig filter for translate integer data to log status[scheduled|finished]
+     */
+    public function setLogText($status) {
+        return ((int)$status) == 1 ? 'finished' : 'scheduled';
+    }
+
+    /**
+     * Custom Twig filter for translating integer data into success text [success|warning]
+     */
+    public function setSuccessText($status) {
+        return ((int)$status) == 1 ? 'success' : 'warning';
     }
 
     /**
