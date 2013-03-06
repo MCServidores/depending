@@ -11,3 +11,5 @@ sql/*
 migrations/*
 cache/*
 !cache/.gitkeep
+logs/*
+!logs/.gitkeep
