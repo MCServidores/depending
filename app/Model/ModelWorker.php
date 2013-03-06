@@ -169,7 +169,7 @@ class ModelWorker extends ModelBase
 
 					$response = ModelBase::factory('Github',new Parameter())->getData('https://packagist.org/feeds/package.'.$vendor.'.rss', array());
 					
-					if ($response->get('result') && ($rss = $response->get('body')) && ! empty($rss)) {
+					if ($response->get('result') && in_array($response->get('head[http_code]',500,true),array(200,304)) && ($rss = $response->get('body')) && ! empty($rss)) {
 						$package = new \SimpleXMLElement($rss);
 
 						foreach ($package->channel->item as $item) {
