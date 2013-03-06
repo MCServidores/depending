@@ -82,10 +82,8 @@ class ControllerUser extends ControllerBase
 		}
 		// @codeCoverageIgnoreEnd
 
-		// Project tab data
+		// Project tab and package tab initialization
 		$projectTab = ModelBase::factory('User')->buildProjectTab($item, $this->data);
-
-		// Package tab data
 		$packageTab = NULL;
 
 		// Finalisasi tabs
