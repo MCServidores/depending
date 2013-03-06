@@ -208,15 +208,16 @@ class ModelUser extends ModelBase
 
 		// Get related repos
 		$repos = ModelBase::factory('User')->getQuery()->findPK($user->get('Uid'))->getReposs();
+		$reposCopy = clone $repos;
 
-		foreach ($repos as $key => $repo) {
+		foreach ($reposCopy as $key => $repo) {
 			// Unset the un-related project
-			if ($repo->getStatus() == 0 || $repo->getIsPackage() == 1) unset($repos[$key]);
+			if ($repo->getStatus() == 0 || $repo->getIsPackage() == 1) unset($reposCopy[$key]);
 		}
 
 		// @codeCoverageIgnoreStart
-		if ( count($repos) > 0) {
-			$projectTab = ModelTemplate::render('blocks/list/project.tpl', compact('repos'));
+		if ( count($reposCopy) > 0) {
+			$projectTab = ModelTemplate::render('blocks/list/project.tpl', array('repos' => $reposCopy));
 		}
 		// @codeCoverageIgnoreEnd
 		
@@ -236,15 +237,16 @@ class ModelUser extends ModelBase
 
 		// Get related repos
 		$repos = ModelBase::factory('User')->getQuery()->findPK($user->get('Uid'))->getReposs();
+		$reposCopy = clone $repos;
 
-		foreach ($repos as $key => $repo) {
+		foreach ($reposCopy as $key => $repo) {
 			// Unset the un-related project
-			if ($repo->getIsPackage() == 0) unset($repos[$key]);
+			if ($repo->getIsPackage() == 0) unset($reposCopy[$key]);
 		}
 
 		// @codeCoverageIgnoreStart
-		if ( count($repos) > 0) {
-			$packageTab = ModelTemplate::render('blocks/list/project.tpl', compact('repos'));
+		if ( count($reposCopy) > 0) {
+			$packageTab = ModelTemplate::render('blocks/list/project.tpl', array('repos' => $reposCopy));
 		}
 		// @codeCoverageIgnoreEnd
 		
