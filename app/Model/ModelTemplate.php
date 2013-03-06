@@ -261,7 +261,7 @@ class ModelTemplate extends ModelBase
      * Custom Twig filter for translating repo state into icon
      */
     public function setProjectIcon($isPackage) {
-        return $isPackage == 1 ? 'icon-sign-blank' : 'icon-github-sign';
+        return $isPackage == 1 ? 'icon-inbox' : 'icon-github-sign';
     }
 
     /**

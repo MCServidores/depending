@@ -211,7 +211,7 @@ class ModelUser extends ModelBase
 
 		foreach ($repos as $key => $repo) {
 			// Unset the un-related project
-			if ($repo->getStatus() == 0) unset($repos[$key]);
+			if ($repo->getStatus() == 0 || $repo->getIsPackage() == 1) unset($repos[$key]);
 		}
 
 		// @codeCoverageIgnoreStart
