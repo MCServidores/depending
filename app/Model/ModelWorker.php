@@ -164,6 +164,9 @@ class ModelWorker extends ModelBase
 					$vendor = $dep['vendor'];
 					$currentVersion = $dep['version'];
 
+					// Skip PHP, its not vendor!!!
+					if ($vendor == 'php') continue;
+
 					$response = ModelBase::factory('Github',new Parameter())->getData('https://packagist.org/feeds/package.'.$vendor.'.rss', array());
 					
 					if ($response->get('result') && ($rss = $response->get('body')) && ! empty($rss)) {
