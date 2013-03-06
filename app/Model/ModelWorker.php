@@ -95,7 +95,7 @@ class ModelWorker extends ModelBase
 
 		// Set the task flag
 		$result->set('logStatus', $depsStatus->get('status'));
-		$result->set('logData', $depsStatus->get('depsDiff'));
+		$result->set('logData', array('depsDiff' => $depsStatus->get('depsDiff')->all()));
 		$result->set('logExecuted', time());
 
 		// We're done
@@ -380,12 +380,12 @@ class ModelWorker extends ModelBase
 	 * Normalize vendor version
 	 *
 	 * @param string $rawVersion
-	 * @param string $version
+	 * @param string $versionCandidate
 	 */
 	public function normalizeVendorVersion($rawVersion) {
 		list($versionCandidate) = explode('-', $rawVersion);
 
-		return str_replace('v','',$version);
+		return str_replace('v','',$versionCandidate);
 	}
 
 	/**
