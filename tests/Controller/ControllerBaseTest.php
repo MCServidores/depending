@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class ControllerBaseTest extends DependingInTestCase {
 
+	protected $needDatabase = true;
 	protected $request;
 
 	/**

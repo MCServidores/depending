@@ -112,4 +112,28 @@ class ControllerSettingTest extends DependingInTestCase {
 		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
 		$this->assertEquals(200, $response->getStatusCode());
 	}
+
+	/**
+	 * Cek action enable hook
+	 */
+	public function testCekActionEnableAppControllerSetting() {
+		$request = $this->request;
+		$controllerSetting = new ControllerSetting($request);
+
+		$this->setExpectedException('RangeException', 'You seems trying to access a different side of this app. Please stop.');
+
+		$controllerSetting->actionEnable();
+	}
+
+	/**
+	 * Cek action disable hook
+	 */
+	public function testCekActionDisableAppControllerSetting() {
+		$request = $this->request;
+		$controllerSetting = new ControllerSetting($request);
+
+		$this->setExpectedException('RangeException', 'You seems trying to access a different side of this app. Please stop.');
+
+		$controllerSetting->actionDisable();
+	}
 }

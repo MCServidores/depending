@@ -16,12 +16,12 @@ abstract class DependingInTestCase extends PHPUnit_Framework_TestCase {
 	 * Main Setup
 	 */
 	public function setUp() {
-		// Panggil before hook
+		// Call before hook
 		if (method_exists($this, 'before')) {
 			$this->before();
 		}
 
-		// Perlukah membuka database?
+		// Need to open database connection?
 		if ($this->needDatabase) {
 			Propel::init(str_replace('app', 'conf', APPLICATION_PATH) . DIRECTORY_SEPARATOR . 'connection.php');
 		}
@@ -35,9 +35,47 @@ abstract class DependingInTestCase extends PHPUnit_Framework_TestCase {
 			$this->after();
 		}
 
-		// Perlukah menghapus data?
+		// Need to delete data?
 		if ($this->needDatabase) {
 			$this->deleteDummyUser();
+			$this->deleteDummyRepo();
+			$this->deleteDummyLog();
+		}
+	}
+
+	/**
+	 * Create dummy repo
+	 */
+	public function createDummyRepo() {
+		return ModelBase::factory('Repo')->createRepo('12345', 'dummy', 'coolaid/dummy', 'Coolest repository', 0, 1);
+	}
+
+	/**
+	 * Delete dummy repo
+	 */
+	public function deleteDummyRepo() {
+		if (($dummyRepo = ModelBase::ormFactory('ReposQuery')->findOneByName('dummy')) && ! empty($dummyRepo)) {
+			$dummyRepo->delete();
+		} elseif (($dummyRepo = ModelBase::ormFactory('ReposQuery')->findOneByName('anotherdummy')) && ! empty($dummyRepo)) {
+			$dummyRepo->delete();
+		}
+	}
+
+	/**
+	 * Create dummy log
+	 */
+	public function createDummyLog() {
+		return ModelBase::factory('Log')->createLog(md5('dummy_before'), md5('dummy'), 'master', 'http://dummy/commit/123', 'I did that', 'Mr. Dummy');
+	}
+
+	/**
+	 * Delete dummy repo
+	 */
+	public function deleteDummyLog() {
+		if (($dummyLog = ModelBase::ormFactory('LogsQuery')->findOneByAfter(md5('dummy'))) && ! empty($dummyLog)) {
+			$dummyLog->delete();
+		} elseif (($dummyLog = ModelBase::ormFactory('LogsQuery')->findOneByAfter(md5('anotherdummy'))) && ! empty($dummyLog)) {
+			$dummyLog->delete();
 		}
 	}
 

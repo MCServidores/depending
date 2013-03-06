@@ -73,6 +73,18 @@ class ControllerHomeTest extends DependingInTestCase {
 	}
 
 	/**
+	 * Cek action accept
+	 */
+	public function testCekActionAcceptAppControllerHome() {
+		$request = Request::create('/home/accept');
+		$controllerHome = new ControllerHome($request);
+
+		$this->setExpectedException('InvalidArgumentException', 'Error Processing JSON Request. Possible cause : ');
+
+		$controllerHome->actionAccept();
+	}
+
+	/**
 	 * Cek action import
 	 */
 	public function testCekActionImportAppControllerHome() {
