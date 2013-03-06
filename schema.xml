@@ -25,6 +25,7 @@
     <column name="access" phpName="Access" type="INTEGER" required="true" defaultValue="0"/>
     <column name="is_fork" phpName="IsFork" type="TINYINT" required="true" defaultValue="0"/>
     <column name="is_private" phpName="IsPrivate" type="TINYINT" required="true" defaultValue="0"/>
+    <column name="is_package" phpName="IsPackage" type="TINYINT" required="true" defaultValue="0"/>
     <column name="status" phpName="Status" type="TINYINT" required="true" defaultValue="0"/>
     <column name="data" phpName="Data" type="BLOB" required="false"/>
     <unique name="name">
