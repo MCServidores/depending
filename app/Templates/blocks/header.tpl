@@ -12,7 +12,7 @@
         {% if acl.isLogin == true %}
 		<div class="dropdown pull-right">
 			<div class="btn-group pull-right">
-			<a class="btn btn-main" href="/user/profile/{{ user.Uid }}"><img src="{{ user.Avatar }}?s=18&d=retro"/> {{ user.Name }}</a>
+			<a class="btn btn-main" href="/{{ user.Name }}"><img src="{{ user.Avatar }}?s=18&d=retro"/> {{ user.Name }}</a>
 			<a class="btn btn-main dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
 			<ul id="account" class="dropdown-menu" role="menu" aria-labelledby="drop1">
 				<li><a href="/setting">Setting</a></li>
