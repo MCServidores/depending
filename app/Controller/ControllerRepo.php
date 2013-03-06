@@ -94,16 +94,19 @@ class ControllerRepo extends ControllerBase
 		if ( ! empty($repoLogs)) {
 			$lastLog = end($repoLogs);
 			reset($repoLogs);
+
 			$repoLogsArray = $repoLogs->getData();
 			krsort($repoLogsArray);
+			
 			$repoLogs = current(array_chunk(array_values($repoLogsArray),5));
 		}
 
-		// Inisialisasi build tab
-		$buildTab = ModelBase::factory('Repo')->buildBuildTab($repoLogs, $this->data);
+		// Get the composer
+		$composer = ModelBase::factory('Worker')->getComposer($this->repo);
 
-		// Inisialisasi deps tab
-		$depsTab = NULL;
+		// Build tab and deps tab initialization
+		$buildTab = ModelBase::factory('Repo')->buildBuildTab($repoLogs, $this->data);
+		$depsTab = ModelBase::factory('Repo')->buildDepsTab($composer, $this->data);
 
 		// Finalisasi tabs
 		$tabs = ModelBase::factory('Repo')->buildTabs($repo->get('rid'),$buildTab,$depsTab);

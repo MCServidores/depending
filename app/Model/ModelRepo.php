@@ -276,6 +276,32 @@ class ModelRepo extends ModelBase
 	}
 
 	/**
+	 * Build Deps tab
+	 *
+	 * @param mixed $composer
+	 * @param Parameter $data
+	 * @return String 
+	 */
+	public function buildDepsTab($composer,Parameter $data) {
+		$depsTab = NULL;
+
+		// Get the packagesArrays
+		$packagesArrays = ModelBase::factory('Worker')->getPackageDeps(new Parameter((array) $composer));
+		
+		// @codeCoverageIgnoreStart
+		if ( ! empty($packagesArrays)) {
+			// Build new array contains all above information
+			$deps = new Parameter($packagesArrays);
+
+			$depsTab = ModelTemplate::render('blocks/list/deps.tpl', compact('deps'));
+		}
+		// @codeCoverageIgnoreEnd
+		
+
+		return $depsTab;
+	}
+
+	/**
 	 * Build tabs data
 	 *
 	 * @param id $rid
@@ -325,6 +351,37 @@ class ModelRepo extends ModelBase
 	 */
 	public function getStatus(Repos $repo) {
 		$status = 'unknown';
+
+		// Check whether this repo has an finished log
+		if (($logs = $repo->getLogss()) && !empty($logs) && count($logs) > 0) {
+			$repoLogsArray = $logs->getData();
+			krsort($repoLogsArray);
+
+			foreach ($repoLogsArray as $log) {
+				if ($log->getStatus() > 0) {
+					// The latest commit status
+					switch ($log->getStatus()) {
+						case 1:
+							$status = 'outofdate';
+							break;
+
+						case 2:
+							$status = 'needupdate';
+							break;
+						
+						case 3:
+							$status = 'uptodate';
+							break;
+						
+						default:
+							$status = 'unknown';
+							break;
+					}
+
+					break;
+				}
+			}
+		}
 
 		return $status;
 	}
