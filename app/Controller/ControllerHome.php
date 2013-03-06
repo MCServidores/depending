@@ -57,8 +57,8 @@ class ControllerHome extends ControllerBase
 	public function actionAccept() {
 		$payload = $this->request->getContent();
 
-		// Log the payload for further inspection 
-		file_put_contents(CACHE_PATH.'/payload_'.time().'.log', $payload);
+		// Log the payload for further inspection if necessary
+		/* file_put_contents(CACHE_PATH.'/payload_'.time().'.log', $payload); */
 
 		// Wrap the payload
 		$payloadObject = json_decode($payload);
