@@ -43,5 +43,10 @@ class ModelLogTest extends DependingInTestCase {
 
 		$this->assertFalse($log->updateLog(NULL, array()));
 		$this->assertFalse($log->updateLog(010101010, array()));
+
+		// Valid update
+		$dummyLog = $this->createDummyLog();
+
+		$this->assertInstanceOf('\app\Parameter',$log->updateLog($dummyLog->getId(), array('after' => md5('anotherdummy'))));
 	}
 }
