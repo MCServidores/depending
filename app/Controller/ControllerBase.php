@@ -190,6 +190,11 @@ class ControllerBase {
 		switch($this->request->get('class')) {
 			case 'app\Controller\ControllerHome':
 				$this->data->set('menuHomeActive','active');
+				break;
+
+			case 'app\Controller\ControllerRepo':
+				$this->data->set('menuProjectActive','active');
+				break;
 		}
 
 		// Check for flash message
