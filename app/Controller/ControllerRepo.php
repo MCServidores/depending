@@ -52,6 +52,8 @@ class ControllerRepo extends ControllerBase
 		// Return detail response
 		$title = $this->repo->getFullName();
 		$repo = ModelBase::factory('Repo')->getRepo($this->repo->getRid());
+		$owners = ModelBase::factory('Repo')->getQuery()->findPK($this->repo->getRid())->getUserss();
+		$owner = current($owners);
 		$lastLog = new Parameter();
 		$repoLogs = $this->repo->getLogss();
 
@@ -70,7 +72,7 @@ class ControllerRepo extends ControllerBase
 
 		// Template configuration
 		$this->layout = 'modules/repo/index.tpl';
-		$data = ModelBase::factory('Template')->getRepoData(compact('repo','title','lastLog','tabs'));
+		$data = ModelBase::factory('Template')->getRepoData(compact('repo','owner','title','lastLog','tabs'));
 
 		// Render
 		return $this->render($data);
