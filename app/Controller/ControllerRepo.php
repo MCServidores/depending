@@ -52,10 +52,16 @@ class ControllerRepo extends ControllerBase
 		// Return detail response
 		$title = $this->repo->getFullName();
 		$repo = ModelBase::factory('Repo')->getRepo($this->repo->getRid());
+		$lastLog = new Parameter();
+		$repoLogs = $this->repo->getLogss();
+
+		if ( ! empty($repoLogs)) {
+			$lastLog = end($repoLogs);
+		}
 
 		// Template configuration
 		$this->layout = 'modules/repo/index.tpl';
-		$data = ModelBase::factory('Template')->getRepoData(compact('repo','title'));
+		$data = ModelBase::factory('Template')->getRepoData(compact('repo','title','lastLog'));
 
 		// Render
 		return $this->render($data);
