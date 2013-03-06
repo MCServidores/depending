@@ -16,10 +16,10 @@ class ModelLogTest extends DependingInTestCase {
 	 * Cek konsistensi model Log instance
 	 */
 	public function testCekKonsistensiModelLog() {
-		$Log = ModelBase::factory('Log');
+		$log = ModelBase::factory('Log');
 
-		$this->assertInstanceOf('\app\Model\ModelBase', $Log);
-		$this->assertInstanceOf('\app\Model\ModelLog', $Log);
+		$this->assertInstanceOf('\app\Model\ModelBase', $log);
+		$this->assertInstanceOf('\app\Model\ModelLog', $log);
 	}
 
 	/**
@@ -28,9 +28,9 @@ class ModelLogTest extends DependingInTestCase {
 	public function testCekGetAllLog() {
 		$this->createDummyLog();
 
-		$Log = new ModelLog();
+		$log = new ModelLog();
 
-		$allLogs = $Log->getAllLog();
+		$allLogs = $log->getAllLog();
 
 		$this->assertTrue(count($allLogs) > 0);
 	}
@@ -39,14 +39,9 @@ class ModelLogTest extends DependingInTestCase {
 	 * Cek update Log
 	 */
 	public function testCekUpdateLogModelLog() {
-		$auth = new ModelLog();
+		$log = new ModelLog();
 
-		$this->assertFalse($auth->updateLog(NULL, array()));
-		$this->assertFalse($auth->updateLog(010101010, array()));
-
-		// Valid update
-		$dummyLog = $this->createDummyLog();
-
-		$this->assertInstanceOf('\app\Parameter',$auth->updateLog($dummyLog->getId(), array('after' => md5('anotherdummy'))));
+		$this->assertFalse($log->updateLog(NULL, array()));
+		$this->assertFalse($log->updateLog(010101010, array()));
 	}
 }
