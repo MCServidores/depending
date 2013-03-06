@@ -228,21 +228,33 @@ class ModelUser extends ModelBase
 	 * @return Parameter 
 	 */
 	public function buildTabs($uid = NULL,$projectTab = NULL, $packageTab = NULL) {
+		$projectLiState = 'active';
+		$projectTabState = 'active in';
+		$packageLiState = ' ';
+		$packageTabState = '';
+
+		if (empty($projectTab) && !empty($packageTab)) {
+			$packageLiState = 'active';
+			$packageTabState = 'active in';
+			$projectLiState = ' ';
+			$projectTabState = '';
+		}
+
 		$tabs = array(
 			// Aktifitas tab
 			new Parameter(array(
 				'id' => 'projects', 
 				'link' => 'All Projects', 
-				'liClass' => !empty($projectTab) ? 'active' : ' ', 
-				'tabClass' => !empty($projectTab) ? 'active in' : ' ', 
+				'liClass' => $projectLiState, 
+				'tabClass' => $projectTabState,
 				'data' => empty($projectTab) ? '' : $projectTab)),
 
 			// Artikel tab
 			new Parameter(array(
 				'id' => 'packages', 
 				'link' => 'All Packages', 
-				'liClass' => !empty($packageTab) && empty($projectTab) ? 'active' : ' ', 
-				'tabClass' => !empty($packageTab) && empty($projectTab) ? 'active in' : ' ', 
+				'liClass' => $packageLiState,
+				'tabClass' => $packageTabState,
 				'data' => empty($packageTab) ? '' : $packageTab)),
 		);
 

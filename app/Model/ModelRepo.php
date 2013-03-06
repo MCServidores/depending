@@ -260,21 +260,33 @@ class ModelRepo extends ModelBase
 	 * @return Parameter 
 	 */
 	public function buildTabs($rid = NULL,$buildTab = NULL, $depsTab = NULL) {
+		$depsLiState = 'active';
+		$depsTabState = 'active in';
+		$buildLiState = ' ';
+		$buildTabState = '';
+
+		if (empty($depsTab) && !empty($buildTab)) {
+			$buildLiState = 'active';
+			$buildTabState = 'active in';
+			$depsLiState = ' ';
+			$depsTabState = '';
+		}
+
 		$tabs = array(
 			// Aktifitas tab
 			new Parameter(array(
 				'id' => 'deps', 
 				'link' => 'All Dependencies', 
-				'liClass' => !empty($depsTab) ? 'active' : ' ', 
-				'tabClass' => !empty($depsTab) ? 'active in' : ' ', 
-				'data' => !empty($depsTab) ? '' : $depsTab)),
+				'liClass' => $depsLiState, 
+				'tabClass' => $depsTabState,
+				'data' => empty($depsTab) ? '' : $depsTab)),
 
 			// Artikel tab
 			new Parameter(array(
 				'id' => 'builds', 
 				'link' => 'All Builds', 
-				'liClass' => !empty($buildTab) && empty($depsTab) ? 'active' : ' ', 
-				'tabClass' => !empty($buildTab) && empty($depsTab) ? 'active in' : ' ', 
+				'liClass' => $buildLiState,
+				'tabClass' => $buildTabState,
 				'data' => empty($buildTab) ? '' : $buildTab)),
 		);
 
