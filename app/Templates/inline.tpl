@@ -63,6 +63,11 @@ $(document).ready(function(){
 		});
 	};
 
+	// Deps status toggle
+	$('#deps-status').click(function(){
+		$(this).popover();
+	})
+
 	// Import loader section
 	var enableHookToggle = function() {
 		var enablerBtn = $('.btn-enable-hook');

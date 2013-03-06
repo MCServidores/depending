@@ -14,4 +14,13 @@ $(function () {
 	$(':input').focusout(function(){
 		$(this).tooltip('hide');
 	});
+
+	$('a.has-tip').hover(function(){
+		$(this).tooltip({
+			placement: 'right',
+			title: $(this).attr('data-title'),
+		});
+	},function(){
+		$(this).tooltip('hide');
+	});
 });

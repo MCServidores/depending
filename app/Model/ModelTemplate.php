@@ -50,6 +50,7 @@ class ModelTemplate extends ModelBase
             new Twig_SimpleFilter('translateToLogText', array(__CLASS__, 'setLogText')),
             new Twig_SimpleFilter('translateToSuccessText', array(__CLASS__, 'setSuccessText')),
             new Twig_SimpleFilter('toPackagist', array(__CLASS__, 'setPackagistUrl')),
+            new Twig_SimpleFilter('toStatus', array(__CLASS__, 'setStatusMarkdown')),
         );
 
         // Register filter
@@ -243,6 +244,16 @@ class ModelTemplate extends ModelBase
      */
     public function setPackagistUrl($vendor) {
         return 'https://packagist.org/packages/'.$vendor;
+    }
+
+    /**
+     * Custom Twig filter for translating repo into its markdown status
+     */
+    public function setStatusMarkdown($repoId) {
+        $repo = ModelBase::factory('Repo')->getQuery()->findPK($repoId);
+        $markdown = '[![Dependencies Status](https://www.wakuwakuw.com/d/'.$repoId.')](http://depending.in/'.$repo->getFullName().')';
+
+        return $markdown;
     }
 
     /**
