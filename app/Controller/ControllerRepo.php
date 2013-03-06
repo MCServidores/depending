@@ -55,31 +55,42 @@ class ControllerRepo extends ControllerBase
 		$owners = ModelBase::factory('Repo')->getQuery()->findPK($this->repo->getRid())->getUserss();
 		$owner = current($owners);
 		$lastLog = new Parameter();
-		$repoLogs = $this->repo->getLogss();
+		$tabOption = NULL;
 
-		// Need to synchronize?
-		if ($this->data->get('getData[synchronize]','0',true) == '1') {
-			// Get the hook status
-			$hooked = false;
-			$hook = ModelBase::factory('Github', new Parameter(array(
-				'githubToken' => $this->getToken(),
-				)))->getHookData($this->repo->getFullName());
+		if ($this->acl->isMe($owner->getUid())) {
+			// Adding tab option to fetch the latest commits manually, for the owner
+			$tabOption = array(
+				'href' => $this->data->get('currentUrl').'?synchronize=1', 
+				'text' => '<i class="icon icon-refresh"></i> Refresh'
+			);
 
-			if ($hook instanceof Parameter) {
-				$hookUrl = $hook->get('test_url');
+			// Need to synchronize?
+			if ($this->data->get('getData[synchronize]','0',true) == '1') {
+				// Get the hook status
+				$hooked = false;
+				$hook = ModelBase::factory('Github', new Parameter(array(
+					'githubToken' => $this->getToken(),
+					)))->getHookData($this->repo->getFullName());
 
-				// Hit the hook
-				$response = ModelBase::factory('Github', new Parameter(array(
-				'githubToken' => $this->getToken(),
-				)))->postData($hookUrl.'?access_token='.$this->getToken(), array());
+				if ($hook instanceof Parameter) {
+					$hookUrl = $hook->get('test_url');
 
-				if ($response->get('result')) {
-					$httpCode = $response->get('head[http_code]',500,true);
-					$hooked = $httpCode == 204;
+					// Hit the hook
+					$response = ModelBase::factory('Github', new Parameter(array(
+					'githubToken' => $this->getToken(),
+					)))->postData($hookUrl.'?access_token='.$this->getToken(), array());
+
+					if ($response->get('result')) {
+						$httpCode = $response->get('head[http_code]',500,true);
+						$hooked = $httpCode == 204;
+					}
 				}
 			}
 		}
 
+		// Get latest repo's logs
+		$repoLogs = $this->repo->getLogss();
+		
 		if ( ! empty($repoLogs)) {
 			$lastLog = end($repoLogs);
 			reset($repoLogs);
@@ -96,15 +107,6 @@ class ControllerRepo extends ControllerBase
 
 		// Finalisasi tabs
 		$tabs = ModelBase::factory('Repo')->buildTabs($repo->get('rid'),$buildTab,$depsTab);
-
-		// Adding tab option to fetch the latest commits manually, for the owner
-		if ($this->acl->isMe($owner->getUid())) {
-			$tabOption = array(
-				'href' => $this->data->get('currentUrl').'?synchronize=1', 
-				'text' => '<i class="icon icon-refresh"></i> Refresh'
-			);
-		}
-		
 
 		// Template configuration
 		$this->layout = 'modules/repo/index.tpl';
