@@ -217,12 +217,24 @@ class ControllerBase {
 	 */
 	public function handleException() {
 		// @codeCoverageIgnoreStart
-		// Try looking for valid repository
+		// Try looking for valid user or repository
 		$pathInfo = $this->request->getPathInfo();
 		$candidate = substr($pathInfo, 1);
 		$isImage = strpos($candidate, '.png') !== false;
 
 		if ($isImage) $candidate = str_replace('.png', '', $candidate);
+
+		$validUser = ModelBase::factory('User')->getQuery()->findOneByName($candidate);
+
+		if ($validUser) {
+			$request = clone $this->request;
+			$request->query->set('exception', NULL);
+			$request->attributes->set('id', $validUser->getUid());
+
+			$proxyHandler = new ControllerUser($request);
+
+		    return $proxyHandler->actionProfile();
+		}
 
 		$validRepo = ModelBase::factory('Repo')->getQuery()->findOneByFullName($candidate);
 
