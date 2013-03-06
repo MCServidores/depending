@@ -57,6 +57,29 @@ class ControllerRepo extends ControllerBase
 		$lastLog = new Parameter();
 		$repoLogs = $this->repo->getLogss();
 
+		// Need to synchronize?
+		if ($this->data->get('getData[synchronize]','0',true) == '1') {
+			// Get the hook status
+			$hooked = false;
+			$hook = ModelBase::factory('Github', new Parameter(array(
+				'githubToken' => $this->getToken(),
+				)))->getHookData($this->repo->getFullName());
+
+			if ($hook instanceof Parameter) {
+				$hookUrl = $hook->get('test_url');
+
+				// Hit the hook
+				$response = ModelBase::factory('Github', new Parameter(array(
+				'githubToken' => $this->getToken(),
+				)))->postData($hookUrl.'?access_token='.$this->getToken(), array());
+
+				if ($response->get('result')) {
+					$httpCode = $response->get('head[http_code]',500,true);
+					$hooked = $httpCode == 204;
+				}
+			}
+		}
+
 		if ( ! empty($repoLogs)) {
 			$lastLog = end($repoLogs);
 			reset($repoLogs);
@@ -74,9 +97,15 @@ class ControllerRepo extends ControllerBase
 		// Finalisasi tabs
 		$tabs = ModelBase::factory('Repo')->buildTabs($repo->get('rid'),$buildTab,$depsTab);
 
+		// Adding tab option to fetch the latest commits manually
+		$tabOption = array(
+			'href' => $this->data->get('currentUrl').'?synchronize=1', 
+			'text' => '<i class="icon icon-refresh"></i> Refresh'
+		);
+
 		// Template configuration
 		$this->layout = 'modules/repo/index.tpl';
-		$data = ModelBase::factory('Template')->getRepoData(compact('repo','owner','title','lastLog','tabs'));
+		$data = ModelBase::factory('Template')->getRepoData(compact('repo','owner','title','lastLog','tabs', 'tabOption'));
 
 		// Render
 		return $this->render($data);
