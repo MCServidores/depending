@@ -175,11 +175,10 @@ class ModelWorker extends ModelBase
 						foreach ($package->channel->item as $item) {
 							$title = $item->title;
 							list($a,$b) = explode('(', $title);
-							list($d,$c) = explode(')', $b);
-							list($versionCandidate) = explode('-', $d);
+							list($versionCandidate,$c) = explode(')', $b);
 
 							if ( ! empty($versionCandidate)) {
-								$versions[] = str_replace(array('v'), array(''), $versionCandidate);
+								$versions[] = $versionCandidate;
 							}
 						}
 					}
@@ -189,12 +188,15 @@ class ModelWorker extends ModelBase
 				if ( ! empty($versions)) {
 					// Itterate and get the latest version and its diff
 					$diff = 0;
-					$currentVersion = str_replace('v','',$dep['version']);
+					$rawVersion = $rawLatestVersion = $dep['version'];
+					$currentVersion = $this->normalizeVendorVersion($dep['version']);
 					$latestVersion = $currentVersion;
 
 					foreach ($versions as $version) {
-						if ($diff = version_compare($currentVersion, $version)) {
+						$nowVersion = $this->normalizeVendorVersion($version);
+						if ($diff = version_compare($currentVersion, $nowVersion)) {
 							if ($diff < 0) {
+								$rawLatestVersion = $version;
 								$latestVersion = $version;
 								$diff = -1;
 								break 1;
@@ -204,6 +206,8 @@ class ModelWorker extends ModelBase
 
 					$depsDiff[] = array(
 						'vendor' => $dep['vendor'],
+						'rawVersion' => $rawVersion,
+						'rawLatestVersion' => $rawLatestVersion,
 						'version' => 'v'.$currentVersion,
 						'latestVersion' => 'v'.$latestVersion,
 						'versionDiff' => $diff,
@@ -370,6 +374,18 @@ class ModelWorker extends ModelBase
 		$success = 1;
 		passthru($command, $success);
 		return $success == 0;
+	}
+
+	/**
+	 * Normalize vendor version
+	 *
+	 * @param string $rawVersion
+	 * @param string $version
+	 */
+	public function normalizeVendorVersion($rawVersion) {
+		list($versionCandidate) = explode('-', $rawVersion);
+
+		return str_replace('v','',$version);
 	}
 
 	/**
