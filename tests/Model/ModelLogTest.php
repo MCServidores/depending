@@ -45,8 +45,7 @@ class ModelLogTest extends DependingInTestCase {
 		$this->assertFalse($auth->updateLog(010101010, array()));
 
 		// Valid update
-		$this->createDummyLog();
-		$dummyLog = ModelBase::ormFactory('LogsQuery')->findOneByAfter(md5('dummy'));
+		$dummyLog = $this->createDummyLog();
 
 		$this->assertInstanceOf('\app\Parameter',$auth->updateLog($dummyLog->getId(), array('after' => md5('anotherdummy'))));
 	}
