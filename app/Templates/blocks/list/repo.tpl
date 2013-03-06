@@ -2,10 +2,10 @@
 	<thead>
 	<h3 class="main-text">Your Repositories</h3>
 	</thead>
+	<tbody>
 	{% if repos is not empty %}
 	{% for repo in repos %}
 
-	<tbody>
 	<tr>
 		<td><i class="icon icon-github-sign"></i> <a href="/{{ repo.FullName }}" class="btn-link"><strong>{{ repo.FullName }}</strong></a></td>
 		<td class="span1">

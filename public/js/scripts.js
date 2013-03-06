@@ -18,7 +18,7 @@ $(function () {
 	$('a.has-tip').hover(function(){
 		$(this).tooltip({
 			placement: 'right',
-			title: $(this).attr('data-title'),
+			title: $(this).attr('data-original-title'),
 		});
 	},function(){
 		$(this).tooltip('hide');

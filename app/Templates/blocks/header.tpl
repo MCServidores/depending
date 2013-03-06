@@ -27,7 +27,6 @@
         <ul class="nav">
           <li class="{{ menuHomeActive }}"><a href="/home">Home</a></li>
           <li class="{{ menuProjectActive }}"><a href="/project">Projects</a></li>
-          <li class="{{ menuPackageActive }}"><a href="/packages">Packages</a></li>
         </ul>
       </div><!--/.nav-collapse -->
     </div>

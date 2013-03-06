@@ -31,45 +31,6 @@ use app\Model\ModelBase;
 class ControllerUser extends ControllerBase
 {
 	/**
-	 * Handler untuk GET/POST /users
-	 */
-	public function actionIndex() {
-		// Inisialisasi
-		$listTitle = 'Semua Pengguna';
-		$page = $this->data->get('getData[page]',1,true);
-		$query = $this->data->get('getData[query]','',true);
-		$filter = array();
-
-		if ($_POST && isset($_POST['query'])) {
-			$query = $_POST['query'];
-
-			// Reset page
-			$page = 1;
-		}
-
-		if ( ! empty($query)) {
-			$listTitle = 'Pencarian "'.$query.'"';
-
-			$filter = array(
-				array('column' => 'Name', 'value' => $query.'%', 'chainOrStatement' => TRUE),
-				array('column' => 'Mail', 'value' => $query.'%', 'chainOrStatement' => TRUE),
-			);
-		}
-			
-		$searchQuery = $query;
-
-		$users = ModelBase::factory('User')->getAllUser(10, $page, $filter);
-		$pagination = ModelBase::buildPagination($users,'UsersQuery', $filter, $page);
-
-		// Template configuration
-		$this->layout = 'modules/user/index.tpl';
-		$data = ModelBase::factory('Template')->getUserData(compact('users','listTitle', 'listPage','pagination','searchQuery'));
-
-		// Render
-		return $this->render($data);
-	}
-
-	/**
 	 * Handler untuk GET/POST /user/profile
 	 */
 	public function actionProfile() {
@@ -84,7 +45,7 @@ class ControllerUser extends ControllerBase
 
 		// Project tab and package tab initialization
 		$projectTab = ModelBase::factory('User')->buildProjectTab($item, $this->data);
-		$packageTab = NULL;
+		$packageTab = ModelBase::factory('User')->buildPackageTab($item, $this->data);
 
 		// Finalisasi tabs
 		$tabs = ModelBase::factory('User')->buildTabs($item->get('id'),$projectTab,$packageTab);

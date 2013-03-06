@@ -1,8 +1,8 @@
 <table class="table table-hover">
+	<tbody>
 	{% if logs is not empty %}
 	{% for log in logs %}
 
-	<tbody>
 	<tr>
 		<td><i class="icon icon icon-exchange"></i> <a href="{{ log.CommitUrl }}"  target="blank" class="btn-link"><strong>{{ log.After|limitHash }}</strong></a></td>
 		<td><small>{{ log.CommitMessage }}</small></td>

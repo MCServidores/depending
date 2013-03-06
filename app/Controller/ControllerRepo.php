@@ -38,11 +38,53 @@ class ControllerRepo extends ControllerBase
 		}
 
 		// If so far we couldnt locate the repo, then it was a non-valid request
-		if (empty($repo)) {
+		if (empty($repo) && substr($this->request->getPathInfo(),1) !== 'project') {
 			throw new \InvalidArgumentException('Could not locate the repo!');
 		}
 
 		$this->repo = $repo;
+	}
+
+	/**
+	 * Handler untuk GET/POST /project
+	 */
+	public function actionIndex() {
+		// Instantiate project section
+		$listTitle = 'All Projects';
+		$page = $this->data->get('getData[page]',1,true);
+		$query = $this->data->get('getData[query]','',true);
+		$filter = array();
+
+		if ($_POST && isset($_POST['query'])) {
+			$query = $_POST['query'];
+
+			// Reset page
+			$page = 1;
+		}
+
+		if ( ! empty($query)) {
+			$listTitle = 'Searhing "'.$query.'"';
+
+			$filter = array(
+				array('column' => 'Name', 'value' => $query.'%', 'chainOrStatement' => TRUE),
+				array('column' => 'FullName', 'value' => $query.'%', 'chainOrStatement' => TRUE),
+			);
+		}
+
+		// Add filter for displaying only registered projects
+		$filter[] = array('column' => 'Status', 'value' => 1);
+
+		$searchQuery = $query;
+
+		$repos = ModelBase::factory('Repo')->getAllRepo(10, $page, $filter);
+		$pagination = ModelBase::buildPagination($repos,'ReposQuery', $filter, $page, 10);
+
+		// Template configuration
+		$this->layout = 'modules/repo/list.tpl';
+		$data = ModelBase::factory('Template')->getRepoData(compact('repos','listTitle', 'listPage','pagination','searchQuery'));
+
+		// Render
+		return $this->render($data);
 	}
 
 	/**

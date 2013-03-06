@@ -41,19 +41,6 @@ class ControllerUserTest extends DependingInTestCase {
 	}
 
 	/**
-	 * Cek action index
-	 */
-	public function testCekActionIndexAppControllerUser() {
-		$request = Request::create('/user');
-		$request->server->set('PATH_INFO', '/user');
-		$controllerUser = new ControllerUser($request);
-		$response = $controllerUser->actionIndex();
-
-		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
-		$this->assertEquals(200, $response->getStatusCode());
-	}
-
-	/**
 	 * Cek action profile
 	 */
 	public function testCekActionProfileAppControllerUser() {

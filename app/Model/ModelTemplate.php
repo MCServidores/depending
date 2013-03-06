@@ -51,6 +51,7 @@ class ModelTemplate extends ModelBase
             new Twig_SimpleFilter('translateToSuccessText', array(__CLASS__, 'setSuccessText')),
             new Twig_SimpleFilter('toPackagist', array(__CLASS__, 'setPackagistUrl')),
             new Twig_SimpleFilter('toStatus', array(__CLASS__, 'setStatusMarkdown')),
+            new Twig_SimpleFilter('toIcon', array(__CLASS__,'setProjectIcon')),
         );
 
         // Register filter
@@ -254,6 +255,13 @@ class ModelTemplate extends ModelBase
         $markdown = '[![Dependencies Status](https://www.wakuwakuw.com/d/'.$repoId.')](http://depending.in/'.$repo->getFullName().')';
 
         return $markdown;
+    }
+
+    /**
+     * Custom Twig filter for translating repo state into icon
+     */
+    public function setProjectIcon($isPackage) {
+        return $isPackage == 1 ? 'icon-sign-blank' : 'icon-github-sign';
     }
 
     /**

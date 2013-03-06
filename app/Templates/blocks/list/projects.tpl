@@ -2,18 +2,19 @@
 	<thead>
 	<h4>{{ listTitle }} ({{ pagination.totalText }})
 	{% if pagination is not empty and pagination.data is not empty %}
-	<span class="pull-right"><small>Halaman {{ pagination.currentPage }} dari {{ pagination.totalPage }}</small></span>
+	<span class="pull-right"><small>Page {{ pagination.currentPage }} of {{ pagination.totalPage }}</small></span>
 	{% endif %}
 	</h4>
 	</thead>
-	{% if users is not empty %}
-	{% for pengguna in users %}
-
 	<tbody>
+	{% if repos is not empty %}
+	{% for repo in repos %}
+
 	<tr>
-		<td class="span1"><img src="{{ pengguna.Avatar }}?d=retro" class="img-polaroid" /></td>
-		<td><a href="/user/profile/{{ pengguna.Uid }}"><strong>{{ pengguna.Name }}</strong></a><br/><blockquote><small>{{ pengguna.Signature|striptags }}</small></blockquote></td>
-		<td class="span1"><button class="btn btn-mini disabled">Report</button></td>
+		<td><i class="icon icon-github-sign"></i> <a href="/{{ repo.FullName }}"  class="btn-link"><strong>{{ repo.FullName }}</strong></a></td>
+		<td class="span3">
+			<a href="/{{ repo.FullName }}"><img src="/{{ repo.FullName }}.png" /></a>
+		</td>
 	</tr>
 	{% endfor %}
 	{% else %}

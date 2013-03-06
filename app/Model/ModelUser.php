@@ -209,14 +209,47 @@ class ModelUser extends ModelBase
 		// Get related repos
 		$repos = ModelBase::factory('User')->getQuery()->findPK($user->get('Uid'))->getReposs();
 
+		foreach ($repos as $key => $repo) {
+			// Unset the un-related project
+			if ($repo->getStatus() == 0) unset($repos[$key]);
+		}
+
 		// @codeCoverageIgnoreStart
-		if ( ! empty($repos)) {
+		if ( count($repos) > 0) {
 			$projectTab = ModelTemplate::render('blocks/list/project.tpl', compact('repos'));
 		}
 		// @codeCoverageIgnoreEnd
 		
 
 		return $projectTab;
+	}
+
+	/**
+	 * Build package tab
+	 *
+	 * @param Parameter $user
+	 * @param Parameter $data
+	 * @return String 
+	 */
+	public function buildPackageTab(Parameter $user,Parameter $data) {
+		$packageTab = NULL;
+
+		// Get related repos
+		$repos = ModelBase::factory('User')->getQuery()->findPK($user->get('Uid'))->getReposs();
+
+		foreach ($repos as $key => $repo) {
+			// Unset the un-related project
+			if ($repo->getIsPackage() == 0) unset($repos[$key]);
+		}
+
+		// @codeCoverageIgnoreStart
+		if ( count($repos) > 0) {
+			$packageTab = ModelTemplate::render('blocks/list/project.tpl', compact('repos'));
+		}
+		// @codeCoverageIgnoreEnd
+		
+
+		return $packageTab;
 	}
 
 	/**

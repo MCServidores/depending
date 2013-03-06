@@ -34,6 +34,8 @@ $routes = new RouteCollection();
  */
 $routes->add('default', new Route('/', array(Route::HANDLER => array(Route::HANDLER_CLASS => 'home', Route::HANDLER_ACTION => 'index'))));
 
+$routes->add('project_home', new Route('/project', array(Route::HANDLER => array(Route::HANDLER_CLASS => 'repo', Route::HANDLER_ACTION => 'index'))));
+
 $routes->add('travis_sync', new Route('/synchronize', array(Route::HANDLER => array(Route::HANDLER_CLASS => 'base', Route::HANDLER_ACTION => 'synchronize'))));
 
 $routes->add('github_hook', new Route('/hook', array(Route::HANDLER => array(Route::HANDLER_CLASS => 'home', Route::HANDLER_ACTION => 'accept'))));

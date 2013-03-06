@@ -166,7 +166,7 @@ class ModelBase
 		 		$query = self::filterQuery($query, $where);
 			}
 	 	}
-
+	 	
 	 	$totalCount = $query->count();
 	 	$currentCount = count($objectCollection);
 
