@@ -1,6 +1,8 @@
 <div class="span6 offset3" id="project-container">
 	<h3 class="main-text"><i class="icon icon-github-sign"></i> {{ repo.FullName }} <span class="pull-right"><img src="/{{ repo.FullName }}.png" /></span></h3>
 	<h4><i class="icon icon-user"></i> <a href="/user/profile/{{ owner.Uid }}" class="btn-link">{{ owner.Name }}</a></h4>
+	<br/>
+	<p><blockquote>{{ repo.Description }}</blockquote></p>
 	<hr/>
 	<ul class="nav nav-tabs nav-stacked">
 		{% if lastLog is not empty %}
