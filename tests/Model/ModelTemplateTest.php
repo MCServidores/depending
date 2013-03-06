@@ -24,7 +24,7 @@ class ModelTemplateTest extends DependingInTestCase {
 	/**
 	 * Cek get default data
 	 */
-	public function testCekGetDefaultDataTemplate() {
+	public function testCekGetDefaultDataModelTemplate() {
 		$template = ModelBase::factory('Template');
 		$defaultData = $template->getDefaultData();
 
@@ -32,5 +32,35 @@ class ModelTemplateTest extends DependingInTestCase {
 		$this->assertArrayHasKey('content', $defaultData);
 		$this->assertArrayHasKey('menu_top', $defaultData);
 		$this->assertArrayHasKey('menu_bottom', $defaultData);
+	}
+
+	/**
+	 * Cek set limit hash
+	 */
+	public function testCekLimitHashModelTemplate() {
+		$template = ModelBase::factory('Template');
+		$hash = md5('something');
+
+		$this->assertEquals(10,strlen($template->setLimitHash($hash)));
+	}
+
+	/**
+	 * Cek set log text
+	 */
+	public function testCekSetLogTextModelTemplate() {
+		$template = ModelBase::factory('Template');
+		$status = 0;
+
+		$this->assertEquals('scheduled',$template->setLogText($status));
+	}
+
+	/**
+	 * Cek set success text
+	 */
+	public function testCekSetSuccessTextModelTemplate() {
+		$template = ModelBase::factory('Template');
+		$status = 1;
+
+		$this->assertEquals('success',$template->setSuccessText($status));
 	}
 }
