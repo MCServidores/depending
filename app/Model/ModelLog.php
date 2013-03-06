@@ -197,6 +197,53 @@ class ModelLog extends ModelBase
 	}
 
 	/**
+	 * Update custom data log
+	 *
+	 * @param int $id Log ID
+	 * @param array $data Custom data
+	 *
+	 * @return mixed
+	 */
+	public function updateLogData($id = NULL, $data = array()) {
+		// Silly
+		if (empty($id)) return false;
+
+		// Get user
+		$log = $this->getQuery()->findPK($id);
+
+		if ($log) {
+			// Get custom data
+			$logData = new Parameter($log->toArray());
+			$customData = $logData->get('Data');
+
+			// @codeCoverageIgnoreStart
+			if (empty($customData)) {
+				// Straight forward
+				$log->setData(serialize($data));
+			} else {
+				$logDataSerialized = @fread($customData,10000);
+				try {
+					$currentLogData = unserialize($logDataSerialized);
+					if ( ! $currentLogData) $currentLogData = array();
+					$currentLogData = array_merge($currentLogData, $data);
+				} catch (\Exception $e) {
+					$currentLogData = $data;
+				}
+
+				// Update custom data
+				$log->setData(serialize($currentLogData));
+			}
+			// @codeCoverageIgnoreEnd
+			
+			$log->save();
+
+			return $this->getLog($log->getId());
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Extract log
 	 *
 	 * @param array
@@ -204,6 +251,25 @@ class ModelLog extends ModelBase
 	 */
 	protected function extractLog($logArrayData = array()) {
 		$logData = new Parameter($logArrayData);
+		$logCustomData = $logData->get('Data');
+
+		// @codeCoverageIgnoreStart
+		if ( ! empty($logCustomData)) {
+			// Get data from opening stream
+			$streamName = (string) $logCustomData;
+
+			if (ModelBase::$stream->has($streamName)) {
+				$logDataSerialized = ModelBase::$stream->get($streamName);
+			} else {
+				$logDataSerialized = @stream_get_contents($logCustomData);
+				ModelBase::$stream->set($streamName, $logDataSerialized);
+			}
+
+			// Now write back
+			$additionalData = unserialize($logDataSerialized);
+			$logData->set('AdditionalData', $additionalData);
+		}
+		// @codeCoverageIgnoreEnd
 
 		return $logData;
 	}
