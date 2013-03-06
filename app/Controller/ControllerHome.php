@@ -55,25 +55,32 @@ class ControllerHome extends ControllerBase
 	 * This is main log consumer, that either run by cron or by regular request
 	 */
 	public function actionWork() {
-		// Get the latest un-processed log and its repository
-		$latestLog = ModelBase::factory('Log')->getQuery()->orderByCreated()->findOneByStatus(0);
+		$userAgent = $this->request->server->get('HTTP_USER_AGENT');
 
-		// Only work on something!
-		if ( ! empty($latestLog)) {
-			try {
-				$success = ModelBase::factory('Worker')->run($latestLog);
+		if (strpos($userAgent, 'curl') !== FALSE) {
+			// Get the latest un-processed log and its repository
+			$latestLog = ModelBase::factory('Log')->getQuery()->orderByCreated()->findOneByStatus(0);
 
-				$statusCode = 200;
-				$statusText = 'OK';
-			} catch (\RuntimeException $e) {
-				$statusCode = 500;
-				$statusText = 'FAIL. Reason :'.$e->getMessage();
+			// Only work on something!
+			if ( ! empty($latestLog)) {
+				try {
+					$success = ModelBase::factory('Worker')->run($latestLog);
+
+					$statusCode = 200;
+					$statusText = 'OK. Log ID:'.$latestLog->getId();
+				} catch (\RuntimeException $e) {
+					$statusCode = 500;
+					$statusText = 'FAIL. Reason :'.$e->getMessage();
+				}
+
+				return $this->render($statusText, $statusCode);
 			}
 
-			return $this->render($statusText, $statusCode);
+			return $this->notModified();
+		} else {
+			// Redirect to regular page
+			return $this->redirect('/home');
 		}
-
-		return $this->notModified();
 	}
 
 	/**
