@@ -46,9 +46,7 @@ class ModelTemplate extends ModelBase
 
         // Filter declaration
         $filters = array(
-            new Twig_SimpleFilter('toUserName', array(__CLASS__, 'getUserNameFromId')),
-            new Twig_SimpleFilter('toUserFullName', array(__CLASS__, 'getUserFullnameFromId')),
-            new Twig_SimpleFilter('toUserAvatar', array(__CLASS__, 'getUserAvatarFromId')),
+            /* new Twig_SimpleFilter('filterName', array(__CLASS__, 'filterFunction')), */
         );
 
         // Register filter
@@ -214,56 +212,6 @@ class ModelTemplate extends ModelBase
      */
     public function getDefaultData() {
         return $this->defaultData;
-    }
-
-     /**
-     * Custom Twig filter untuk mendapat nama lengkap user
-     *
-     * @param int ID
-     * @return mixed
-     * @codeCoverageIgnore
-     */
-    public function getUserFullnameFromId($id) {
-        return ModelBase::factory('Template')->getUserNameFromId($id, 200);
-    }
-
-    /**
-     * Custom Twig filter untuk mendapat nama user
-     *
-     * @param int ID
-     * @param int Limit text
-     * @return mixed
-     * @codeCoverageIgnore
-     */
-    public function getUserNameFromId($id, $limitLen = 10) {
-        $userData = ModelBase::factory('User')->getUser($id);
-
-        if (empty($userData)) {
-            $name = 'Unknown';
-        } else {
-            $name = ModelTemplate::formatText($userData->get('Name'), $limitLen);
-        }
-
-        return $name;
-    }
-
-    /**
-     * Custom Twig filter untuk mendapat avatar
-     *
-     * @param int ID
-     * @return mixed
-     * @codeCoverageIgnore
-     */
-    public function getUserAvatarFromId($id) {
-        $userData = ModelBase::factory('User')->getUser($id);
-
-        if (empty($userData)) {
-            $avatar = 'https://secure.gravatar.com/avatar/'.md5('Unknown');
-        } else {
-            $avatar = $userData->get('Avatar');
-        }
-
-        return $avatar;
     }
 
     /**
