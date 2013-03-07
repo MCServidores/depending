@@ -375,6 +375,7 @@ class ModelTemplate extends ModelBase
      * Custom Twig filter for translating vendor into packagist url
      */
     public function setPackagistUrl($vendor) {
+        if ($vendor == 'php') return 'http://php.net/downloads.php';
         return 'https://packagist.org/packages/'.$vendor;
     }
 
