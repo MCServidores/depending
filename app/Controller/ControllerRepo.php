@@ -27,18 +27,12 @@ class ControllerRepo extends ControllerBase
 	public function beforeAction() {
 		parent::beforeAction();
 
-		// Either get the ID or get the FullName (from proxy controller)
+		// Get the ID (from proxy controller or regular request)
 		$id = $this->request->get('id');
-
 		$repo = ModelBase::factory('Repo')->getQuery()->findPK($id);
 
-		if ( ! $repo) {
-			// Try the fullname
-			$repo = ModelBase::factory('Repo')->getQuery()->findOneByFullName($id);
-		}
-
 		// If so far we couldnt locate the repo, then it was a non-valid request
-		if (empty($repo) && ! preg_match('/[(project|repo\/status|build)]+/',substr($this->request->getPathInfo(),1))) {
+		if (empty($repo) && ! preg_match('/\b(project|build|repo\/status)\b/i',substr($this->request->getPathInfo(),1))) {
 			throw new \InvalidArgumentException('Could not locate the repo!');
 		}
 
