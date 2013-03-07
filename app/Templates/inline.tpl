@@ -104,7 +104,7 @@ $(document).ready(function(){
 
 				default:
 					btnHandler.addClass('c-grey');
-					statusLabel.removeClass('label-info').addClass('label-warning');
+					statusLabel.removeClass('label-info label-success').addClass('label-warning');
 					statusLabel.html('scheduled');
 					break;
 			}
