@@ -112,6 +112,7 @@ class ControllerRepo extends ControllerBase
 		if ($this->data->get('isAllowed')) {
 			// Adding tab option to fetch the latest commits manually, for the owner
 			$tabOption = array(
+				'id' => 'refresh-log',
 				'href' => $this->data->get('currentUrl').'?synchronize=1', 
 				'text' => '<i class="icon icon-refresh"></i> Refresh'
 			);

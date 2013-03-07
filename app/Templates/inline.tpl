@@ -68,6 +68,17 @@ $(document).ready(function(){
 		$(this).popover();
 	})
 
+	// Log refresher
+	$('#refresh-log').click(function(){
+		var url = $(this).attr('href');
+		var icon = $(this).children('i');
+		icon.removeClass('icon').addClass('icon-spin');
+		setTimeout(function(){
+			window.location.href = url;
+		},3000);
+		return false;
+	})
+
 	// Log details toogle
 	$('.has-log').click(function(){
 		var resultContainer = $('#log-details');
