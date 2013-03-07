@@ -209,6 +209,9 @@ class ControllerRepo extends ControllerBase
 
 				$html .= ModelBase::factory('Template')->getBuildData($id);
 
+				// Get the latest log
+				$log = ModelBase::factory('Log')->getLog($id);
+
 				if ( ! empty($log) && $log->get('Status') > 0) {
 					// Update the status
 					$status = $log->get('Status');
