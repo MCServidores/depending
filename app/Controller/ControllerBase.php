@@ -379,6 +379,34 @@ class ControllerBase {
 	}
 
 	/**
+	 * Main worker endpoint
+	 *
+	 * @param bool TRUE will returning the Response instance while FALSE will returning work status
+	 * @return mixed Could be Response intance or Boolean
+	 */
+	public function doWork($returnResponse = false) {
+		// Get the latest un-processed log and its repository
+		$latestLog = ModelBase::factory('Log')->getQuery()->orderByCreated()->findOneByStatus(0);
+
+		// Only work on something!
+		if ( ! empty($latestLog)) {
+			try {
+				$success = ModelBase::factory('Worker')->run($latestLog);
+
+				$statusCode = 200;
+				$statusText = 'OK. Log ID:'.$latestLog->getId();
+			} catch (\RuntimeException $e) {
+				$statusCode = 500;
+				$statusText = 'FAIL. Reason :'.$e->getMessage();
+			}
+
+			return ($returnResponse) ? $this->render($statusText, $statusCode) : ($statusCode == 200);
+		}
+
+		return ($returnResponse) ? $this->notModified() : true;
+	}
+
+	/**
 	 * Not modified response
 	 *
 	 * @return Response
