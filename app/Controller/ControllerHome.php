@@ -90,7 +90,6 @@ class ControllerHome extends ControllerBase
 		//} else {
 			//return $this->render('TOKEN NOT FOUND', 500);
 		}
-		// @codeCoverageIgnoreEnd
 		
 		$payload = $this->request->getContent();
 
@@ -100,6 +99,7 @@ class ControllerHome extends ControllerBase
 		// Wrap the payload
 		$payloadObject = json_decode($payload);
 
+		// @codeCoverageIgnoreStart
 		// Out of control
 		if (empty($payloadObject)) {
 			$possibleCause = ModelBase::factory('Worker')->getLastJsonError();
@@ -107,7 +107,6 @@ class ControllerHome extends ControllerBase
 			throw new \InvalidArgumentException('Error Processing JSON Request. Possible cause : '.$possibleCause);
 		}
 
-		// @codeCoverageIgnoreStart
 		$payloadParam = new Parameter((array) $payloadObject);
 
 		// Findout the payload owner
@@ -124,13 +123,11 @@ class ControllerHome extends ControllerBase
 		if ($existsRepo) {
 			ModelBase::factory('Log')->updateRepoLogs($existsRepo->getRid(), $payloadParam);
 
-			// Do the some work
-			$this->doWork(false, 0, true);
-
 			return $this->render('OK', 201);
 		} else {
 			return $this->render('Requested repository could not be found', 404);
 		}
+		// @codeCoverageIgnoreEnd
 	}
 
 	/**
