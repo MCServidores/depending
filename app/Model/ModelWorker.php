@@ -204,7 +204,7 @@ class ModelWorker extends ModelBase
 						if ($diff = version_compare($currentVersion, $nowVersion)) {
 							if ($diff < 0) {
 								$rawLatestVersion = $version;
-								$latestVersion = $version;
+								$latestVersion = $nowVersion;
 								$diff = -1;
 								break 1;
 							}
@@ -215,8 +215,8 @@ class ModelWorker extends ModelBase
 						'vendor' => $dep['vendor'],
 						'rawVersion' => $rawVersion,
 						'rawLatestVersion' => $rawLatestVersion,
-						'version' => 'v'.$currentVersion,
-						'latestVersion' => 'v'.$latestVersion,
+						'version' => $currentVersion,
+						'latestVersion' => $latestVersion,
 						'versionDiff' => $diff,
 					);
 				}
@@ -390,9 +390,68 @@ class ModelWorker extends ModelBase
 	 * @param string $versionCandidate
 	 */
 	public function normalizeVendorVersion($rawVersion) {
+		// Remove the package link (alpha, RC, beta, etc)
 		list($versionCandidate) = explode('-', $rawVersion);
 
-		return str_replace('v','',$versionCandidate);
+		// Strip the 'v' prefix if exists
+		$versionCandidate = str_replace('v','',$versionCandidate);
+
+		// Transform the ranges
+		if (strpos($versionCandidate, ',') !== false) {
+			$versionsRange = explode(',', $versionCandidate);
+			// Reset the candidate
+			$versionCandidate = '0.0.0';
+
+			// Get the higher range
+			foreach ($versionsRange as $versionRange) {
+				$nowVersion = $this->determineVersionValue($versionRange);
+
+				if (version_compare($versionCandidate, $nowVersion) < 0) {
+					// Range is higher
+					$versionCandidate = $nowVersion;
+				}
+			}
+		} else {
+			// Done
+			$versionCandidate = $this->determineVersionValue($versionCandidate);
+		}
+
+		return $versionCandidate;
+	}
+
+	/**
+	 * Determine version value and handle wildcards and comparison operator
+	 *
+	 * @param string $rawVersion
+	 * @return string $version
+	 */
+	public function determineVersionValue($rawVersion) {
+		// Transform any wildcard into possible highest value
+		$version = str_replace('*', '999', $rawVersion);
+
+		// Handle operator
+		if (preg_match('/^([\>\<\=\!]+)([0-9\.]+)$/', $version, $m) && count($m) == 3) {
+			$operator = $m[1];
+			$version = $m[2]; 
+
+			// Hope for the best (finger crossed...)
+			list($major,$minor,$patch) = explode('.', $version);
+
+			// Determine the closest possible value
+			if (strpos($operator, '>')!==false || strpos($operator, '!')!==false) {
+				// Increase the patch and minor version to the max
+				$version = $major.'.999.999';
+			} elseif (strpos($operator, '<') !== false) {
+				// Decrease the patch and minor version to the min
+				if ($patch == 0) {
+					$version = (((int)$major)-1).'.999.999';
+				} else {
+					$version = $major.'.0.0';
+				}
+			}
+		}
+
+		return $version;
 	}
 
 	/**
