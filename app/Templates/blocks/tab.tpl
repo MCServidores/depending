@@ -2,7 +2,7 @@
 	{% for tab in tabs %}
 	<li class="{{ tab.liClass }}"><a href="#{{ tab.id }}" data-toggle="tab">{{ tab.link }}</a></li>
 	{% endfor %}
-	{% if tabOption is not empty %}
+	{% if tabOption is not empty and isAllowed %}
 	<a href="{{ tabOption.href }}" class="btn btn-mini pull-right">{{ tabOption.text|raw }}</a>
 	{% endif %}
 </ul>

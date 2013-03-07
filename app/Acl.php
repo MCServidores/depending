@@ -49,12 +49,12 @@ class Acl implements AclInterface
 	 * status/role user dan menentukan apa yang boleh dan tidak boleh
 	 *
 	 * @param string Resource action  : article,forum,gallery,etc
-	 * @param string Permission Type : read,write,delete
+	 * @param string Permission Type : read,write,delete (default to write, for security)
 	 * @param int Resource id
 	 * @param string Resource Jika tidak dipass, maka akan diambil dari request
 	 * @return bool 
 	 */
-	public function isAllowed($permission = self::READ, $id = NULL, $action = '', $resource = NULL) {
+	public function isAllowed($permission = self::WRITE, $id = NULL, $action = '', $resource = NULL) {
 		$granted = false;
 
 		// Validasi resource
@@ -84,6 +84,11 @@ class Acl implements AclInterface
 	 * @return string User Role
 	 */
 	public function getCurrentRole() {
+		// Run to check whether this user is the resource owner
+		if ($this->isLogin()) {
+			if ($this->isOwner($this->getCurrentResource(), $this->getCurrentAction())) return 'owner';
+		}
+
 		return $this->session->get('role', 'guest');
 	}
 
@@ -115,6 +120,26 @@ class Acl implements AclInterface
 		if ( ! $this->isLogin()) return false;
 
 		return $this->session->get('userId',0) == $uid;
+	}
+
+	/**
+	 * Check if the current user is owner with matched resource id
+	 *
+	 * @param $class Resource handler
+	 * @param $action Resource action
+	 * @return bool
+	 */
+	public function isOwner($class,$action) {
+		$isOwner = false;
+		$modelClass = str_replace('Controller', 'Model', $class);
+		$model = new $modelClass();
+
+		if (is_callable(array($model,'isOwner'))) {
+			$isOwner = call_user_func_array(array($model,'isOwner'), 
+			                                array($this->request->get('id',0),$this->session->get('userId',0)));
+		}
+
+		return $isOwner;
 	}
 
 	/**

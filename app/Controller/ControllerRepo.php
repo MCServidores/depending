@@ -8,6 +8,8 @@
 
 namespace app\Controller;
 
+use app\Acl;
+use app\AclDriver;
 use app\Parameter;
 use app\Model\ModelBase;
 use app\Model\ModelTemplate;
@@ -16,6 +18,17 @@ use app\Model\ModelTemplate;
  * ControllerRepo
  *
  * @author depending.in Dev
+ * @AclDriver(
+ *	name="Repo",
+ * 	availableActions={"detail", "status"},
+ *	config={
+ *
+ *		"detail"={
+ *			Acl::READ="all",
+ *			Acl::WRITE="owner,admin",
+ *			Acl::EDIT="owner,admin",
+ *			Acl::DELETE="admin"},
+ * })
  */
 class ControllerRepo extends ControllerBase
 {
@@ -93,7 +106,10 @@ class ControllerRepo extends ControllerBase
 		$lastLog = new Parameter();
 		$tabOption = NULL;
 
-		if ($this->acl->isMe($owner->getUid())) {
+		// Set global permission of this resource
+		$this->data->set('isAllowed',$this->acl->isAllowed(Acl::WRITE));
+
+		if ($this->data->get('isAllowed')) {
 			// Adding tab option to fetch the latest commits manually, for the owner
 			$tabOption = array(
 				'href' => $this->data->get('currentUrl').'?synchronize=1', 
@@ -149,7 +165,7 @@ class ControllerRepo extends ControllerBase
 
 		// Template configuration
 		$this->layout = 'modules/repo/index.tpl';
-		$data = ModelBase::factory('Template')->getRepoData(compact('repo','owner','title','lastLog','tabs', 'tabOption'));
+		$data = ModelBase::factory('Template')->getRepoData(compact('repo','owner','title','lastLog','tabs', 'tabOption','isAllowed'));
 
 		// Render
 		return $this->render($data);

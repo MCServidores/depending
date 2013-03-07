@@ -22,6 +22,23 @@ class ModelRepo extends ModelBase
 	protected $query = 'ReposQuery';
 
 	/**
+	 * Determine whether the UID is repo owner
+	 *
+	 * @param $rid Repo id
+	 * @param $uid User id
+	 * @return bool
+	 */
+	public function isOwner($rid,$uid) {
+		if ($repo = $this->getQuery()->findPK($rid)) {
+			if (empty($repo)) return false;
+
+			$user = current($repo->getUserss());
+
+			return (empty($user)) ? false : $user->getUid() === $uid;
+		}
+	}
+
+	/**
 	 * Fetch repo lists
 	 *
 	 * @param int Limit result 
@@ -267,7 +284,8 @@ class ModelRepo extends ModelBase
 
 		// @codeCoverageIgnoreStart
 		if ( ! empty($repoLogs) && count($repoLogs) > 0) {
-			$buildTab = ModelTemplate::render('blocks/list/log.tpl', array('logs' => $repoLogs));
+			$data->set('logs',$repoLogs);
+			$buildTab = ModelTemplate::render('blocks/list/log.tpl', $data->all());
 		}
 		// @codeCoverageIgnoreEnd
 		
@@ -292,8 +310,9 @@ class ModelRepo extends ModelBase
 		if ( ! empty($packagesArrays)) {
 			// Build new array contains all above information
 			$deps = new Parameter($packagesArrays);
+			$data->set('deps',$deps);
 
-			$depsTab = ModelTemplate::render('blocks/list/deps.tpl', compact('deps'));
+			$depsTab = ModelTemplate::render('blocks/list/deps.tpl', $data->all());
 		}
 		// @codeCoverageIgnoreEnd
 		
