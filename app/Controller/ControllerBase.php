@@ -241,7 +241,7 @@ class ControllerBase {
 		if ($validRepo) {
 			$request = clone $this->request;
 			$request->query->set('exception', NULL);
-			$request->attributes->set('id', $candidate);
+			$request->attributes->set('id', $validRepo->getRid());
 
 			$proxyHandler = new ControllerRepo($request);
 
