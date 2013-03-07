@@ -332,7 +332,7 @@ class ModelTemplate extends ModelBase
      * Custom Twig filter for translate integer data to log status[scheduled|finished]
      */
     public function setLogText($status) {
-        return ((int)$status) == 1 ? 'finished' : 'scheduled';
+        return ((int)$status) > 0 ? 'finished' : 'scheduled';
     }
 
     /**
