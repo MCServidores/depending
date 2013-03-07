@@ -435,7 +435,25 @@ class ModelWorker extends ModelBase
 			$version = $m[2]; 
 
 			// Hope for the best (finger crossed...)
-			list($major,$minor,$patch) = explode('.', $version);
+			$versionAnnotations = explode('.', $version);
+
+			if (count($versionAnnotations) == 3) {
+				// Everything ok
+				list($major,$minor,$patch) = $versionAnnotations;
+			} else {
+				switch (count($versionAnnotations)) {
+					case 2:
+						list($major,$minor) = $versionAnnotations;
+						$patch = 999;
+						break;
+					
+					default:
+						$major = $versionAnnotations;
+						$minor = 999;
+						$patch = 999;
+						break;
+				}
+			}
 
 			// Determine the closest possible value
 			if (strpos($operator, '>')!==false || strpos($operator, '!')!==false) {
