@@ -103,6 +103,9 @@ class ControllerHome extends ControllerBase
 		if ($existsRepo) {
 			ModelBase::factory('Log')->updateRepoLogs($existsRepo->getRid(), $payloadParam);
 
+			// Do the some work
+			$this->doWork(false, 0, true);
+
 			return $this->render('OK', 201);
 		} else {
 			return $this->render('Requested repository could not be found', 404);

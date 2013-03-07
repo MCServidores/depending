@@ -194,22 +194,33 @@ class ControllerRepo extends ControllerBase
 
 		// Initialize result
 		$success = true;
+		$status = 0;
 		$html = '<div class="bin">';
 
 		if (($id = $this->data->get('postData[id]',false,true)) && ! empty($id)) {
-			// Trigger the build, if the user login
-			if ($this->acl->isLogin()) {
-				$success = $this->doWork(false, $id, true);
-			}
+			// Validate the log
+			$log = ModelBase::factory('Log')->getLog($id);
 
-			$html .= ModelBase::factory('Template')->getBuildData($id);
+			if ( ! empty($log)) {
+				// Trigger the build, if the user login and the log is not executed
+				if ($this->acl->isLogin() && $log->get('Status') == 0) {
+					$success = $this->doWork(false, $id, true);
+				}
+
+				$html .= ModelBase::factory('Template')->getBuildData($id);
+
+				if ( ! empty($log) && $log->get('Status') > 0) {
+					// Update the status
+					$status = $log->get('Status');
+				}
+			}
 		}
 
 		$html .= '</div>';
 		// Just for the sake of jQuery ajax delay
 		sleep(1);
 
-		return $this->renderJson(compact('success','html'));
+		return $this->renderJson(compact('success','status','html'));
 		// @codeCoverageIgnoreEnd
 	}
 }

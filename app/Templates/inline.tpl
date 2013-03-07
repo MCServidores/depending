@@ -73,10 +73,47 @@ $(document).ready(function(){
 		var resultContainer = $('#log-details');
 		var buildUrl = '/build';
 		var btnHandler = $(this);
+		var statusLabel = $(this).parent().nextAll('td:last').find('label');
+		var previousLogLabel = 'label-success';
+		var previousLogText = statusLabel.html();
+
+		if (statusLabel.html() == 'scheduled') {
+			previousLogLabel = 'label-warning';
+			statusLabel.removeClass('label-warning').addClass('label-info');
+			statusLabel.html('running...');
+		}
+
 		var successHandler = function(data) {
+			btnHandler.removeClass('c-grey c-green c-yellow c-red');
+
+			statusLabel.removeClass('label-info').addClass('label-success');
+			statusLabel.html('finished');
+
+			switch (data.status) {
+				case 3:
+					btnHandler.addClass('c-green');
+					break;
+
+				case 2:
+					btnHandler.addClass('c-yellow');
+					break;
+
+				case 1:
+					btnHandler.addClass('c-red');
+					break;
+
+				default:
+					btnHandler.addClass('c-grey');
+					statusLabel.removeClass('label-info').addClass('label-warning');
+					statusLabel.html('scheduled');
+					break;
+			}
+
 			resultContainer.html(data.html);
 		};
 		var errorHandler = function(data) {
+			statusLabel.removeClass('label-info').addClass(previousLogLabel);
+			statusLabel.html(previousLogText);
 			resultContainer.html('<div class="alert alert-error">Sorry, something goes really wrong. Please try again later.</div>');
 		};
 		var logData = {'id':btnHandler.attr('data-log')};
