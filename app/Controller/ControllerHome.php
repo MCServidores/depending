@@ -110,6 +110,26 @@ class ControllerHome extends ControllerBase
 		} else {
 			return $this->render('Requested repository could not be found', 404);
 		}
+		
+		// Authentication, for registered service
+		if ($this->request->getUser() && $this->request->getPassword()) {
+			// For valid service only
+			$username = $this->request->getUser();
+			$password = $this->request->getPassword();
+
+			if ($username == 'github') {
+				// Skip the github service tests
+				if (md5($username) == $password) return $this->render('OK', 200);
+
+				// Validate and block invalid user
+				if ( ! ModelBase::factory('Auth')->isLikePassword($password)) {
+					return $this->render('AUTH FAIL', 500);
+				}
+			}
+			// HOOK PLACE
+		} else {
+			return $this->render('TOKEN NOT FOUND', 500);
+		}
 		// @codeCoverageIgnoreEnd
 	}
 

@@ -209,6 +209,18 @@ class ModelAuth extends ModelBase
 	}
 
 	/**
+	 * Basic auth checker
+	 *
+	 * @param string The token
+	 * @return bool
+	 */
+	public function isLikePassword($password) {
+		$existsUser = ModelBase::factory('User')->getQuery()->filterByPass('%'.$password)->find();
+
+		return (bool) count($existsUser) > 0;
+	}
+
+	/**
 	 * Pengecekan validitas password
 	 *
 	 * @param Users $user User object
