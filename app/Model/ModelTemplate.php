@@ -343,7 +343,7 @@ class ModelTemplate extends ModelBase
      * Custom Twig filter for translating integer data into success text [success|warning]
      */
     public function setSuccessText($status) {
-        return ((int)$status) > 1 ? 'success' : 'warning';
+        return ((int)$status) > 0 ? 'success' : 'warning';
     }
 
     /**
