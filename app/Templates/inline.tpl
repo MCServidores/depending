@@ -68,6 +68,22 @@ $(document).ready(function(){
 		$(this).popover();
 	})
 
+	// Log details toogle
+	$('.has-log').click(function(){
+		var resultContainer = $('#log-details');
+		var buildUrl = '/build';
+		var btnHandler = $(this);
+		var successHandler = function(data) {
+			resultContainer.html(data.html);
+		};
+		var errorHandler = function(data) {
+			resultContainer.html('<div class="alert alert-error">Sorry, something goes really wrong. Please try again later.</div>');
+		};
+		var logData = {'id':btnHandler.attr('data-log')};
+
+		callInternalProvider(buildUrl,btnHandler,errorHandler,successHandler,logData,resultContainer);
+	})
+
 	// Import loader section
 	var enableHookToggle = function() {
 		var enablerBtn = $('.btn-enable-hook');

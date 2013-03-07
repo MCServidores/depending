@@ -51,7 +51,8 @@ class ModelTemplate extends ModelBase
             new Twig_SimpleFilter('translateToSuccessText', array(__CLASS__, 'setSuccessText')),
             new Twig_SimpleFilter('toPackagist', array(__CLASS__, 'setPackagistUrl')),
             new Twig_SimpleFilter('toStatus', array(__CLASS__, 'setStatusMarkdown')),
-            new Twig_SimpleFilter('toIcon', array(__CLASS__,'setProjectIcon')),
+            new Twig_SimpleFilter('toIcon', array(__CLASS__, 'setProjectIcon')),
+            new Twig_SimpleFilter('toStatusIcon', array(__CLASS__, 'setLogStatusText')),
             new Twig_SimpleFilter('toVendorIcon', array(__CLASS__,'setVendorIcon')),
         );
 
@@ -83,6 +84,102 @@ class ModelTemplate extends ModelBase
         }
         
         return $text;
+    }
+
+    /**
+     * Provider for Build data log
+     *
+     * @param id $id Log id
+     *
+     * @return string 
+     */
+    public function getBuildData($id = 0) {
+        // Default data
+        $clock = '--:--';
+        $label = new Parameter(array(
+            'Name' => str_pad('Description',28),
+            'UsedVersion' => str_pad('Used',10),
+            'LatestVersion' => str_pad('Latest',11),
+        ));
+        $build = new Parameter(array(
+            'Title' => '<span class="b-yellow">Scheduled</span>',
+            'ResultText' => str_pad('0 out of 0 passed',28),
+            'ResultStatus' => '<span class="b-red">'.str_pad('0%',22,' ',STR_PAD_BOTH).'</span>',
+        ));
+        $vendors = array(
+            new Parameter(array(
+                'Name' => str_pad('-',28),
+                'UsedVersion' => '<span class="b-red">'.str_pad('-',10).'</span>',
+                'LatestVersion' => '<span class="b-red">'.str_pad('-',11).'</span>',
+            )),
+        );
+
+        // Check the actual log
+        if (($log = ModelBase::factory('Log')->getLog($id)) && !empty($log)) {
+            // Set the build attributes
+            $build->set('Title', 'Based by composer.json'."\n"
+                                 .'rev: '.$log->get('After')."\n"
+                                 .'msg: '.$log->get('CommitMessage')."\n"
+                                 .'by : '.$log->get('CommitAuthor'));
+
+            // Do we have executed log?
+            if ($log->get('Status') > 0 && ($additionalData = $log->get('AdditionalData')) && ! empty($additionalData) && array_key_exists('depsDiff', $additionalData)) {
+                $depsDiff = $additionalData['depsDiff'];
+
+                // Build the vendor status
+                if ( ! empty($depsDiff)) {
+                    // Reset the vendors value
+                    $vendors = array();
+
+                    $outOfdatePackages = 0;
+
+                    foreach ($depsDiff as $dep) {
+                        $diffStatus = ($dep['versionDiff'] < 0) ? 'red' : 'green';
+                        $rawVersion = $this->setLimitHash($dep['rawVersion'],10);
+                        $rawLatestVersion = $this->setLimitHash($dep['rawLatestVersion'],11);
+                        $vendors[] = new Parameter(array(
+                            'Name' => str_pad($dep['vendor'],28),
+                            'UsedVersion' => '<span class="b-'.$diffStatus.'">'.str_pad($rawVersion,10).'</span>',
+                            'LatestVersion' => '<span class="b-green">'.str_pad($rawLatestVersion,11).'</span>',
+                        ));
+
+                        if ($diffStatus == 'red') {
+                            $outOfdatePackages++;
+                        }
+                    }
+
+                    // Reset the build status
+                    if ($outOfdatePackages == 0) {
+                        $status = 'green';
+                        $percentage = 100;
+                    } elseif (count($depsDiff) == $outOfdatePackages) {
+                        $status = 'red';
+                        $percentage = 0;
+                    } else {
+                        $percentage = (int) floor(($outOfdatePackages/count($depsDiff))*100);
+
+                        if ($percentage >= 50) {
+                            $status = 'yellow';
+                        }
+                    }
+
+                    $statusText = count($depsDiff)-$outOfdatePackages.' out of '.count($depsDiff).' passed';
+
+                    $build->set('ResultText', str_pad($statusText,28));
+                    $build->set('ResultStatus','<span class="b-'.$status.'">'.str_pad($percentage.'%',22,' ',STR_PAD_BOTH).'</span>');
+
+                   
+                }
+
+
+
+                // Set the clock
+                $clock = date('H:i l M, Y',$log->get('Executed'));
+            }
+
+        }
+
+        return self::render('blocks/build.tpl',compact('label','clock','build','vendors'));
     }
 
     /**
@@ -223,7 +320,11 @@ class ModelTemplate extends ModelBase
     /**
      * Custom Twig filter for limiting hash length
      */
-    public function setLimitHash($hash) {
+    public function setLimitHash($hash, $count = 0) {
+        if ($count > 0) {
+            return (strlen($hash) <= $count) ? $hash : substr($hash, 0, ($count-2)).'..';
+        }
+
         return substr($hash, 0, 7).'...';
     }
 
@@ -239,6 +340,31 @@ class ModelTemplate extends ModelBase
      */
     public function setSuccessText($status) {
         return ((int)$status) == 1 ? 'success' : 'warning';
+    }
+
+    /**
+     * Custom Twig filter for translating integer data into build status text [grey|red|yellow|green]
+     */
+    public function setLogStatusText($status) {
+        switch ($status) {
+            case 1:
+                $text = 'red';
+                break;
+
+            case 2:
+                $text = 'yellow';
+                break;
+
+            case 3:
+                $text = 'green';
+                break;
+            
+            default:
+                $text = 'grey';
+                break;
+        }
+
+        return $text;
     }
 
     /**

@@ -95,7 +95,8 @@ class ModelWorker extends ModelBase
 
 		// Set the task flag
 		$result->set('logStatus', $depsStatus->get('status'));
-		$result->set('logData', array('depsDiff' => $depsStatus->get('depsDiff')->all()));
+		$result->set('logData', array('percentage' => $depsStatus->get('percentage'),
+		                              'depsDiff' => $depsStatus->get('depsDiff')->all()));
 		$result->set('logExecuted', time());
 
 		// We're done
@@ -130,17 +131,23 @@ class ModelWorker extends ModelBase
 
 			foreach ($depsDiff as $depDiff) {
 				if ($depDiff['versionDiff'] < 0) {
-					$outOfdatePackages;
+					$outOfdatePackages++;
 				}
 			}
 
-			$percentage = (int) floor(($outOfdatePackages/$totalPackages)*100);
+			if ($outOfdatePackages == 0) {
+                $status = 3;
+                $percentage = 100;
+            } elseif (count($depsDiff) == $outOfdatePackages) {
+                $status = 1;
+                $percentage = 0;
+            } else {
+                $percentage = (int) floor(($outOfdatePackages/$totalPackages)*100);
 
-			if ($percentage == 100) {
-				$status = 3;
-			} elseif ($percentage > 75) {
-				$status = 2;
-			}
+                if ($percentage >= 50) {
+                    $status = 2;
+                }
+            }
 		}
 
 		return new Parameter(compact('status','percentage','depsDiff'));

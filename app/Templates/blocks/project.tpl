@@ -15,4 +15,5 @@
 	</ul>
 	<hr/>
 	{% include "blocks/tab.tpl" %}
+	<div id="log-details"></div>
 </div>

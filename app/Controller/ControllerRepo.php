@@ -38,7 +38,7 @@ class ControllerRepo extends ControllerBase
 		}
 
 		// If so far we couldnt locate the repo, then it was a non-valid request
-		if (empty($repo) && substr($this->request->getPathInfo(),1) !== 'project') {
+		if (empty($repo) && ! preg_match('/[(project|repo\/status|build)]+/',substr($this->request->getPathInfo(),1))) {
 			throw new \InvalidArgumentException('Could not locate the repo!');
 		}
 
@@ -166,7 +166,9 @@ class ControllerRepo extends ControllerBase
 	 */
 	public function actionStatus() {
 		// Generate the image
-		$file = ModelBase::factory('Repo')->getStatus($this->repo).'.png';
+		$status = (empty($this->repo)) ? 'unknown' : ModelBase::factory('Repo')->getStatus($this->repo);
+
+		$file = $status.'.png';
 		$path = ASSET_PATH . DIRECTORY_SEPARATOR;
 		$folder = 'status/';
 
@@ -178,5 +180,30 @@ class ControllerRepo extends ControllerBase
 
 		// Return image response
 		return $this->render($content, 200, array('Content-Type' => $mime));
+	}
+
+	/**
+	 * Handler for GET/POST /build
+	 */
+	public function actionBuild() {
+		// For AJAX call only
+		if ( ! $this->request->isXmlHttpRequest()) throw new \RangeException('You seems trying to access a different side of this app. Please stop.');
+
+		// @codeCoverageIgnoreStart
+
+		// Initialize result
+		$success = true;
+		$html = '<div class="bin">';
+
+		if (($id = $this->data->get('postData[id]',false,true)) && ! empty($id)) {
+			$html .= ModelBase::factory('Template')->getBuildData($id);
+		}
+
+		$html .= '</div>';
+		// Just for the sake of jQuery ajax delay
+		sleep(1);
+
+		return $this->renderJson(compact('success','html'));
+		// @codeCoverageIgnoreEnd
 	}
 }

@@ -42,6 +42,8 @@ $routes->add('github_hook', new Route('/hook', array(Route::HANDLER => array(Rou
 
 $routes->add('cron_hook', new Route('/work', array(Route::HANDLER => array(Route::HANDLER_CLASS => 'home', Route::HANDLER_ACTION => 'work'))));
 
+$routes->add('build', new Route('/build', array(Route::HANDLER => array(Route::HANDLER_CLASS => 'repo', Route::HANDLER_ACTION => 'build'))));
+
 $routes->add('asset', new Route('/{controller}/{action}/{id}', array('controller' => 'asset', 'action' => '(js|css|img|font)', 'id' => '[a-zA-Z\.\-]+')));
 
 $routes->add('asset_subfolder', new Route('/{controller}/{action}/{subfolder}/{id}', array('controller' => 'asset', 'action' => '(js|css|img|font)', 'subfolder' => '[0-9a-zA-Z\_\-]+','id' => '[0-9a-zA-Z\.\-]+')));
