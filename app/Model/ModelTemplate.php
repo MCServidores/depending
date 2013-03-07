@@ -116,8 +116,12 @@ class ModelTemplate extends ModelBase
 
         // Check the actual log
         if (($log = ModelBase::factory('Log')->getLog($id)) && !empty($log)) {
+            // Get the queued status
+            $buildQueuedStatus = $log->get('Status') == 0 ? '<span class="b-yellow">Scheduled</span>' : '<span class="b-green">Finished</span>';
+
             // Set the build attributes
-            $build->set('Title', 'Based by composer.json'."\n"
+            $build->set('Title', $buildQueuedStatus."\n"
+                                 .'Based by composer.json'."\n"
                                  .'rev: '.$log->get('After')."\n"
                                  .'msg: '.$log->get('CommitMessage')."\n"
                                  .'by : '.$log->get('CommitAuthor'));
@@ -339,7 +343,7 @@ class ModelTemplate extends ModelBase
      * Custom Twig filter for translating integer data into success text [success|warning]
      */
     public function setSuccessText($status) {
-        return ((int)$status) == 1 ? 'success' : 'warning';
+        return ((int)$status) > 1 ? 'success' : 'warning';
     }
 
     /**
