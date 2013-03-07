@@ -189,6 +189,7 @@ class ControllerRepo extends ControllerBase
 		// For AJAX call only
 		if ( ! $this->request->isXmlHttpRequest()) throw new \RangeException('You seems trying to access a different side of this app. Please stop.');
 
+
 		// @codeCoverageIgnoreStart
 
 		// Initialize result
@@ -196,6 +197,11 @@ class ControllerRepo extends ControllerBase
 		$html = '<div class="bin">';
 
 		if (($id = $this->data->get('postData[id]',false,true)) && ! empty($id)) {
+			// Trigger the build, if the user login
+			if ($this->acl->isLogin()) {
+				$success = $this->doWork(false, $id, true);
+			}
+
 			$html .= ModelBase::factory('Template')->getBuildData($id);
 		}
 

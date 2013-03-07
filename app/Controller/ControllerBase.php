@@ -382,16 +382,24 @@ class ControllerBase {
 	 * Main worker endpoint
 	 *
 	 * @param bool TRUE will returning the Response instance while FALSE will returning work status
+	 * @param int Could specify the log to be build
+	 * @param bool Whether to output directly or use the buffer to blocks any output
 	 * @return mixed Could be Response intance or Boolean
 	 */
-	public function doWork($returnResponse = false) {
-		// Get the latest un-processed log and its repository
-		$latestLog = ModelBase::factory('Log')->getQuery()->orderByCreated()->findOneByStatus(0);
+	public function doWork($returnResponse = false, $logId = 0, $silent = false) {
+
+		if (empty($logId)) {
+			// Get the latest un-processed log and its repository
+			$latestLog = ModelBase::factory('Log')->getQuery()->orderByCreated()->findOneByStatus(0);
+		} else {
+			// Get the requested log
+			$latestLog = ModelBase::factory('Log')->getQuery()->filterByStatus(0)->findPK($logId);
+		}
 
 		// Only work on something!
 		if ( ! empty($latestLog)) {
 			try {
-				$success = ModelBase::factory('Worker')->run($latestLog);
+				$success = ModelBase::factory('Worker')->run($latestLog, $silent);
 
 				$statusCode = 200;
 				$statusText = 'OK. Log ID:'.$latestLog->getId();

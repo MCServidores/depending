@@ -20,15 +20,28 @@ use app\Model\Orm\Repos;
 class ModelWorker extends ModelBase 
 {
 	const COMPOSER = 'composer.json';
+	private $silent = false;
+	private $bufferContent;
+
+	/**
+	 * Set up mode
+	 */
+	public function setUp() {
+		$this->bufferContent = new Parameter();
+	}
 
 	/**
 	 * Main worker API to consume a task
 	 *
 	 * @param Logs The log task to consume
+	 * @param bool The flag to block any output to be sent/rendered
 	 * @return bool TRUE only if success, otherwise Exception will thrown
 	 * @throws RuntimeException on system failure
 	 */
-	public function run(Logs $log) {
+	public function run(Logs $log, $silent = false) {
+		// Set the flag
+		$this->silent = $silent;
+
 		// Valid log task?
 		if ($log->getStatus() > 0) return false;
 
@@ -379,8 +392,24 @@ class ModelWorker extends ModelBase
 	 */
 	public function execute($command) {
 		$success = 1;
+		if ($this->silent) {
+			if (!ob_get_level()) ob_start();
+		}
+
 		passthru($command, $success);
+
+		if ($this->silent) {
+			$this->bufferContent->set($command, ob_get_clean());
+		}
+
 		return $success == 0;
+	}
+
+	/**
+	 * Get buffer content
+	 */
+	public function getBufferContent() {
+		return $this->bufferContent;
 	}
 
 	/**
