@@ -78,6 +78,20 @@ class ControllerSetting extends ControllerBase
 	}
 
 	/**
+	 * Handler untuk GET/POST /setting/token
+	 */
+	public function actionToken() {
+		$content = ModelBase::factory('Setting')->handleToken($this->data);
+
+		// Template configuration
+		$this->layout = 'modules/setting/index.tpl';
+		$data = ModelBase::factory('Template')->getSettingData(compact('content'));
+
+		// Render
+		return $this->render($data);
+	}
+
+	/**
 	 * Handler untuk GET/POST /setting/email
 	 */
 	public function actionMail() {

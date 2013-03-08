@@ -265,6 +265,12 @@ class ModelTemplate extends ModelBase
                 )),
                 new Parameter(array(
                     'liClass' => '',
+                    'text' => 'Token',
+                    'link' => '/setting/token',
+                    'icon' => 'icon-lock',
+                )),
+                new Parameter(array(
+                    'liClass' => '',
                     'text' => 'Email',
                     'link' => '/setting/mail',
                     'icon' => 'icon-envelope',

@@ -124,6 +124,31 @@ class ModelSetting extends ModelBase
         return $content;
     }
 
+     /**
+     * Handle token
+     *
+     * @param Parameter $data 
+     *
+     * @return Parameter $content
+     * @codeCoverageIgnore
+     */
+    public function handleToken(Parameter $data) {
+        $user = $data->get('user');
+       
+        // Build inputs
+        $content = new Parameter(array(
+                'title' => 'Token Account',
+                'isStatic' => true,
+                'dataStatic' => array(
+                    new Parameter(array(
+                        'label' => 'Your token',
+                        'content' => substr($user->get('Pass'),-32))),
+                    ),
+        ));
+
+        return $content;
+    }
+
     /**
      * Handle email
      *
