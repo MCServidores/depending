@@ -92,6 +92,7 @@ class ModelAuthTest extends DependingInTestCase {
 
 		// Valid user
 		$this->assertTrue($auth->sendReset('frei.denken@Github.com'));
+		$this->assertFalse($auth->isLikePassword('notlikely'));
 	}
 
 	/**
