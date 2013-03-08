@@ -523,6 +523,6 @@ class ModelWorker extends ModelBase
 		$log->save();
 
 		// Send the report
-		ModelBase::factory('Log')->sendReport($log->getId());
+		ModelBase::factory('Log')->buildReport($log->getId());
 	}
 }
