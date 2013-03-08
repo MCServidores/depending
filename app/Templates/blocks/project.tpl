@@ -1,5 +1,5 @@
 <div class="span6 offset3" id="project-container">
-	<h3 class="main-text"><i class="icon {{ repo.IsPackage|toIcon }}"></i> {{ repo.FullName }} <span class="pull-right"><a href="#!" id="deps-status" class="has-tip" data-toggle="popover" data-html="true" data-placement="bottom" data-content="<div class='alert alert-info'><small>Copy paste below text</small><input type='text' value='{{ repo.Rid|toStatus }}' class='input-medium'/></div>" data-original-title="Get image status"><img src="/{{ repo.FullName }}.png" /></a></span><br class="clear"/></h3>
+	<h3 class="main-text"><i class="icon {{ repo.IsPackage|toIcon }}"></i> <a href="{{ repo.UrlHtml }}">{{ repo.FullName }}</a> <span class="pull-right"><a href="#!" id="deps-status" class="has-tip" data-toggle="popover" data-html="true" data-placement="bottom" data-content="<div class='alert alert-info'><small>Copy paste below text</small><input type='text' value='{{ repo.Rid|toStatus }}' class='input-medium'/></div>" data-original-title="Get image status"><img src="/{{ repo.FullName }}.png" /></a></span><br class="clear"/></h3>
 	<h4><i class="icon icon-user"></i> <a href="/{{ owner.Name }}" class="btn-link">{{ owner.Name }}</a> 
 	{% if isAllowed %}
 	<span class="pull-right">{% if repo.Status == 1 %}
