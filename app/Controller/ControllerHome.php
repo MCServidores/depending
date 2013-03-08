@@ -57,9 +57,11 @@ class ControllerHome extends ControllerBase
 	public function actionWork() {
 		$userAgent = $this->request->server->get('HTTP_USER_AGENT');
 
+		// @codeCoverageIgnoreStart
 		if (strpos($userAgent, 'curl') !== FALSE) {
 			return $this->doWork(TRUE);
 		} else {
+		// @codeCoverageIgnoreEnd
 			// Redirect to regular page
 			return $this->redirect('/home');
 		}
@@ -69,6 +71,7 @@ class ControllerHome extends ControllerBase
 	 * Handler for GET/POST /home/accept
 	 *
 	 * This is main payload handler, that accept Json data from Github
+	 * @codeCoverageIgnore
 	 */
 	public function actionAccept() {
 		// Authentication, for registered service
@@ -99,7 +102,6 @@ class ControllerHome extends ControllerBase
 		// Wrap the payload
 		$payloadObject = json_decode($payload);
 
-		// @codeCoverageIgnoreStart
 		// Out of control
 		if (empty($payloadObject)) {
 			$possibleCause = ModelBase::factory('Worker')->getLastJsonError();
@@ -127,7 +129,6 @@ class ControllerHome extends ControllerBase
 		} else {
 			return $this->render('Requested repository could not be found', 404);
 		}
-		// @codeCoverageIgnoreEnd
 	}
 
 	/**

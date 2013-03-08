@@ -73,6 +73,17 @@ class ControllerHomeTest extends DependingInTestCase {
 	}
 
 	/**
+	 * Cek action Work
+	 */
+	public function testCekActionWorkAppControllerHome() {
+		$request = Request::create('/home/work');
+		$controllerHome = new ControllerHome($request);
+		$response = $controllerHome->actionWork();
+
+		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\RedirectResponse', $response);
+	}
+
+	/**
 	 * Cek action accept
 	 */
 	public function testCekActionAcceptAppControllerHome() {
