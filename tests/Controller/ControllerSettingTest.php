@@ -82,6 +82,22 @@ class ControllerSettingTest extends DependingInTestCase {
 	}
 
 	/**
+	 * Cek action token
+	 */
+	public function testCekActionTokenAppControllerSetting() {
+		$this->createDummyUser();
+		$dummyUser = ModelBase::ormFactory('UsersQuery')->findOneByName('dummy');
+		$dummyUserData = ModelBase::factory('User')->getUser($dummyUser->getUid());
+
+		$controllerSetting = new ControllerSetting($this->request);
+		$controllerSetting->getData()->set('user', $dummyUserData);
+		$response = $controllerSetting->actionToken();
+
+		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
+		$this->assertEquals(200, $response->getStatusCode());
+	}
+
+	/**
 	 * Cek action mail
 	 */
 	public function testCekActionMailAppControllerSetting() {
