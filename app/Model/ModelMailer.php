@@ -95,6 +95,27 @@ class ModelMailer extends ModelBase
 		return $this->send();
 	}
 
+	/**
+	 * Send report
+	 *
+	 * @param string $reportTitle 
+	 * @param array $reportData 
+	 */
+	public function sendReport($reportTitle, $reportData) {
+		// Sily
+		if (empty($reportData)) return false;
+
+		// Kumpulkan data
+		$data = $reportData;
+
+		// Message parameter
+		$this->subject = $reportTitle;
+		$this->messageType = 'text/html';
+		$this->messageBody = ModelBase::factory('Template')->render('email.tpl', $data);
+
+		return $this->send();
+	}
+
     /**
      * Send the message
      *

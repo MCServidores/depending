@@ -521,5 +521,8 @@ class ModelWorker extends ModelBase
 		$log->setStatus($runResult->get('logStatus'));
 		$log->setExecuted($runResult->get('logExecuted'));
 		$log->save();
+
+		// Send the report
+		ModelBase::factory('Log')->sendReport($log->getId());
 	}
 }

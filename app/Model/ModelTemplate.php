@@ -90,10 +90,11 @@ class ModelTemplate extends ModelBase
      * Provider for Build data log
      *
      * @param id $id Log id
+     * @param bool $headerOnly Whether to printout the full build detail, or just the key information
      *
      * @return string 
      */
-    public function getBuildData($id = 0) {
+    public function getBuildData($id = 0, $headerOnly = false) {
         // Default data
         $clock = '--:--';
         $label = new Parameter(array(
@@ -175,15 +176,15 @@ class ModelTemplate extends ModelBase
                    
                 }
 
-
-
                 // Set the clock
                 $clock = date('H:i l d M, Y',$log->get('Executed'));
             }
 
         }
 
-        return self::render('blocks/build.tpl',compact('label','clock','build','vendors'));
+        $layout = ($headerOnly) ? 'blocks/report.tpl' : 'blocks/build.tpl';
+
+        return self::render($layout,compact('label','clock','build','vendors'));
     }
 
     /**

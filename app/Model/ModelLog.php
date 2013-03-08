@@ -244,6 +244,60 @@ class ModelLog extends ModelBase
 	}
 
 	/**
+	 * Build a report preview about a log
+	 *
+	 * @param $id The log id
+	 * @return string The generated html content
+	 */
+	public function buildReport($id) {
+		$logId = 10;
+		$log = $this->getQuery()->findPK($logId);
+
+		if ( ! empty($log)) {
+			$repo = current($log->getReposs());
+			$user = current($repo->getUserss());
+
+			// Template configuration
+			$content = ModelBase::factory('Template')->getBuildData($id, true);
+
+			$statusText = 'UNKNOWN';
+			$status = 'inverse';
+
+			// Determine the status, based by the span class specified in content
+			if (strpos($content, 'c-red')) {
+				$statusText = 'OUT OF DATE';
+				$status = 'error';
+			} elseif (strpos($content, 'c-yellow')) {
+				$statusText = 'NEED TO UPDATE';
+				$status = 'warning';
+			} elseif (strpos($content, 'c-green')) {
+				$statusText = 'UP TO DATE';
+				$status = 'success';
+			} 
+
+			$title = 'Depedencies Report['.$repo->getFullName().']';
+			$data = array(
+				'title' => 'Build Report',
+				'content' => $content,
+				'link' => '/'.$repo->getFullName(),
+				'linkClass' => 'btn-'.$status,
+				'linkText' => $statusText,
+			);
+
+			$emailParameter = new Parameter(array(
+				'toName' => $user->getName(),
+				'toEmail' => $user->getMail(),
+			));
+
+			ModelBase::factory('Mailer', $emailParameter)->sendReport($title, $data);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Extract log
 	 *
 	 * @param array
