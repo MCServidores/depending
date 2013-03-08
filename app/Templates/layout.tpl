@@ -16,6 +16,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
+        <link rel="stylesheet" href="http://simonwhitaker.github.com/github-fork-ribbon-css/gh-fork-ribbon.css" />
         <link href="/asset/css/main.css" rel="stylesheet">
 
         {% if parseCode == true %}
