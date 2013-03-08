@@ -77,17 +77,13 @@ class ModelUser extends ModelBase
 	 * @return Parameter
 	 */
 	public function getUser($id = NULL) {
-		// Silly
-		if (empty($id)) return false;
-
-		// Get user
-		$user = $this->getQuery()->findPK($id);
-
-		if ($user) {
-			// Get other misc data
-			$userData = $this->extractUser($user->toArray());
-			$user = $userData;
-		}
+		// Validate resource
+		$user = $this->isValidResource($id);
+		if ( !$user) return false;
+		
+		// Get other misc data
+		$userData = $this->extractUser($user->toArray());
+		$user = $userData;
 		
 		return $user;
 	}
@@ -127,21 +123,15 @@ class ModelUser extends ModelBase
 	 * @return mixed
 	 */
 	public function updateUser($id = NULL, $data = array()) {
-		// Silly
-		if (empty($id)) return false;
+		// Validate resource
+		$user = $this->isValidResource($id);
+		if ( !$user) return false;
 
-		// Get user
-		$user = $this->getQuery()->findPK($id);
-
-		if ($user) {
-			foreach ($data as $key => $value) {
-				$setMethod = 'set'.ucfirst($key);
-				if (is_callable(array($user,$setMethod))) {
-					$user = call_user_func_array(array($user,$setMethod), array($value));
-				}
+		foreach ($data as $key => $value) {
+			$setMethod = 'set'.ucfirst($key);
+			if (is_callable(array($user,$setMethod))) {
+				$user = call_user_func_array(array($user,$setMethod), array($value));
 			}
-		} else {
-			return false;
 		}
 
 		$user->save();
@@ -158,42 +148,36 @@ class ModelUser extends ModelBase
 	 * @return mixed
 	 */
 	public function updateUserData($id = NULL, $data = array()) {
-		// Silly
-		if (empty($id)) return false;
+		// Validate resource
+		$user = $this->isValidResource($id);
+		if ( !$user) return false;
 
-		// Get user
-		$user = $this->getQuery()->findPK($id);
+		// Get custom data
+		$userData = new Parameter($user->toArray());
+		$customData = $userData->get('Data');
 
-		if ($user) {
-			// Get custom data
-			$userData = new Parameter($user->toArray());
-			$customData = $userData->get('Data');
-
-			// @codeCoverageIgnoreStart
-			if (empty($customData)) {
-				// Straight forward
-				$user->setData(serialize($data));
-			} else {
-				$userDataSerialized = @fread($customData,10000);
-				try {
-					$currentUserData = unserialize($userDataSerialized);
-					if ( ! $currentUserData) $currentUserData = array();
-					$currentUserData = array_merge($currentUserData, $data);
-				} catch (\Exception $e) {
-					$currentUserData = $data;
-				}
-
-				// Update custom data
-				$user->setData(serialize($currentUserData));
-			}
-			// @codeCoverageIgnoreEnd
-			
-			$user->save();
-
-			return $this->getUser($user->getUid());
+		// @codeCoverageIgnoreStart
+		if (empty($customData)) {
+			// Straight forward
+			$user->setData(serialize($data));
 		} else {
-			return false;
+			$userDataSerialized = @fread($customData,10000);
+			try {
+				$currentUserData = unserialize($userDataSerialized);
+				if ( ! $currentUserData) $currentUserData = array();
+				$currentUserData = array_merge($currentUserData, $data);
+			} catch (\Exception $e) {
+				$currentUserData = $data;
+			}
+
+			// Update custom data
+			$user->setData(serialize($currentUserData));
 		}
+		// @codeCoverageIgnoreEnd
+		
+		$user->save();
+
+		return $this->getUser($user->getUid());
 	}
 
 	/**
@@ -210,17 +194,16 @@ class ModelUser extends ModelBase
 		$repos = ModelBase::factory('User')->getQuery()->findPK($user->get('Uid'))->getReposs();
 		$reposCopy = clone $repos;
 
+		// @codeCoverageIgnoreStart
 		foreach ($reposCopy as $key => $repo) {
 			// Unset the un-related project
 			if ($repo->getStatus() == 0 || $repo->getIsPackage() == 1) unset($reposCopy[$key]);
 		}
 
-		// @codeCoverageIgnoreStart
 		if ( count($reposCopy) > 0) {
 			$projectTab = ModelTemplate::render('blocks/list/project.tpl', array('repos' => $reposCopy));
 		}
 		// @codeCoverageIgnoreEnd
-		
 
 		return $projectTab;
 	}
@@ -239,17 +222,16 @@ class ModelUser extends ModelBase
 		$repos = ModelBase::factory('User')->getQuery()->findPK($user->get('Uid'))->getReposs();
 		$reposCopy = clone $repos;
 
+		// @codeCoverageIgnoreStart
 		foreach ($reposCopy as $key => $repo) {
 			// Unset the un-related project
 			if ($repo->getIsPackage() == 0) unset($reposCopy[$key]);
 		}
 
-		// @codeCoverageIgnoreStart
 		if ( count($reposCopy) > 0) {
 			$packageTab = ModelTemplate::render('blocks/list/project.tpl', array('repos' => $reposCopy));
 		}
 		// @codeCoverageIgnoreEnd
-		
 
 		return $packageTab;
 	}
@@ -257,12 +239,11 @@ class ModelUser extends ModelBase
 	/**
 	 * Build tabs data
 	 *
-	 * @param id $uid
 	 * @param string $projectTab
 	 * @param string $packageTab
 	 * @return Parameter 
 	 */
-	public function buildTabs($uid = NULL,$projectTab = NULL, $packageTab = NULL) {
+	public function buildTabs($projectTab = NULL, $packageTab = NULL) {
 		$projectLiState = 'active';
 		$projectTabState = 'active in';
 		$packageLiState = ' ';

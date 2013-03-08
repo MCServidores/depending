@@ -48,7 +48,7 @@ class ControllerUser extends ControllerBase
 		$packageTab = ModelBase::factory('User')->buildPackageTab($item, $this->data);
 
 		// Finalisasi tabs
-		$tabs = ModelBase::factory('User')->buildTabs($item->get('id'),$projectTab,$packageTab);
+		$tabs = ModelBase::factory('User')->buildTabs($projectTab,$packageTab);
 
 		// Template configuration
 		$title = $item->get('Name');

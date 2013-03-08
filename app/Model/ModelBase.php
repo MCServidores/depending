@@ -67,6 +67,22 @@ class ModelBase
 	}
 
 	/**
+	 * Check whether given id is a valid resource
+	 *
+	 * @param int $id A corresponding model PK
+	 * @return mixed the resource or false
+	 */
+	public function isValidResource($id) {
+		// Silly
+		if (empty($id)) return false;
+
+		// Get resource
+		$resource = $this->getQuery()->findPK($id);
+
+		return (is_object($resource) && ! empty($resource)) ? $resource : false;
+	}
+
+	/**
 	 * API for wraping propel object with propel collection
 	 *
 	 * @param mixed

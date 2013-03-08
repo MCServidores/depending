@@ -6,6 +6,7 @@
  * (c) depending.in 2013
  */
 
+use app\Parameter;
 use app\Model\ModelBase;
 use app\Model\ModelUser;
 
@@ -30,7 +31,9 @@ class ModelUserTest extends DependingInTestCase {
 
 		$user = new ModelUser();
 
-		$allUsers = $user->getAllUser();
+		$allUsers = $user->getAllUser(1,1,array(
+			array('column'=>'name','value'=>'%ummy'),
+		));
 
 		$this->assertTrue(count($allUsers) > 0);
 	}
@@ -39,31 +42,43 @@ class ModelUserTest extends DependingInTestCase {
 	 * Cek update user
 	 */
 	public function testCekUpdateUserModelUser() {
-		$auth = new ModelUser();
+		$user = new ModelUser();
 
-		$this->assertFalse($auth->updateUser(NULL, array()));
-		$this->assertFalse($auth->updateUser(010101010, array()));
+		$this->assertFalse($user->updateUser(NULL, array()));
+		$this->assertFalse($user->updateUser(010101010, array()));
 
 		// Valid update
 		$this->createDummyUser();
 		$dummyUser = ModelBase::ormFactory('UsersQuery')->findOneByName('dummy');
 
-		$this->assertInstanceOf('\app\Parameter',$auth->updateUser($dummyUser->getUid(), array('name' => 'Not Dummy Anymore')));
+		$this->assertInstanceOf('\app\Parameter',$user->updateUser($dummyUser->getUid(), array('name' => 'Not Dummy Anymore')));
 	}
 
 	/**
 	 * Cek update user custom data
 	 */
 	public function testCekUpdateUserCustomModelUser() {
-		$auth = new ModelUser();
+		$user = new ModelUser();
 
-		$this->assertFalse($auth->updateUserData(NULL, array()));
-		$this->assertFalse($auth->updateUserData(010101010, array()));
+		$this->assertFalse($user->updateUserData(NULL, array()));
+		$this->assertFalse($user->updateUserData(010101010, array()));
 
 		// Valid update
 		$this->createDummyUser();
 		$dummyUser = ModelBase::ormFactory('UsersQuery')->findOneByName('dummy');
 
-		$this->assertInstanceOf('\app\Parameter',$auth->updateUserData($dummyUser->getUid(), array('realname' => 'Dummy User')));
+		$this->assertInstanceOf('\app\Parameter',$user->updateUserData($dummyUser->getUid(), array('realname' => 'Dummy User')));
+	}
+
+	/**
+	 * Cek Build tabs
+	 */
+	public function testCekBuildTabsModelUser() {
+		$user = new ModelUser();
+
+		$projectTab = NULL;
+		$packageTab = 'Something about his package';
+
+		$this->assertCount(2, $user->buildTabs($projectTab,$packageTab));
 	}
 }
