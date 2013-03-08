@@ -27,6 +27,7 @@ use \ConfigurationException;
  */
 class ControllerBase {
 
+	const PRODUCTION = 'depending.in';
 	const BEFORE_ACTION = 'beforeAction';
 	protected $request;
 	protected $session;
@@ -255,11 +256,15 @@ class ControllerBase {
 
 		if (empty($e) || ! $e instanceof FlattenException) $e = new FlattenException();
 
+		if ($this->request->server->get('HTTP_HOST') == self::PRODUCTION) {
+			$e->setMessage('<strong>Sorry for this, but it seems that you\'re hit us with invalid request.</strong><br/>No? This is some sort of unknown bug?<br/>Then, fork <a href="https://github.com/toopay/depending">this open-source project</a> and help us to fix this.');
+		}
+
 		$this->layout = 'modules/error/general.tpl';
 		$data = ModelBase::factory('Template')->getDefaultData();
 
 		// Additional setter
-		$this->data->set('title', 'Oops');
+		$this->data->set('title', 'Y U not working!');
 		$this->data->set('content', $e);
 
 		return $this->render($data);
