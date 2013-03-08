@@ -41,7 +41,9 @@ class ControllerBaseTest extends DependingInTestCase {
 	 * Cek konsistensi controller base instance
 	 */
 	public function testCekKonsistensiAppControllerBase() {
+		$_POST['query'] = 'foo';
 		$request = Request::create('/home/index');
+		$request->server->set('SCRIPT_URL', '/home/index');
 		$controllerBase = new ControllerBase($request);
 
 		$this->assertInstanceOf('\app\Controller\ControllerBase', $controllerBase);
@@ -56,6 +58,7 @@ class ControllerBaseTest extends DependingInTestCase {
 		$this->assertInstanceOf('\app\Acl', $controllerBase->getAcl());
 
 		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $controllerBase->handleException());
+		unset($_POST['query']);
 	}
 
 	/**
@@ -124,6 +127,37 @@ class ControllerBaseTest extends DependingInTestCase {
 		// Cek data 
 		$this->assertEquals('error', $controllerBase->getData()->get('alertType'));
 		$this->assertTrue(strpos($controllerBase->getData()->get('alertMessage'),'Some warning...') !== false);
+
+		// Set new alert for current request
+		$controllerBase->setAlert('info', 'Some infos...');
+
+		// Cek data 
+		$this->assertEquals('info', $controllerBase->getData()->get('alertType'));
+		$this->assertTrue(strpos($controllerBase->getData()->get('alertMessage'),'Some infos...') !== false);
+	}
+
+	/**
+	 * Cek Set login
+	 */
+	public function testCekSetLoginAppControllerBase() {
+		$validUser = $this->createDummyUser();
+		$request = Request::create('/home/index');
+		$controllerBase = new ControllerBase($request);
+		$controllerBase->setLogin($validUser->getUid());
+
+		$this->assertTrue($controllerBase->getSession()->get('login'));
+	}
+
+	/**
+	 * Cek not modified
+	 */
+	public function testCekNotModifiedAppControllerBase() {
+		$request = Request::create('/home/index');
+		$controllerBase = new ControllerBase($request);
+		$response = $controllerBase->notModified();
+
+		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
+		$this->assertEquals(304, $response->getStatusCode());
 	}
 
 	/**

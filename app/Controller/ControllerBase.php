@@ -159,8 +159,9 @@ class ControllerBase {
 		if (empty($currentUrl)) $currentUrl = $this->request->server->get('SCRIPT_URL');
 
 		if ( ! empty($currentUrl)) {
-			$queryUrl = $_GET;
-			
+			// Initialize
+			$queryUrl = array();
+
 			// Exceptions for this keys
 			$postToGetKeys = array('query');
 			$flashedKeys = array('page', $currentUrl);
@@ -187,7 +188,8 @@ class ControllerBase {
 			$this->data->set('currentQueryUrl', $currentQueryUrl);
 		}
 
-		// Set for MENU
+		// Set for MENU 
+		// @codeCoverageIgnoreStart
 		switch($this->request->get('class')) {
 			case 'app\Controller\ControllerHome':
 				$this->data->set('menuHomeActive','active');
@@ -197,6 +199,7 @@ class ControllerBase {
 				$this->data->set('menuProjectActive','active');
 				break;
 		}
+		// @codeCoverageIgnoreEnd
 
 		// Check for flash message
 		if ($this->session->get('alert')) {
@@ -256,9 +259,11 @@ class ControllerBase {
 
 		if (empty($e) || ! $e instanceof FlattenException) $e = new FlattenException();
 
+		// @codeCoverageIgnoreStart
 		if ($this->request->server->get('HTTP_HOST') == self::PRODUCTION) {
 			$e->setMessage('<strong>Sorry for this, but it seems that you\'re hit us with invalid request.</strong><br/>No? This is some sort of unknown bug?<br/>Then, fork <a href="https://github.com/toopay/depending">this open-source project</a> and help us to fix this.');
 		}
+		// @codeCoverageIgnoreEnd
 
 		$this->layout = 'modules/error/general.tpl';
 		$data = ModelBase::factory('Template')->getDefaultData();
@@ -321,7 +326,6 @@ class ControllerBase {
 	 * Login setter
 	 *
 	 * @param $id User ID
-	 * @codeCoverageIgnore
 	 */
 	public function setLogin($id) {
 		// Catat waktu login
@@ -350,7 +354,6 @@ class ControllerBase {
 	 */
 	public function setAlert($type = NULL, $message = NULL, $timeout = 0, $next = false) {
 		// Prepare message alert
-		// @codeCoverageIgnoreStart
 		switch ($type) {
 			case 'confirmation':
 				$type = 'info';
@@ -365,7 +368,6 @@ class ControllerBase {
 				$alertMessage = ModelBase::factory('Template')->render('blocks/alert/general.tpl', compact('message'));
 				break;
 		}
-		// @codeCoverageIgnoreEnd
 
 		// Build alert element
 		$alert = array(
@@ -392,6 +394,7 @@ class ControllerBase {
 	 * @param int Could specify the log to be build
 	 * @param bool Whether to output directly or use the buffer to blocks any output
 	 * @return mixed Could be Response intance or Boolean
+	 * @codeCoverageIgnore
 	 */
 	public function doWork($returnResponse = false, $logId = 0, $silent = false) {
 
@@ -425,7 +428,6 @@ class ControllerBase {
 	 * Not modified response
 	 *
 	 * @return Response
-	 * @codeCoverageIgnore
 	 */
 	public function notModified() {
 		return Response::create()->setNotModified();
