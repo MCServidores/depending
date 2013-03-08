@@ -170,7 +170,6 @@ class ControllerAsset extends ControllerBase
 		// @codeCoverageIgnoreStart
 		// Check for request parameters
 		if($this->request->server->get('HTTP_IF_MODIFIED_SINCE') || $this->request->server->get('HTTP_IF_NONE_MATCH')) {
-			die('yay');
 			$reqLastModified = $this->request->server->get('HTTP_IF_MODIFIED_SINCE');
 			$reqEtag = $this->request->server->get('HTTP_IF_NONE_MATCH');
 
