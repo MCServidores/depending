@@ -250,8 +250,7 @@ class ModelLog extends ModelBase
 	 * @return string The generated html content
 	 */
 	public function buildReport($id) {
-		$logId = 10;
-		$log = $this->getQuery()->findPK($logId);
+		$log = $this->getQuery()->findPK($id);
 
 		if ( ! empty($log)) {
 			// Determine the status
