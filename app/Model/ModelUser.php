@@ -225,7 +225,7 @@ class ModelUser extends ModelBase
 		// @codeCoverageIgnoreStart
 		foreach ($reposCopy as $key => $repo) {
 			// Unset the un-related project
-			if ($repo->getIsPackage() == 0) unset($reposCopy[$key]);
+			if ($repo->getStatus() == 0 || $repo->getIsPackage() == 0) unset($reposCopy[$key]);
 		}
 
 		if ( count($reposCopy) > 0) {

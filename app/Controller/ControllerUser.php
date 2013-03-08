@@ -39,7 +39,7 @@ class ControllerUser extends ControllerBase
 		// Check one or other mandatory fields
 		// @codeCoverageIgnoreStart
 		if ( empty($item) || ! $item->get('Mail') || ! $item->get('Name')) {
-			throw new \LogicException('Maaf, ada yang salah dengan user_'.$this->request->get('id'));
+			throw new \LogicException('Something wrong with user_'.$this->request->get('id'));
 		}
 		// @codeCoverageIgnoreEnd
 
