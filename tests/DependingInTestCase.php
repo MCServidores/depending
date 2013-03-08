@@ -6,6 +6,8 @@
  * (c) depending.in 2013
  */
 
+require 'Mocks'.DIRECTORY_SEPARATOR.'ModelFoo.php';
+
 use app\Model\ModelBase;
 
 abstract class DependingInTestCase extends PHPUnit_Framework_TestCase {

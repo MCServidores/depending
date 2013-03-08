@@ -42,36 +42,35 @@ class Acl implements AclInterface
 	/**
 	 * isAllowed
 	 *
-	 * API utama untuk ACL
+	 * Main API for ACL
 	 *
-	 * API ini akan membaca anotasi yang berkaitan dengan resource
-	 * yang akan diakses, untuk kemudian melakukan pengecekan terhadap
-	 * status/role user dan menentukan apa yang boleh dan tidak boleh
+	 * this method will read related resource annotation (defined in its controller) 
+	 * that accessed, and determine the user's role and his permission
 	 *
-	 * @param string Resource action  : article,forum,gallery,etc
 	 * @param string Permission Type : read,write,delete (default to write, for security)
 	 * @param int Resource id
-	 * @param string Resource Jika tidak dipass, maka akan diambil dari request
+	 * @param string Resource action  : article,forum,gallery,etc
+	 * @param string Resource 
 	 * @return bool 
 	 */
 	public function isAllowed($permission = self::WRITE, $id = NULL, $action = '', $resource = NULL) {
 		$granted = false;
 
-		// Validasi resource
+		// Resource validation
 		$resource = (empty($resource) || ! class_exists($resource)) ? $this->getCurrentResource() : $resource;
 
-		// Validasi action
+		// Action validation
 		$action = (empty($action)) ? $action = $this->getCurrentAction() : $action;
 
-		// Dapatkan driver
+		// Get the driver
 		$resourceReflection = new \ReflectionClass($resource);
 		$driver = $this->reader->getClassAnnotation($resourceReflection, self::ANNOTATION);
 
 		if ( ! empty($driver) && $driver instanceof AclDriverInterface && $driver->inRange($action)) {
-			// Action ada dalam range, ambil config
+			// Action is within valid range, get the config
 			$config = $driver->getConfig($action);
 
-			// Lihat permission
+			// See the permission
 			$granted = $driver->grantPermission($permission, $config, $this->getCurrentRole());
 		}
 
@@ -79,7 +78,7 @@ class Acl implements AclInterface
 	}
 
 	/**
-	 * Mengambil role user dalam request saat ini
+	 * Get current user role
 	 *
 	 * @return string User Role
 	 */
@@ -93,7 +92,7 @@ class Acl implements AclInterface
 	}
 
 	/**
-	 * Mengambil nama resource dalam request saat ini
+	 * Get the accessed resource from request
 	 *
 	 * @return string Controller Class
 	 */
@@ -102,7 +101,7 @@ class Acl implements AclInterface
 	}
 
 	/**
-	 * Mengambil nama action dalam request saat ini
+	 * Get the action within request instance
 	 *
 	 * @return string Controller Action
 	 */
@@ -117,9 +116,7 @@ class Acl implements AclInterface
 	 * @return bool
 	 */
 	public function isMe($uid) {
-		if ( ! $this->isLogin()) return false;
-
-		return $this->session->get('userId',0) == $uid;
+		return $this->isLogin() && $this->session->get('userId',0) == $uid;
 	}
 
 	/**
@@ -132,20 +129,23 @@ class Acl implements AclInterface
 	public function isOwner($class,$action) {
 		$isOwner = false;
 		$modelClass = str_replace('Controller', 'Model', $class);
-		$model = new $modelClass();
 
-		if (is_callable(array($model,'isOwner'))) {
-			$isOwner = call_user_func_array(array($model,'isOwner'), 
-			                                array($this->request->get('id',0),$this->session->get('userId',0)));
+		if (class_exists($modelClass)) {
+			$model = new $modelClass();
+
+			if (is_callable(array($model,'isOwner'))) {
+				$isOwner = call_user_func_array(array($model,'isOwner'), 
+				                                array($this->request->get('id',0),$this->session->get('userId',0)));
+			}
 		}
 
-		return $isOwner;
+		return !empty($isOwner);
 	}
 
 	/**
 	 * isLogin
 	 *
-	 * Mengecek apakah user sedang login
+	 * Check the request session to determine user login state
 	 */
 	public function isLogin() {
 		return (empty($this->session)) ? false : $this->session->get('login', false);
@@ -154,7 +154,7 @@ class Acl implements AclInterface
 	/**
 	 * isContainGithubData
 	 *
-	 * Mengecek apakah user sedang login dengan Github
+	 * Check the request session and see whether it contain github data or not
 	 */
 	public function isContainGithubData() {
 		return (empty($this->session)) ? false : is_array($this->session->get('githubData'));

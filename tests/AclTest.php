@@ -14,7 +14,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Symfony\Component\HttpFoundation\Request;
 
 class AclTest extends DependingInTestCase {
-
+	protected $needDatabase=true;
 	protected $reader, $request;
 
 	/**
@@ -24,7 +24,7 @@ class AclTest extends DependingInTestCase {
 
 		$session = new Session();
 		$this->reader = new Reader();
-		$this->request = Request::create('/community/article');
+		$this->request = Request::create('/repo/detail/1');
 		$this->request->setSession($session);
 
 		// Setting Doctrine Component
@@ -67,5 +67,51 @@ class AclTest extends DependingInTestCase {
 		$this->assertObjectHasAttribute('reader',$acl);
 
 		$this->assertTrue($acl->isAllowed(Acl::READ, NULL, 'profile', 'app\Controller\ControllerUser'));
+	}
+
+	/**
+	 * Cek current Role
+	 */
+	public function testCekCurrentRoleAppAcl() {
+		// Non login user
+		$acl = new Acl($this->request,$this->reader);
+		
+		$this->assertEquals('guest', $acl->getCurrentRole());
+
+		// Login user
+		$request = clone $this->request;
+		$request->getSession()->set('login',true);
+		$request->getSession()->set('role','member');
+		$acl = new Acl($request,$this->reader);
+
+		$this->assertEquals('member', $acl->getCurrentRole());
+	}
+
+	/**
+	 * Cek is ME
+	 */
+	public function testCekIsMeAppAcl() {
+		$acl = new Acl($this->request,$this->reader);
+		
+		$this->assertFalse($acl->isMe(999));
+	}
+
+	/**
+	 * Cek is Owner
+	 */
+	public function testCekIsOwnerAppAcl() {
+		$acl = new Acl($this->request,$this->reader);
+		
+		$this->assertFalse($acl->isOwner('app\Controller\ControllerRepo','detail'));
+
+		// Check valid owner
+		$request = clone $this->request;
+		$request->getSession()->set('login',true);
+		$request->getSession()->set('role','member');
+		$request->getSession()->set('userId',1);
+		$request->attributes->set('id',1);
+		$acl = new Acl($request,$this->reader);
+		
+		$this->assertTrue($acl->isOwner('ControllerFoo','detail'));
 	}
 }
