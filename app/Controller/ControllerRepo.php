@@ -143,30 +143,65 @@ class ControllerRepo extends ControllerBase
 
 		// Get latest repo's logs
 		$repoLogs = $this->repo->getLogss();
-		
-		if ( ! empty($repoLogs)) {
-			$lastLog = end($repoLogs);
-			reset($repoLogs);
 
-			$repoLogsArray = $repoLogs->getData();
-			krsort($repoLogsArray);
-			
-			$repoLogs = current(array_chunk(array_values($repoLogsArray),5));
+		if ($this->data->get('isAllowed')) {
+			if ( ! empty($repoLogs)) {
+				$lastLog = end($repoLogs);
+				reset($repoLogs);
+
+				$repoLogsArray = $repoLogs->getData();
+				krsort($repoLogsArray);
+				
+				$repoLogs = current(array_chunk(array_values($repoLogsArray),5));
+			}
+
+			// Get the composer
+			$composer = ModelBase::factory('Worker')->getComposer($this->repo);
+
+			// Build tab and deps tab initialization
+			$buildTab = ModelBase::factory('Repo')->buildBuildTab($repoLogs, $this->data);
+			$depsTab = ModelBase::factory('Repo')->buildDepsTab($composer, $this->data);
+
+			// Finalisasi tabs
+			$tabs = ModelBase::factory('Repo')->buildTabs($repo->get('rid'),$buildTab,$depsTab);
+		} else {
+			// Empty id
+			$id = 0;
+
+			if ( ! empty($repoLogs)) {
+				$repoLogsArray = $repoLogs->getData();
+				krsort($repoLogsArray);
+				$lastLog = current($repoLogsArray);
+				reset($repoLogsArray);
+
+				$id = $lastLog->getId();
+			}
+
+
+			$buildHtml = '<div class="bin">';
+
+			// Validate the log
+			$log = ModelBase::factory('Log')->getLog($id);
+
+			if ( ! empty($log)) {
+				// Trigger the build, if the user login and the log is not executed
+				if ($this->acl->isLogin() && $log->get('Status') == 0) {
+					$success = $this->doWork(false, $id, true);
+				}
+
+				$buildHtml .= ModelBase::factory('Template')->getBuildData($id);
+
+				// Get the latest log
+				$log = ModelBase::factory('Log')->getLog($id);
+
+			}
+
+			$buildHtml .= '</div>';
 		}
-
-		// Get the composer
-		$composer = ModelBase::factory('Worker')->getComposer($this->repo);
-
-		// Build tab and deps tab initialization
-		$buildTab = ModelBase::factory('Repo')->buildBuildTab($repoLogs, $this->data);
-		$depsTab = ModelBase::factory('Repo')->buildDepsTab($composer, $this->data);
-
-		// Finalisasi tabs
-		$tabs = ModelBase::factory('Repo')->buildTabs($repo->get('rid'),$buildTab,$depsTab);
 
 		// Template configuration
 		$this->layout = 'modules/repo/index.tpl';
-		$data = ModelBase::factory('Template')->getRepoData(compact('repo','owner','title','lastLog','tabs', 'tabOption','isAllowed'));
+		$data = ModelBase::factory('Template')->getRepoData(compact('repo','owner','title','lastLog','tabs', 'tabOption','isAllowed','buildHtml'));
 
 		// Render
 		return $this->render($data);

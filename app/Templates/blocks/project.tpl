@@ -15,5 +15,9 @@
 	</ul>
 	<hr/>
 	{% include "blocks/tab.tpl" %}
-	<div id="log-details"></div>
+	<div id="log-details">
+	{% if buildHtml is not empty %}
+	{{ buildHtml|raw }}
+	{% endif %}
+	</div>
 </div>
