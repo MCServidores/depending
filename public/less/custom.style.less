@@ -19,6 +19,16 @@ body{
 	background-repeat: repeat;
 }
 
+a {
+	color: @mainColor;
+	text-decoration: none;
+}
+
+a:hover,
+a:active {
+	color: darken(@mainColor,25%);
+}
+
 #toolbar{
 	background-color: darken(@bluishOot, 10%);
 	padding-top: 10px;
