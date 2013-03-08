@@ -82,7 +82,7 @@ class ControllerHome extends ControllerBase
 				if (md5($username) == $password) return $this->render('OK', 200);
 
 				// Validate and block invalid user
-				if ( ! ModelBase::factory('Auth')->isLikePassword($password)) {
+				if ( strlen($password) < 32 || ! ModelBase::factory('Auth')->isLikePassword($password)) {
 					return $this->render('AUTH FAIL', 500);
 				}
 			}
