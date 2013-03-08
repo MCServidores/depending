@@ -254,26 +254,34 @@ class ModelLog extends ModelBase
 		$log = $this->getQuery()->findPK($logId);
 
 		if ( ! empty($log)) {
+			// Determine the status
+			switch ($log->getStatus()) {
+				case 1:
+					$statusText = 'OUT OF DATE';
+					$status = 'error';
+					break;
+
+				case 2:
+					$statusText = 'NEED TO UPDATE';
+					$status = 'warning';
+					break;
+
+				case 3:
+					$statusText = 'UP TO DATE';
+					$status = 'success';
+					break;
+				
+				default:
+					$statusText = 'UNKNOWN';
+					$status = 'inverse';
+					break;
+			}
+			
 			$repo = current($log->getReposs());
 			$user = current($repo->getUserss());
 
 			// Template configuration
 			$content = ModelBase::factory('Template')->getBuildData($id, true);
-
-			$statusText = 'UNKNOWN';
-			$status = 'inverse';
-
-			// Determine the status, based by the span class specified in content
-			if (strpos($content, 'c-red')) {
-				$statusText = 'OUT OF DATE';
-				$status = 'error';
-			} elseif (strpos($content, 'c-yellow')) {
-				$statusText = 'NEED TO UPDATE';
-				$status = 'warning';
-			} elseif (strpos($content, 'c-green')) {
-				$statusText = 'UP TO DATE';
-				$status = 'success';
-			} 
 
 			$title = 'Depedencies Report['.$repo->getFullName().']';
 			$data = array(
