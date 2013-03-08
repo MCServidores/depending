@@ -178,7 +178,7 @@ class ModelTemplate extends ModelBase
 
 
                 // Set the clock
-                $clock = date('H:i l M, Y',$log->get('Executed'));
+                $clock = date('H:i l d M, Y',$log->get('Executed'));
             }
 
         }
