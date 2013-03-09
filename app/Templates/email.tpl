@@ -29,7 +29,7 @@
                     <p>http://depending.in{{link}}<p>
                     {% endif %}
                     <hr/>
-                    <p><small>You receive this message because you are registered on <strong>depending.in</strong> and agree with our TOS. To stop receiving this email, contact admin@depending.in.</small><p>
+                    <p><small>You receive this message because you are registered on <strong>depending.in</strong>.</small><p>
                     </div>
                 </div>
             </div>

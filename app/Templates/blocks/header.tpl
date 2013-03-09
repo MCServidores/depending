@@ -6,7 +6,13 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="brand brand-text" href="/"><b class="logo-main">D</b>epending</a>
+      <a class="brand brand-text" href="/"><b class="logo-main">D</b>epending
+      <span style="font-size:14px;">
+      <i class="icon-circle c-green"></i>
+      <i class="icon-circle c-yellow"></i>
+      <i class="icon-circle c-red"></i>
+      </span>
+      </a>
       <div class="nav-collapse collapse">
       	<div class="pull-right">
         {% if acl.isLogin == true %}
