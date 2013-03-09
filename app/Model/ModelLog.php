@@ -254,7 +254,10 @@ class ModelLog extends ModelBase
 
 		if ( ! empty($log)) {
 			// Determine the status
-			list($text,$status,$statusText) = ModelBase::factory('Template')->setLogStatusText($log->getStatus(), true);
+			$logInfo = new Parameter(ModelBase::factory('Template')->setLogStatusText($log->getStatus(), true));
+			$status = $logInfo->get('status','inverse');
+			$statusText = $logInfo->get('statusText','UNKNOWN');
+
 			
 			$repo = current($log->getReposs());
 			$user = current($repo->getUserss());
