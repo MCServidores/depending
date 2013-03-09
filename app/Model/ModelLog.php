@@ -265,7 +265,10 @@ class ModelLog extends ModelBase
 			// Template configuration
 			$content = ModelBase::factory('Template')->getBuildData($id, true);
 
-			$title = 'Depedencies Report['.$repo->getFullName().']';
+			$title = '['.$statusText.'] '.$repo->getFullName()
+			         .' ('.$log->getRef()
+			         .' - '.ModelBase::factory('Template')->setLimitHash($log->getAfter()).')';
+			         
 			$data = array(
 				'title' => 'Build Report',
 				'content' => $content,
