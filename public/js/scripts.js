@@ -15,11 +15,13 @@ $(function () {
 		$(this).tooltip('hide');
 	});
 
-	$('a.has-tip').hover(function(){
-		$(this).tooltip({
-			placement: 'right',
-			title: $(this).attr('data-original-title'),
-		});
+	$('i.has-tip,a.has-tip').tooltip({
+		placement: 'right',
+		title: $(this).attr('data-original-title'),
+	});
+
+	$('i.has-tip,a.has-tip').hover(function(){
+		$(this).tooltip('show');
 	},function(){
 		$(this).tooltip('hide');
 	});
