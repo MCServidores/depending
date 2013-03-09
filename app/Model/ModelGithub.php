@@ -59,26 +59,83 @@ class ModelGithub extends ModelBase
     }
 
     /**
+     * Generic repos API
+     *
+     * @param string User
+     * @param string Token
+     * @param bool organizations flag
+     * @return array
+     */
+    public function getGithubRepositories($user = '', $token = '', $isOrganization = false) {
+        $apiUrl = self::API_URL.($isOrganization ? 'orgs/'.$user.'/repos' : 'user/repos');
+        $response = $this->getData($apiUrl, array('access_token' => $this->accessToken));
+
+        if ($response->get('result') == false || strpos($response->get('body'),'full_name')===false) {
+            return array();
+        }
+
+        // Parsing the body
+        if (($repos = json_decode($response->get('body'))) && empty($repos)) {
+            return array();
+        }
+
+        $repos = (array) $repos;
+
+        return $repos;
+    }
+
+    /**
      * Get repository data
      */
     public function getRepositories() {
         if (empty($this->accessToken)) return false;
 
-        $response = $this->getData(self::API_URL.'user/repos', array('access_token' => $this->accessToken));
+        $orgsRepos = array();
+        $userRepos = $this->getGithubRepositories();
 
-        if ($response->get('result') == false || strpos($response->get('body'),'full_name')===false) {
-            return false;
+        // Try to get related organizations repo
+        $orgs = $this->getOrganizations();
+
+        if ( ! empty($orgs)) {
+            // Fetch all organizations repos
+            foreach ($orgs as $org) {
+                if (property_exists($org, 'login')) {
+                     $organizationRepos = $this->getGithubRepositories($org->login,$this->accessToken,true);
+
+                    if ( ! empty($organizationRepos)) {
+                        $orgsRepos = array_merge($orgsRepos,$organizationRepos);
+                    }
+                }
+            }
+        }
+
+        $reposData = new Parameter(array_merge($orgsRepos,$userRepos));
+
+        return $reposData;
+    }
+
+    /**
+     * Get related organizations
+     *
+     * @return Parameter
+     */
+    public function getOrganizations() {
+        if (empty($this->accessToken)) return array();
+
+        $response = $this->getData(self::API_URL.'user/orgs', array('access_token' => $this->accessToken));
+
+        if ($response->get('result') == false || strpos($response->get('body'),'login')===false) {
+            return array();
         }
 
         // Parsing the body
-        if (($repos = json_decode($response->get('body'))) && empty($repos)) {
-            return false;
+        if (($orgs = json_decode($response->get('body'))) && empty($orgs)) {
+            return array();
         }
 
-        $repos = (array) $repos;
-        $reposData = new Parameter($repos);
+        $orgs = (array) $orgs;
 
-        return $reposData;
+        return new Parameter($orgs);
     }
 
     /**
