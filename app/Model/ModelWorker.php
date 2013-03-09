@@ -155,7 +155,7 @@ class ModelWorker extends ModelBase
                 $status = 1;
                 $percentage = 0;
             } else {
-                $percentage = (int) floor(($outOfdatePackages/$totalPackages)*100);
+                $percentage = (int) floor((($totalPackages-$outOfdatePackages)/$totalPackages)*100);
 
                 if ($percentage >= 50) {
                     $status = 2;
