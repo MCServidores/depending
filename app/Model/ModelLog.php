@@ -254,27 +254,7 @@ class ModelLog extends ModelBase
 
 		if ( ! empty($log)) {
 			// Determine the status
-			switch ($log->getStatus()) {
-				case 1:
-					$statusText = 'OUT OF DATE';
-					$status = 'error';
-					break;
-
-				case 2:
-					$statusText = 'NEED TO UPDATE';
-					$status = 'warning';
-					break;
-
-				case 3:
-					$statusText = 'UP TO DATE';
-					$status = 'success';
-					break;
-				
-				default:
-					$statusText = 'UNKNOWN';
-					$status = 'inverse';
-					break;
-			}
+			list($text,$status,$statusText) = ModelBase::factory('Template')->setLogStatusText($log->getStatus(), true);
 			
 			$repo = current($log->getReposs());
 			$user = current($repo->getUserss());

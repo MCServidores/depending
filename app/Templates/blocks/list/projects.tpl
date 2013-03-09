@@ -12,8 +12,10 @@
 
 	<tr>
 		<td><i class="icon {{ repo.IsPackage|toIcon }}"></i> <a href="/{{ repo.FullName }}"  class="btn-link"><strong>{{ repo.FullName }}</strong></a></td>
-		<td class="span3">
-			<a href="/{{ repo.FullName }}"><img src="/{{ repo.FullName }}.png" /></a>
+		<td class="span2">
+			<i class="icon-circle{{ repo.Rid|isGreenStatus }}"></i>
+			<i class="icon-circle{{ repo.Rid|isYellowStatus }}"></i>
+			<i class="icon-circle{{ repo.Rid|isRedStatus }}"></i>
 		</td>
 	</tr>
 	{% endfor %}

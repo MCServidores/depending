@@ -54,6 +54,9 @@ class ModelTemplate extends ModelBase
             new Twig_SimpleFilter('toIcon', array(__CLASS__, 'setProjectIcon')),
             new Twig_SimpleFilter('toStatusIcon', array(__CLASS__, 'setLogStatusText')),
             new Twig_SimpleFilter('toVendorIcon', array(__CLASS__,'setVendorIcon')),
+            new Twig_SimpleFilter('isRedStatus', array(__CLASS__, 'isRepoOutOfDate')),
+            new Twig_SimpleFilter('isYellowStatus', array(__CLASS__, 'isRepoNeedUpdate')),
+            new Twig_SimpleFilter('isGreenStatus', array(__CLASS__,'isRepoUptodate')),
         );
 
         // Register filter
@@ -329,6 +332,30 @@ class ModelTemplate extends ModelBase
     }
 
     /**
+     * Custom Twig filter for determine repo state
+     */
+    public function isRepoOutOfDate($rid) {
+        $t = ModelBase::factory('Template');
+        return ($t->getRepoLatestLogStatus($rid) == 'outofdate') ? ' c-red' : '-blank';
+    }
+
+    /**
+     * Custom Twig filter for determine repo state
+     */
+    public function isRepoNeedUpdate($rid) {
+        $t = ModelBase::factory('Template');
+        return ($t->getRepoLatestLogStatus($rid) == 'needupdate') ? ' c-yellow' : '-blank';
+    }
+
+    /**
+     * Custom Twig filter for determine repo state
+     */
+    public function isRepoUptodate($rid) {
+        $t = ModelBase::factory('Template');
+        return ($t->getRepoLatestLogStatus($rid) == 'uptodate') ? ' c-green' : '-blank';
+    }
+
+    /**
      * Custom Twig filter for limiting hash length
      */
     public function setLimitHash($hash, $count = 0) {
@@ -355,27 +382,38 @@ class ModelTemplate extends ModelBase
 
     /**
      * Custom Twig filter for translating integer data into build status text [grey|red|yellow|green]
+     *
+     * @param int The log status
+     * @param bool Whether to return the full details or just the text
      */
-    public function setLogStatusText($status) {
-        switch ($status) {
+    public function setLogStatusText($logStatus,$asArray = false) {
+        switch ($logStatus) {
             case 1:
                 $text = 'red';
+                $statusText = 'OUT OF DATE';
+                $status = 'error';
                 break;
 
             case 2:
                 $text = 'yellow';
+                $statusText = 'NEED TO UPDATE';
+                $status = 'warning';
                 break;
 
             case 3:
                 $text = 'green';
+                $statusText = 'UP TO DATE';
+                $status = 'success';
                 break;
             
             default:
                 $text = 'grey';
+                $statusText = 'UNKNOWN';
+                $status = 'inverse';
                 break;
         }
 
-        return $text;
+        return ($asArray) ? compact('text','status','statusText') : $text;
     }
 
     /**
@@ -408,6 +446,22 @@ class ModelTemplate extends ModelBase
      */
     public function setVendorIcon($name) {
         return strtolower($name) == 'php' ? 'icon-cogs' : 'icon-inbox';
+    }
+
+    /**
+     * Get latest log repo status
+     * @param int
+     * @return string
+     */
+    protected function getRepoLatestLogStatus($rid) {
+        $repo = ModelBase::factory('Repo')->getQuery()->findPK($rid);
+        $repoCopy = clone $repo;
+
+        if (empty($repoCopy)) return 'unknown';
+
+        $latestStatus = ModelBase::factory('Repo')->getStatus($repoCopy);
+
+        return $latestStatus;
     }
 
     /**
