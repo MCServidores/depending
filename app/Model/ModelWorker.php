@@ -206,32 +206,16 @@ class ModelWorker extends ModelBase
 				
 
 				if ( ! empty($versions)) {
-					// Itterate and get the latest version and its diff
-					$diff = 0;
-					$rawVersion = $rawLatestVersion = $dep['version'];
-					$currentVersion = $this->normalizeVendorVersion($dep['version']);
-					$latestVersion = $currentVersion;
+					// Get the latest version and its diff
+					$versionDiff = 0;
+					$vendor = $dep['vendor'];
+					$rawVersion = $dep['version'];
+					$version = $this->normalizeVendorVersion($rawVersion);
+					list($rawLatestVersion,$latestVersion) = $this->getHighestVersion($versions);
 
-					foreach ($versions as $version) {
-						$nowVersion = $this->normalizeVendorVersion($version);
-						if ($diff = version_compare($currentVersion, $nowVersion)) {
-							if ($diff < 0) {
-								$rawLatestVersion = $version;
-								$latestVersion = $nowVersion;
-								$diff = -1;
-								break 1;
-							}
-						}
-					}
+					$versionDiff = version_compare($version, $latestVersion);
 
-					$depsDiff[] = array(
-						'vendor' => $dep['vendor'],
-						'rawVersion' => $rawVersion,
-						'rawLatestVersion' => $rawLatestVersion,
-						'version' => $currentVersion,
-						'latestVersion' => $latestVersion,
-						'versionDiff' => $diff,
-					);
+					$depsDiff[] = compact('vendor','rawVersion','rawLatestVersion','version','latestVersion','versionDiff');
 				}
 			}
 		}
@@ -410,6 +394,30 @@ class ModelWorker extends ModelBase
 	 */
 	public function getBufferContent() {
 		return $this->bufferContent;
+	}
+
+	/**
+	 * Get highest version from an array of versions
+	 *
+	 * @param array $versions
+	 * @return array raw latestVersion and normalized version
+	 */
+	public function getHighestVersion($versions = array()) {
+		$latestVersion = 'v0.0.0';
+		$rawLatestVersion = '0.0.0';
+
+		foreach ($versions as $version) {
+			$nowVersion = $this->normalizeVendorVersion($version);
+
+			if (version_compare($latestVersion, $nowVersion) >= 0) {
+				continue;
+			}
+
+			$latestVersion = $nowVersion;
+			$rawLatestVersion = $version;
+		}
+
+		return array($rawLatestVersion, $latestVersion);
 	}
 
 	/**
