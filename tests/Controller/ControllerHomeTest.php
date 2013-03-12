@@ -89,10 +89,11 @@ class ControllerHomeTest extends DependingInTestCase {
 	public function testCekActionAcceptAppControllerHome() {
 		$request = Request::create('/home/accept');
 		$controllerHome = new ControllerHome($request);
+		$response = $controllerHome->actionAccept();
 
-		$this->setExpectedException('InvalidArgumentException', 'Error Processing JSON Request. Possible cause : ');
-
-		$controllerHome->actionAccept();
+		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response',$response);
+		$this->assertEquals(500,$response->getStatusCode());
+		$this->assertEquals('TOKEN NOT FOUND',$response->getContent());
 	}
 
 	/**
