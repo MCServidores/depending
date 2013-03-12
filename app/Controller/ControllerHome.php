@@ -89,45 +89,44 @@ class ControllerHome extends ControllerBase
 					return $this->render('AUTH FAIL', 500);
 				}
 			}
-			// HOOK ORIGINAL PLACE
-		//} else {
-			//return $this->render('TOKEN NOT FOUND', 500);
-		}
-		
-		$payload = $this->request->getContent();
 
-		// Log the payload for further inspection if necessary
-		/* file_put_contents(CACHE_PATH.'/payload_'.time().'.log', $payload); */
+			$payload = $this->request->getContent();
 
-		// Wrap the payload
-		$payloadObject = json_decode($payload);
+			// Log the payload for further inspection if necessary
+			/* file_put_contents(CACHE_PATH.'/payload_'.time().'.log', $payload); */
 
-		// Out of control
-		if (empty($payloadObject)) {
-			$possibleCause = ModelBase::factory('Worker')->getLastJsonError();
+			// Wrap the payload
+			$payloadObject = json_decode($payload);
 
-			throw new \InvalidArgumentException('Error Processing JSON Request. Possible cause : '.$possibleCause);
-		}
+			// Out of control
+			if (empty($payloadObject)) {
+				$possibleCause = ModelBase::factory('Worker')->getLastJsonError();
 
-		$payloadParam = new Parameter((array) $payloadObject);
+				throw new \InvalidArgumentException('Error Processing JSON Request. Possible cause : '.$possibleCause);
+			}
 
-		// Findout the payload owner
-		$repo = $payloadParam->get('repository');
-		$repoName = $repo->url;
+			$payloadParam = new Parameter((array) $payloadObject);
 
-		if (preg_match('%^((https?://)|(www\.))([a-z0-9-].?)+(:[0-9]+)?(/.*)?$%i', $repoName, $matches) && count($matches) > 3) {
-			$protocol = $matches[1];
-			$repoName = str_replace($protocol.'github.com/', '', $repoName);
-		}
+			// Findout the payload owner
+			$repo = $payloadParam->get('repository');
+			$repoName = $repo->url;
 
-		$existsRepo = ModelBase::factory('Repo')->getQuery()->findOneByFullName($repoName);
+			if (preg_match('%^((https?://)|(www\.))([a-z0-9-].?)+(:[0-9]+)?(/.*)?$%i', $repoName, $matches) && count($matches) > 3) {
+				$protocol = $matches[1];
+				$repoName = str_replace($protocol.'github.com/', '', $repoName);
+			}
 
-		if ($existsRepo) {
-			ModelBase::factory('Log')->updateRepoLogs($existsRepo->getRid(), $payloadParam);
+			$existsRepo = ModelBase::factory('Repo')->getQuery()->findOneByFullName($repoName);
 
-			return $this->render('OK', 201);
+			if ($existsRepo) {
+				ModelBase::factory('Log')->updateRepoLogs($existsRepo->getRid(), $payloadParam);
+
+				return $this->render('OK', 201);
+			} else {
+				return $this->render('Requested repository could not be found', 404);
+			}
 		} else {
-			return $this->render('Requested repository could not be found', 404);
+			return $this->render('TOKEN NOT FOUND', 500);
 		}
 	}
 
