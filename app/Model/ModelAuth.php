@@ -249,6 +249,16 @@ class ModelAuth extends ModelBase
 	}
 
 	/**
+	 * Get service token
+	 *
+	 * @param Users
+	 * @return string
+	 */
+	public function getServiceToken(Parameter $user) {
+		return substr($user->get('Pass',md5('undefined')),-32);
+	}
+
+	/**
 	 * Buat user
 	 *
 	 * @param string $username

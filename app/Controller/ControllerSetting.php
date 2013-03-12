@@ -141,10 +141,12 @@ class ControllerSetting extends ControllerBase
 		if ($postData->get('repo')) {
 			$uid = $this->session->get('userId');
 			$accessToken = $this->getToken();
+			$user = ModelBase::factory('User')->getUser($uid);
 
 			// Enable repository hook
 			$hookSetup = ModelBase::factory('Github', new Parameter(array(
 				'githubToken' => $accessToken,
+				'serviceToken' => ModelBase::factory('Auth')->getServiceToken($user),
 				)))->setHookData($postData->get('repo'));
 
 			// Update the repo status data, if success

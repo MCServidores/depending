@@ -142,7 +142,7 @@ class ModelSetting extends ModelBase
                 'dataStatic' => array(
                     new Parameter(array(
                         'label' => 'Your token',
-                        'content' => substr($user->get('Pass'),-32))),
+                        'content' => ModelBase::factory('Auth')->getServiceToken($user))),
                     ),
         ));
 

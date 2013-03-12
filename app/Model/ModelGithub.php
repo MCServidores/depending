@@ -23,6 +23,7 @@ class ModelGithub extends ModelBase
     protected $clientId = '460190b3cf77dd2305ec';
     protected $clientSecret = '4c34311721e46c38c342420b5d101dd5670f16f6';
     protected $scope = 'user:email,public_repo';
+    protected $serviceToken = '';
     protected $accessToken = '';
     protected $redirectUrl = '';
 
@@ -30,6 +31,7 @@ class ModelGithub extends ModelBase
      * Constructor
      */
     public function __construct(Parameter $params) {
+        $this->serviceToken = $params->get('serviceToken');
         $this->accessToken = $params->get('githubToken');
         $this->redirectUrl = $params->get('redirectUrl');
     }
@@ -145,16 +147,17 @@ class ModelGithub extends ModelBase
      * @return bool
      */
     public function setHookData($repo) {
-        if (empty($this->accessToken)) return false;
+        if (empty($this->accessToken) || empty($this->serviceToken)) return false;
 
         $hook = array(
-            'name' => 'web',
+            'name' => 'depending',
             'active' => true,
             'events' => array('push','pull_request'),
             'config' => array(
-                'url' => 'http://depending.in/hook',
-                'content_type' => 'json',
-                'secret' => $this->clientSecret,
+                //'url' => 'http://depending.in/hook',
+                //'content_type' => 'json',
+                //'secret' => $this->clientSecret,
+                'token' => $this->serviceToken,
             )
         );
 
@@ -191,7 +194,7 @@ class ModelGithub extends ModelBase
         $hooks = (array) $hooks;
 
         foreach ($hooks as $hook) {
-            if ($hook->name == 'web' && strpos($hook->config->url, 'depending.in') !== false) {
+            if ($hook->name == 'depending') {
                 $success = new Parameter((array) $hook);
                 break;
             }
@@ -224,7 +227,7 @@ class ModelGithub extends ModelBase
         $hooks = (array) $hooks;
 
         foreach ($hooks as $hook) {
-            if ($hook->name == 'web' && strpos($hook->config->url, 'depending.in') !== false) {
+            if ($hook->name == 'depending') {
 
                 $deleteResponse = $this->removeData(self::API_URL.'repos/'.$repo.'/hooks/'.$hook->id.'?access_token='.$this->accessToken);
 
