@@ -90,7 +90,8 @@ class ControllerHome extends ControllerBase
 				}
 			}
 
-			$payload = $this->request->getContent();
+			$rawPayload = $this->request->getContent();
+			$payload = urldecode($rawPayload);
 
 			// Log the payload for further inspection if necessary
 			/* file_put_contents(CACHE_PATH.'/payload_'.time().'.log', $payload); */
