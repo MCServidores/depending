@@ -90,8 +90,14 @@ class ControllerHome extends ControllerBase
 				}
 			}
 
+			// Transform the payload into valid JSON object
 			$rawPayload = $this->request->getContent();
-			$payload = urldecode($rawPayload);
+			$payloadJson = urldecode($rawPayload);
+			if (strpos($payloadJson, 'payload=') !== false) {
+				$payload = str_replace('payload=', '', $payloadJson);
+			} else {
+				$payload = $payloadJson;
+			}
 
 			// Log the payload for further inspection if necessary
 			/* file_put_contents(CACHE_PATH.'/payload_'.time().'.log', $payload); */
