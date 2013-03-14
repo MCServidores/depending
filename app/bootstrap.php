@@ -17,7 +17,13 @@ defined('ASSET_PATH') OR define('ASSET_PATH', dirname(__DIR__) . DIRECTORY_SEPAR
 defined('CONFIG_PATH') OR define('CONFIG_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'conf');
 defined('CACHE_PATH') OR define('CACHE_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cache');
 
-require realpath(__DIR__ . '/../vendor/autoload.php');
+if (($defaultAutoload = realpath(__DIR__ . '/../vendor/autoload.php')) && is_file($defaultAutoload)) {
+	require $defaultAutoload;
+} elseif (($autoload = realpath(__DIR__ . '/../../frameworks/vendor/autoload.php')) && is_file($autoload)) {
+	require $autoload;
+} else {
+	die('Can not locate the vendor path');
+}
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
