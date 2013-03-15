@@ -37,7 +37,7 @@ Now we need to prepare **Propel ORM**. First, create a database named **dependin
 
 You could use provided template (build.properties.tpl, connection.xml.tpl, buildtime.xml.tpl) as a starting point.
 	
-	chmod -R 755 vendor/propel
+	chmod -R 777 vendor/propel
 
 Now we could run :
 
