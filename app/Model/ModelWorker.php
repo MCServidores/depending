@@ -467,7 +467,7 @@ class ModelWorker extends ModelBase
 		$version = str_replace('*', '999', $rawVersion);
 
 		// Handle operator
-		if (preg_match('/^([\>\<\=\!]+)([0-9\.]+)$/', $version, $m) && count($m) == 3) {
+		if (preg_match('/^([\~\>\<\=\!]+)([0-9\.]+)$/', $version, $m) && count($m) == 3) {
 			$operator = $m[1];
 			$version = $m[2]; 
 
@@ -493,7 +493,7 @@ class ModelWorker extends ModelBase
 			}
 
 			// Determine the closest possible value
-			if (strpos($operator, '>')!==false || strpos($operator, '!')!==false) {
+			if (strpos($operator, '>')!==false || strpos($operator, '!')!==false || strpos($operator, '~')!== false) {
 				// Increase the patch and minor version to the max
 				$version = $major.'.999.999';
 			} elseif (strpos($operator, '<') !== false) {
