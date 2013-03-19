@@ -164,7 +164,7 @@ class ModelTemplate extends ModelBase
                         $status = 'red';
                         $percentage = 0;
                     } else {
-                        $percentage = (int) floor(($outOfdatePackages/count($depsDiff))*100);
+                        $percentage = (int) floor(((count($depsDiff)-$outOfdatePackages)/count($depsDiff))*100);
 
                         if ($percentage >= 50) {
                             $status = 'yellow';
