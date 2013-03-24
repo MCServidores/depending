@@ -5,7 +5,7 @@
 
     "require": {
         "php": ">=5.3.2",
-        "doctrine/annotations": "v1.0",
+        "doctrine/annotations": "v1.1",
         "doctrine/cache": "v1.0",
         "symfony/http-kernel": "v2.1.7",
         "symfony/routing": "v2.1.7",
