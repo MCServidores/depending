@@ -168,7 +168,7 @@ class ControllerRepo extends ControllerBase
 			// Empty id
 			$id = 0;
 
-			if ( ! empty($repoLogs)) {
+			if ( ! empty($repoLogs) && count($repoLogs->getData()) > 0) {
 				$repoLogsArray = $repoLogs->getData();
 				krsort($repoLogsArray);
 				$lastLog = current($repoLogsArray);
