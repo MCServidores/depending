@@ -185,6 +185,7 @@ $(document).ready(function(){
 			enableHookToggle();
 		};
 		var errorHandler = function(data) {
+			console.log(data);
 			resultContainer.html('<div class="alert alert-error">Sorry, something goes really wrong. Please try again later.</div>');
 		};
 
