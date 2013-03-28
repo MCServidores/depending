@@ -187,19 +187,17 @@ class ModelWorker extends ModelBase
 					// Skip PHP, its not vendor!!!
 					if ($vendor == 'php') continue;
 
-					$response = ModelBase::factory('Github',new Parameter())->getData('https://packagist.org/feeds/package.'.$vendor.'.rss', array());
-					
-					if ($response->get('result') && in_array($response->get('head[http_code]',500,true),array(200,304)) && ($rss = $response->get('body')) && ! empty($rss)) {
-						$package = new \SimpleXMLElement($rss);
+					// Skip *dev*
+					if (stripos($currentVersion, 'dev') !== false) continue;
 
-						foreach ($package->channel->item as $item) {
-							$title = $item->title;
-							list($a,$b) = explode('(', $title);
-							list($versionCandidate,$c) = explode(')', $b);
+					$response = ModelBase::factory('Github',new Parameter())->getData('https://packagist.org/packages/'.$vendor.'.json', array());
 
-							if ( ! empty($versionCandidate)) {
-								$versions[] = $versionCandidate;
-							}
+					if ($response->get('result') && in_array($response->get('head[http_code]',500,true),array(200,304)) && ($json = $response->get('body')) && ! empty($json)) {
+						$package = new Parameter((array) json_decode($json));
+
+						foreach ($package->get('package')->versions as $versionKey => $versionData) {
+							if (stripos($versionKey, 'dev') !== false) continue;
+							$versions[] = $versionKey;
 						}
 					}
 				}
