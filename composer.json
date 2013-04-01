@@ -9,7 +9,7 @@
         "doctrine/cache": "v1.0",
         "symfony/http-kernel": "v2.*",
         "symfony/routing": "v2.*",
-        "propel/propel1": "1.6.8",
+        "propel/propel1": "1.6.*",
         "twig/twig": "v1.12.2",
         "kriswallsmith/assetic": "v1.1.0-alpha4",
         "toopay/assetic-minifier": "v1.0.0",
