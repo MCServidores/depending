@@ -70,8 +70,8 @@ class ModelWorker extends ModelBase
 		}
 
 		// Checkout the desired revision
-		if ( ! $this->checkOutTo($log->getAfter(), $repo)) {
-			throw new \RuntimeException('Cannot checkout to : '.$repo->getFullName().'/'.$log->getAfter());
+		if ( ! $this->checkOutTo($log->getRef(), $log->getAfter(), $repo)) {
+			throw new \RuntimeException('Cannot checkout to : '.$repo->getFullName().'/'.$log->getRef().'/'.$log->getAfter());
 		}
 		
 		// Now, inspect the composer if exists
@@ -362,8 +362,8 @@ class ModelWorker extends ModelBase
 	 * @param Repos the repo to be checked out
 	 * @return bool 
 	 */
-	public function checkOutTo($revision, Repos $repo) {
-		return $this->execute('cd '.$this->getClonePath($repo).';git checkout '.$revision);
+	public function checkOutTo($branch = 'master', $revision, Repos $repo) {
+		return $this->execute('cd '.$this->getClonePath($repo).';git checkout '.$branch.' '.$revision);
 	}
 
 	/**
