@@ -7,14 +7,14 @@
         "php": ">=5.3.2",
         "doctrine/annotations": "v1.1",
         "doctrine/cache": "v1.0",
-        "symfony/http-kernel": "v2.*",
-        "symfony/routing": "v2.*",
+        "symfony/http-kernel": "v2.2.*",
+        "symfony/routing": "v2.2.*",
         "propel/propel1": "1.6.*",
         "twig/twig": "v1.12.2",
         "kriswallsmith/assetic": "v1.1.0-alpha4",
         "toopay/assetic-minifier": "v1.0.0",
         "leafo/lessphp": "v0.3.*",
-        "phpunit/phpunit": "3.*",
+        "phpunit/phpunit": "3.7.*",
         "phpunit/phpunit-selenium": "1.2.12",
         "swiftmailer/swiftmailer": "v4.3.0"
     }
