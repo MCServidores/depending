@@ -6,6 +6,7 @@ php:
 
 before_script:
   - curl -sS https://getcomposer.org/installer | php
+  - php composer.phar -V
   - php composer.phar install
   - mysqladmin create depending
   - mv build.properties.tpl build.properties
