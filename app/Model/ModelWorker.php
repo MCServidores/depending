@@ -363,7 +363,15 @@ class ModelWorker extends ModelBase
 	 * @return bool 
 	 */
 	public function checkOutTo($branch = 'master', $revision, Repos $repo) {
-		return $this->execute('cd '.$this->getClonePath($repo).';git checkout '.$branch.' '.$revision);
+		$checkoutStatus = 1;
+
+		$checkoutStatus = $this->execute('cd '.$this->getClonePath($repo).';git checkout '.$revision);
+
+		if ($checkoutStatus > 0) {
+			$checkoutStatus = $this->execute('cd '.$this->getClonePath($repo).';git checkout '.$branch.' '.$revision);
+		}
+
+		return $checkoutStatus;
 	}
 
 	/**
