@@ -17,6 +17,6 @@
         "leafo/lessphp": "v0.3.9",
         "phpunit/phpunit": "3.7.19",
         "phpunit/phpunit-selenium": "1.2.12",
-        "swiftmailer/swiftmailer": "v4.3.0"
+        "swiftmailer/swiftmailer": "v4.3.1"
     }
 }
