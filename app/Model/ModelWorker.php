@@ -19,7 +19,9 @@ use app\Model\Orm\Repos;
  */
 class ModelWorker extends ModelBase 
 {
+	const SECURITY_VENDOR = 'https://security.sensiolabs.org/check_lock';
 	const COMPOSER = 'composer.json';
+	const LOCK = 'composer.lock';
 	private $silent = false;
 	private $bufferContent;
 
@@ -86,7 +88,7 @@ class ModelWorker extends ModelBase
 		}
 
 		// inspect the composer
-		$composer = new Parameter((array) $this->getComposer($repo));
+		$composer = new Parameter($this->getComposer($repo));
 
 		if (empty($composer)) {
 			throw new \RuntimeException('Error Processing Composer. '.$this->getLastJsonError());
@@ -97,6 +99,9 @@ class ModelWorker extends ModelBase
 		if (empty($depsStatus)) {
 			throw new \RuntimeException('Error occured when comparing dependencies versions.');
 		}
+
+		// inspect the lock
+		$advice = $this->getAdvice($repo);
 
 		if ($composer->get('name') || $composer->get('type')) {
 			// Set the repo flag as package
@@ -109,7 +114,8 @@ class ModelWorker extends ModelBase
 		// Set the task flag
 		$result->set('logStatus', $depsStatus->get('status'));
 		$result->set('logData', array('percentage' => $depsStatus->get('percentage'),
-		                              'depsDiff' => $depsStatus->get('depsDiff')->all()));
+		                              'depsDiff' => $depsStatus->get('depsDiff')->all(),
+		                              'advice' => $advice));
 		$result->set('logExecuted', time());
 
 		// We're done
@@ -193,7 +199,7 @@ class ModelWorker extends ModelBase
 					$response = ModelBase::factory('Github',new Parameter())->getData('https://packagist.org/packages/'.$vendor.'.json', array());
 
 					if ($response->get('result') && in_array($response->get('head[http_code]',500,true),array(200,304)) && ($json = $response->get('body')) && ! empty($json)) {
-						$package = new Parameter((array) json_decode($json));
+						$package = new Parameter(json_decode($json,true));
 
 						foreach ($package->get('package')->versions as $versionKey => $versionData) {
 							if (stripos($versionKey, 'dev') !== false) continue;
@@ -232,7 +238,7 @@ class ModelWorker extends ModelBase
 
 		if ( ! empty($composer) && $composer instanceof Parameter && ($requiredPackages = $composer->get('require')) && ! empty($requiredPackages)) {
 			// We get a valid composer
-			$requiredPackagesArray = (array) $requiredPackages;
+			$requiredPackagesArray = $requiredPackages;
 
 			// Extract the package and its version
 			$packagesArrays = array_chunk(array_keys($requiredPackagesArray),1);
@@ -246,6 +252,43 @@ class ModelWorker extends ModelBase
 		}
 
 		return $dependencies;
+	}
+
+	/**
+	 * Retrieve security advisories
+	 *
+	 * @param Repos $repo
+	 * @return array 
+	 */
+	public function getAdvice(Repos $repo) {
+		$advice = array();
+
+		if ($this->containsLock($repo)) {
+			$lock = '@'.$this->getClonePath($repo).DIRECTORY_SEPARATOR.self::LOCK;
+			$check = $this->postData(self::SECURITY_VENDOR,array(),array(
+				array(CURLOPT_HTTPHEADER => array('Accept: application/json')),
+				array(CURLOPT_POSTFIELDS => array('lock' => $lock))
+			));
+
+			if (($result = $check->get('result')) && !empty($result)) {
+				$advice = json_decode($result,true);
+			}
+		}
+
+		return $advice;
+	}
+
+	/**
+	 * Check if given repo has a composer.lock
+	 *
+	 * @param Repos the repo to be checked
+	 * @return bool 
+	 */
+	public function containsLock(Repos $repo) {
+		// Check if repo exists
+		if ( ! $this->isCloneExists($repo)) return false;
+
+		return is_file($this->getClonePath($repo).DIRECTORY_SEPARATOR.self::LOCK);
 	}
 
 	/**
@@ -275,7 +318,7 @@ class ModelWorker extends ModelBase
 		$composerJson = file_get_contents($this->getClonePath($repo).DIRECTORY_SEPARATOR.self::COMPOSER);
 
 		// We're done
-		return json_decode($composerJson);
+		return json_decode($composerJson, true);
 	}
 
 	/**
