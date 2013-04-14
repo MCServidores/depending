@@ -393,7 +393,7 @@ class ModelTemplate extends ModelBase
      * Custom Twig filter for limiting tweet length
      */
     public function setLimitTweet($tweet) {
-        return self::setLimitHash($tweet,85);
+        return ModelBase::factory('Template')->setLimitHash($tweet,85);
     }
 
     /**
