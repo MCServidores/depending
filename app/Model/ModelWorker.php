@@ -9,6 +9,7 @@
 namespace app\Model;
 
 use app\Parameter;
+use app\CacheManager;
 use app\Model\Orm\Logs;
 use app\Model\Orm\Repos;
 
@@ -19,7 +20,9 @@ use app\Model\Orm\Repos;
  */
 class ModelWorker extends ModelBase 
 {
+	const PROVIDER_VENDOR = 'https://packagist.org/packages/';
 	const SECURITY_VENDOR = 'https://security.sensiolabs.org/check_lock';
+	const PREFIX_VENDOR = 'response_packagist_';
 	const COMPOSER = 'composer.json';
 	const LOCK = 'composer.lock';
 	private $silent = false;
@@ -196,10 +199,10 @@ class ModelWorker extends ModelBase
 					// Skip *dev*
 					if (stripos($currentVersion, 'dev') !== false) continue;
 
-					$response = ModelBase::factory('Github',new Parameter())->getData('https://packagist.org/packages/'.$vendor.'.json', array());
+					$packageInformation = $this->getPackageInfo($vendor);
 
-					if ($response->get('result') && in_array($response->get('head[http_code]',500,true),array(200,304)) && ($json = $response->get('body')) && ! empty($json)) {
-						$package = new Parameter(json_decode($json,true));
+					if ( ! empty($packageInformation) && is_array($packageInformation)) {
+						$package = new Parameter($packageInformation);
 
 						foreach ($package->get('package[versions]',array(),true) as $versionKey => $versionData) {
 							if (stripos($versionKey, 'dev') !== false) continue;
@@ -252,6 +255,29 @@ class ModelWorker extends ModelBase
 		}
 
 		return $dependencies;
+	}
+
+	/**
+	 * Retrieve package information from Packagist
+	 *
+	 * @param string $vendor
+	 * @return array $information
+	 */
+	public function getPackageInfo($vendor = '') {
+		// Get responses and cache it!
+		$cacheManager = new CacheManager();
+		if ($cacheManager->has(self::PREFIX_VENDOR.$vendor)) {
+			$response = $cacheManager->get(self::PREFIX_VENDOR.$vendor);
+		} else {
+			$response = $this->getData(self::PROVIDER_VENDOR.$vendor.'.json', array());
+
+			// Only cache successful request
+			if ($response->get('result') && in_array($response->get('head[http_code]',500,true),array(200,304))) {
+				$cacheManager->set(self::PREFIX_VENDOR.$vendor,$response,3600);
+			}
+		}
+
+		return (($json = $response->get('body')) && ! empty($json)) ? json_decode($json,true) : array();
 	}
 
 	/**
