@@ -5,7 +5,14 @@
 		        <p class="credit"><br/>&copy; 2013 - depending.in</p>
 		    </div>
 		    <div class="span7">
-				<p><br/><i class="icon icon-twitter"></i> <a href="https://twitter.com/depending_in" target="_blank"><i>"{{ lastTweet|striptags|limitTweet }}"</i></a></p>
+				<!-- Last Tweet -->
+				<p><br/><i class="icon icon-twitter"></i> 
+				{% if lastTweet is not empty %}
+				<a href="https://twitter.com/depending_in" target="_blank"><i>"{{ lastTweet|striptags|limitTweet }}"</i></a>
+				{% else %}
+				...
+				{% endif %}
+				</p>
 			</div>
 	    	<div class="span1">
 				<!-- Tweet Button -->
