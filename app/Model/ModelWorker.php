@@ -201,7 +201,7 @@ class ModelWorker extends ModelBase
 					if ($response->get('result') && in_array($response->get('head[http_code]',500,true),array(200,304)) && ($json = $response->get('body')) && ! empty($json)) {
 						$package = new Parameter(json_decode($json,true));
 
-						foreach ($package->get('package')->versions as $versionKey => $versionData) {
+						foreach ($package->get('package[versions]',array(),true) as $versionKey => $versionData) {
 							if (stripos($versionKey, 'dev') !== false) continue;
 							$versions[] = $versionKey;
 						}
