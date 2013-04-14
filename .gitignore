@@ -1,5 +1,4 @@
 composer.phar
-composer.lock
 build.properties
 buildtime.xml
 connection.xml
