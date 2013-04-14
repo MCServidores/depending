@@ -25,6 +25,7 @@ class ModelBase
 	const ORM = 'Orm';
 	protected $inspector;
 	static $stream = false;
+	static $req = false;
 
 	/**
 	 * Constructor
@@ -144,19 +145,19 @@ class ModelBase
 	 * @return ModelCriteria filtered query instance
 	 */
 	public static function filterQuery(ModelCriteria $query, Parameter $filter) {
-	 	$column = $filter->get('column','Undefined');
+		$column = $filter->get('column','Undefined');
 
-	 	if (is_callable(array($query, 'filterBy'.ucfirst($column)), false, $filterBy)) {
-	 		// Add OR statement while necessary
-	 		if ($filter->get('chainOrStatement')) $query->_or();
-	 		
-	 		$query = call_user_func_array(array($query, $filterBy), array($filter->get('value','')));
+		if (is_callable(array($query, 'filterBy'.ucfirst($column)), false, $filterBy)) {
+			// Add OR statement while necessary
+			if ($filter->get('chainOrStatement')) $query->_or();
+			
+			$query = call_user_func_array(array($query, $filterBy), array($filter->get('value','')));
 		}
 
 		return $query;
 	 }
 
-	 /**
+	/**
 	  * Build pagination information based some query object
 	  *
 	  * @param array the query instance
@@ -166,79 +167,268 @@ class ModelBase
 	  * @param int total item per/page
 	  * @return Parameter contain all pagination information
 	  */
-	 public static function buildPagination($objectCollection = array(), $ormClassName, $filter = array(), $currentPage = 1, $perPage = 10) {
-	 	$result = new Parameter();
+	public static function buildPagination($objectCollection = array(), $ormClassName, $filter = array(), $currentPage = 1, $perPage = 10) {
+		$result = new Parameter();
 
-	 	// Get total entity
-	 	$query = self::ormFactory($ormClassName);
+		// Get total entity
+		$query = self::ormFactory($ormClassName);
 
-	 	// @codeCoverageIgnoreStart
-	 	if ( ! empty($filter)) {
-	 		foreach ($filter as $where) {
+		// @codeCoverageIgnoreStart
+		if ( ! empty($filter)) {
+			foreach ($filter as $where) {
 				if ( ! $where instanceof Parameter) {
 					$where = new Parameter($where);
 				}
 
-		 		$query = self::filterQuery($query, $where);
+				$query = self::filterQuery($query, $where);
 			}
-	 	}
-	 	
-	 	$totalCount = $query->count();
-	 	$currentCount = count($objectCollection);
+		}
+		
+		$totalCount = $query->count();
+		$currentCount = count($objectCollection);
 
-	 	$totalPage = (int) ceil($totalCount/$perPage);
-	 	$previousPage = ($currentPage == 1) ? $currentPage : $currentPage-1;
-	 	$nextPage = ($currentPage == $totalPage) ? $currentPage : $currentPage+1;
+		$totalPage = (int) ceil($totalCount/$perPage);
+		$previousPage = ($currentPage == 1) ? $currentPage : $currentPage-1;
+		$nextPage = ($currentPage == $totalPage) ? $currentPage : $currentPage+1;
 
-	 	// Building Page collection
-	 	$pages = array();
-	 	$maxPage = ($totalPage > 11) ? 11 : $totalPage;
-	 	$medianPage = (($totalPage/2) > 6) ? 6 : 0;
+		// Building Page collection
+		$pages = array();
+		$maxPage = ($totalPage > 11) ? 11 : $totalPage;
+		$medianPage = (($totalPage/2) > 6) ? 6 : 0;
 
-	 	for ($i=1; $i < ($maxPage+1); $i++) { 
-	 		if ($i == $medianPage) {
-		 		$page = new Parameter(array(
-		 			'number' => '...',
-		 			'class' => ' ',
-		 		));
-	 		} elseif ($i > $medianPage && $maxPage < $totalPage) {
-	 			$iRevert = (($totalPage-$medianPage)+$i)-floor($maxPage/2);
-	 			$page = new Parameter(array(
-		 			'number' => $iRevert,
-		 			'class' => ($iRevert == $currentPage) ? 'disabled' : ' ',
-		 		));
-	 		}else {
-	 			$page = new Parameter(array(
-		 			'number' => $i,
-		 			'class' => ($i == $currentPage) ? 'disabled' : ' ',
-		 		));
-	 		}
+		for ($i=1; $i < ($maxPage+1); $i++) { 
+			if ($i == $medianPage) {
+				$page = new Parameter(array(
+					'number' => '...',
+					'class' => ' ',
+				));
+			} elseif ($i > $medianPage && $maxPage < $totalPage) {
+				$iRevert = (($totalPage-$medianPage)+$i)-floor($maxPage/2);
+				$page = new Parameter(array(
+					'number' => $iRevert,
+					'class' => ($iRevert == $currentPage) ? 'disabled' : ' ',
+				));
+			}else {
+				$page = new Parameter(array(
+					'number' => $i,
+					'class' => ($i == $currentPage) ? 'disabled' : ' ',
+				));
+			}
 
-	 		$pages[] = $page;
-	 	}
-	 	// @codeCoverageIgnoreEnd
+			$pages[] = $page;
+		}
+		// @codeCoverageIgnoreEnd
 
-	 	$result->set('data', $objectCollection);
-	 	$result->set('pages', $pages);
-	 	$result->set('currentPage', $currentPage);
-	 	$result->set('previousPage', $previousPage);
-	 	$result->set('nextPage', $nextPage);
-	 	$result->set('totalPage', $totalPage);
-	 	$result->set('currentCount', $currentCount);
-	 	$result->set('totalCount', $totalCount);
-	 	$result->set('totalText', ' '.$totalCount.' ');
+		$result->set('data', $objectCollection);
+		$result->set('pages', $pages);
+		$result->set('currentPage', $currentPage);
+		$result->set('previousPage', $previousPage);
+		$result->set('nextPage', $nextPage);
+		$result->set('totalPage', $totalPage);
+		$result->set('currentCount', $currentCount);
+		$result->set('totalCount', $totalCount);
+		$result->set('totalText', ' '.$totalCount.' ');
 
-	 	return $result;
-	 }
+		return $result;
+	}
 
-	 /**
+	/**
+	 * POST an API JSON data
+	 *
+	 * @param string $url
+	 * @param array $data
+	 * @return Parameter
+	 * @throws RuntimeException
+	 */
+	public function postJsonData($url, $jsonData) {
+		 try {
+			// Start output buffer
+			ob_start();
+
+			//open connection
+			static::$req = curl_init();
+
+			$opt[] = array(
+				CURLOPT_URL => $url,
+				CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+				CURLOPT_RETURNTRANSFER => 1,
+				CURLOPT_FOLLOWLOCATION => TRUE,
+				CURLOPT_VERBOSE => TRUE,
+				CURLOPT_POSTFIELDS => $jsonData,
+				CURLOPT_POST => 1,
+			);
+
+			$this->setRequestOption($opt);
+
+			//Execute post
+			$result = $this->executeRequest();
+
+			//close connection
+			curl_close(static::$req);
+
+			// Capture the buffer and assign into content holder
+			$result->set('body',ob_get_clean());
+		} catch (\Exception $e) {
+			throw new \RuntimeException('cURL POST error');
+		}
+
+		return $result;
+	}
+
+	/**
+	 * POST an API data
+	 *
+	 * @param string $url
+	 * @param array $data
+	 * @param array $opt
+	 * @return Parameter
+	 * @throws RuntimeException
+	 */
+	public function postData($url, $data, $opt = array()) {
+		 try {
+			// Start output buffer
+			ob_start();
+
+			//open connection
+			static::$req = curl_init();
+
+			$opt[] = array(
+				CURLOPT_URL => $url,
+				CURLOPT_POSTFIELDS => http_build_query($data),
+				CURLOPT_RETURNTRANSFER => 1,
+			);
+
+			$this->setRequestOption($opt);
+
+			//Execute post
+			$result = $this->executeRequest();
+
+			//close connection
+			curl_close(static::$req);
+
+			// Capture the buffer and assign into content holder
+			$result->set('body', ob_get_clean());
+		} catch (\Exception $e) {
+			throw new \RuntimeException('cURL POST error');
+		}
+
+		return $result;
+	}
+
+	/**
+	 * GET an API data
+	 *
+	 * @param string $url
+	 * @param array $data
+	 * @param array $opt
+	 * @return Parameter
+	 * @throws Exception
+	 */
+	public function getData($url, $data, $opt = array()) {
+		$url .= '?'.http_build_query($data);
+
+		try {
+			// Start output buffer
+			ob_start();
+
+			//open connection
+			static::$req = curl_init();
+
+			$opt[] = array(
+				CURLOPT_URL => $url,
+			);
+
+			$this->setRequestOption($opt);
+
+			//Execute post
+			$result = $this->executeRequest();
+
+			//close connection
+			curl_close(static::$req);
+
+			// Capture the buffer and assign into content holder
+			$result->set('body',ob_get_clean());
+		} catch (\Exception $e) {
+			throw new \RuntimeException('cURL GET error');
+		}
+
+		return $result;
+	}
+
+	/**
+	 * DELETE an API data
+	 *
+	 * @param string $url
+	 * @param array $opt
+	 * @return int HTTP Code
+	 * @throws Exception
+	 */
+	public function removeData($url, $opt = array()) {
+		try {
+			// Start output buffer
+			ob_start();
+
+			//open connection
+			static::$req = curl_init();
+
+			$opt[] = array(
+				CURLOPT_URL => $url,
+				CURLOPT_CUSTOMREQUEST => "DELETE",
+			);
+
+			$this->setRequestOption($opt);
+
+			//Execute post
+			$result = $this->executeRequest();
+			$httpCode = curl_getinfo(static::$req, CURLINFO_HTTP_CODE);
+
+			//close connection
+			curl_close(static::$req);
+
+			$body = ob_get_clean();
+		} catch (\Exception $e) {
+			throw new \RuntimeException('cURL DELETE error');
+		}
+
+		return $httpCode;
+	}
+
+	/**
+	 * Set cURL options
+	 *
+	 * @param array $opt
+	 */
+	protected function setRequestOption($opt = array()) {
+		krsort($opt);
+		foreach (array_values($opt) as $singleOption) {
+			foreach ($singleOption as $option => $value) {
+				curl_setopt(static::$req, $option, $value);
+			}
+		}
+	}
+
+	/**
+	 * Execute cURL request
+	 *
+	 * @return Parameter
+	 */
+	protected function executeRequest() {
+		$result  = curl_exec(static::$req);
+		$err     = curl_errno(static::$req); 
+		$errmsg  = curl_error(static::$req) ;
+		$head    = curl_getinfo(static::$req);
+
+		return new Parameter(compact('result', 'err', 'errmsg', 'head'));
+	}
+
+	/**
 	  * Overide method for gracefully fail bad method
 	  *
 	  * @codeCoverageIgnore
 	  */
-	 public function __call($method, $arguments) {
-	 	if ( ! method_exists($this, $method) && $method !== self::SET_UP) {
-	 		throw new \BadMethodCallException(get_class($this) . ' did not contain '.$method);
-	 	}
-	 }
+	public function __call($method, $arguments) {
+		if ( ! method_exists($this, $method) && $method !== self::SET_UP) {
+			throw new \BadMethodCallException(get_class($this) . ' did not contain '.$method);
+		}
+	}
 }
