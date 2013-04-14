@@ -47,6 +47,7 @@ class ModelTemplate extends ModelBase
         // Filter declaration
         $filters = array(
             new Twig_SimpleFilter('limitHash', array(__CLASS__, 'setLimitHash')),
+            new Twig_SimpleFilter('limitTweet', array(__CLASS__, 'setLimitTweet')),
             new Twig_SimpleFilter('translateToLogText', array(__CLASS__, 'setLogText')),
             new Twig_SimpleFilter('translateToSuccessText', array(__CLASS__, 'setSuccessText')),
             new Twig_SimpleFilter('toPackagist', array(__CLASS__, 'setPackagistUrl')),
@@ -386,6 +387,13 @@ class ModelTemplate extends ModelBase
     public function isRepoUptodate($rid) {
         $t = ModelBase::factory('Template');
         return ($t->getRepoLatestLogStatus($rid) == 'uptodate') ? ' c-green' : '-blank';
+    }
+
+    /**
+     * Custom Twig filter for limiting tweet length
+     */
+    public function setLimitTweet($tweet) {
+        return ModelBase::factory('Template')->setLimitHash($tweet,85);
     }
 
     /**

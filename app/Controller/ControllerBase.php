@@ -498,23 +498,25 @@ class ControllerBase {
 	 * @codeCoverageIgnore
 	 */
 	private function checkTweet() {
-		$cm = new CacheManager();
+		if ( ! defined('STDIN')) {
+			$cm = new CacheManager();
 
-		if ( ! $cm->has('tweet')) {
-			$url = "https://api.twitter.com/1/statuses/user_timeline/depending_in.xml?count=1";
-			$xml = simplexml_load_file($url);
+			if ( ! $cm->has('tweet')) {
+				$url = "https://api.twitter.com/1/statuses/user_timeline/depending_in.xml?count=1";
+				$xml = simplexml_load_file($url);
 
-			if ($xml) {
-				foreach($xml->status as $status){
-					$tweet = (string) $status->text;
+				if ($xml) {
+					foreach($xml->status as $status){
+						$tweet = (string) $status->text;
+					}
+					
+					$cm->set('tweet',$tweet,600);
+				} else {
+					$cm->set('tweet', '...',5);
 				}
-				
-				$cm->set('tweet',$tweet,600);
-			} else {
-				$cm->set('tweet', '...',5);
 			}
-		}
 
-		$this->data->set('lastTweet', $cm->get('tweet'));
+			$this->data->set('lastTweet', $cm->get('tweet'));
+		}
 	}
 }
