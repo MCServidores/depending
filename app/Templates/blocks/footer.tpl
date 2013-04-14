@@ -5,7 +5,7 @@
 		        <p class="credit"><br/>&copy; 2013 - depending.in</p>
 		    </div>
 		    <div class="span7">
-				<p><br/><i class="icon icon-twitter"></i> <i>"{{ lastTweet|raw }}"</i></p>
+				<p><br/><i class="icon icon-twitter"></i> <a href="https://twitter.com/depending_in" target="_blank"><i>"{{ lastTweet|striptags|limitTweet }}"</i></a></p>
 			</div>
 	    	<div class="span1">
 				<!-- Tweet Button -->
