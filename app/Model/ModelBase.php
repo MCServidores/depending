@@ -295,7 +295,6 @@ class ModelBase
 			$opt[] = array(
 				CURLOPT_URL => $url,
 				CURLOPT_POSTFIELDS => http_build_query($data),
-				CURLOPT_RETURNTRANSFER => 1,
 			);
 
 			$this->setRequestOption($opt);

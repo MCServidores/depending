@@ -154,9 +154,11 @@ class ModelGithub extends ModelBase
             'active' => true,
             'events' => array('push','pull_request'),
             'config' => array(
+                /* THIS IS OLD WEB-HOOK CONFIGURATION
                 //'url' => 'http://depending.in/hook',
                 //'content_type' => 'json',
                 //'secret' => $this->clientSecret,
+                */
                 'token' => $this->serviceToken,
             )
         );

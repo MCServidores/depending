@@ -267,7 +267,8 @@ class ModelWorker extends ModelBase
 			$lock = '@'.$this->getClonePath($repo).DIRECTORY_SEPARATOR.self::LOCK;
 			$check = $this->postData(self::SECURITY_VENDOR,array(),array(
 				array(CURLOPT_HTTPHEADER => array('Accept: application/json')),
-				array(CURLOPT_POSTFIELDS => array('lock' => $lock))
+				array(CURLOPT_POSTFIELDS => array('lock' => $lock)),
+				array(CURLOPT_RETURNTRANSFER => 1),
 			));
 
 			if (($result = $check->get('result')) && !empty($result)) {
