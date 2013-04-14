@@ -132,7 +132,9 @@ class ModelTemplate extends ModelBase
 
             // Do we have executed log?
             if ($log->get('Status') > 0 && ($additionalData = $log->get('AdditionalData')) && ! empty($additionalData) && array_key_exists('depsDiff', $additionalData)) {
+                // Get depedencies data (and security advices if exists)
                 $depsDiff = $additionalData['depsDiff'];
+                $advice = isset($additionalData['advice']) ? $additionalData['advice'] : array();
 
                 // Build the vendor status
                 if ( ! empty($depsDiff)) {
@@ -177,6 +179,35 @@ class ModelTemplate extends ModelBase
                     $build->set('ResultStatus','<span class="b-'.$status.'">'.str_pad($percentage.'%',22,' ',STR_PAD_BOTH).'</span>');
 
                    
+                }
+
+                if ( ! empty($advice)) {
+                    // Build advisories data
+                    $advisories = '';
+
+                    foreach ($advice as $vendor => $data) {
+                        $adviceData = '';
+                        if (is_array($data) && array_key_exists('advisories', $data)) {
+                            foreach ($data['advisories'] as $adviceArray) {
+                                $adviceData .= "\n".' - ';
+                                if (isset($adviceArray['title'])) {
+                                    $adviceData .= $adviceArray['title'];
+                                }
+                                if (isset($adviceArray['link'])) {
+                                    $adviceData .= '('.$adviceArray['link'].')';
+                                }
+                                $adviceData .= "\n";
+                            }
+                            
+                        }
+
+                        $advisories .= $vendor.':'.$adviceData."\n";
+                    }
+
+                    $currentTitle = $build->get('Title');
+                    $build->set('Title', $currentTitle."\n"
+                                 .'Security advisories based by composer.lock'."\n"
+                                 .$advisories);
                 }
 
                 // Set the clock
