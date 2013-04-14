@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\Exception\FlattenException;
 use app\Acl;
 use app\Session;
 use app\Parameter;
+use app\CacheManager;
 use app\Model\ModelBase;
 use \Phing;
 use \ConfigurationException;
@@ -212,6 +213,9 @@ class ControllerBase {
 
 			$this->session->set('alert',NULL);
 		}
+
+		// Check for tweet
+		$this->checkTweet();
 	}
 
 	/**
@@ -488,4 +492,29 @@ class ControllerBase {
 		return new Response($content, $status, $headers);
 	}
 
+	/**
+	 * Check last tweet
+	 *
+	 * @codeCoverageIgnore
+	 */
+	private function checkTweet() {
+		$cm = new CacheManager();
+
+		if ( ! $cm->has('tweet')) {
+			$url = "https://api.twitter.com/1/statuses/user_timeline/depending_in.xml?count=1";
+			$xml = simplexml_load_file($url);
+
+			if ($xml) {
+				foreach($xml->status as $status){
+					$tweet = (string) $status->text;
+				}
+				
+				$cm->set('tweet',$tweet,600);
+			} else {
+				$cm->set('tweet', '...',5);
+			}
+		}
+
+		$this->data->set('lastTweet', $cm->get('tweet'));
+	}
 }
