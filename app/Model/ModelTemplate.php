@@ -127,7 +127,7 @@ class ModelTemplate extends ModelBase
             $build->set('Title', $buildQueuedStatus."\n"
                                  .'Based by composer.json'."\n"
                                  .'rev: '.$log->get('After')."\n"
-                                 .'msg: '.$log->get('CommitMessage')."\n"
+                                 .'msg: '.$this->setLimitHash($log->get('CommitMessage'),65)."\n"
                                  .'by : '.$log->get('CommitAuthor'));
 
             // Do we have executed log?
@@ -191,10 +191,12 @@ class ModelTemplate extends ModelBase
                             foreach ($data['advisories'] as $adviceArray) {
                                 $adviceData .= "\n".' - ';
                                 if (isset($adviceArray['title'])) {
-                                    $adviceData .= $adviceArray['title'];
+                                    $adviceData .= $this->setLimitHash($adviceArray['title'],40);
                                 }
                                 if (isset($adviceArray['link'])) {
-                                    $adviceData .= '('.$adviceArray['link'].')';
+                                    $link = '<a href="'.$adviceArray['link'].'" target="_blank">'
+                                            .$this->setLimitHash($adviceArray['link'],20).'</a>';
+                                    $adviceData .= ' (see '.$link.')';
                                 }
                                 $adviceData .= "\n";
                             }
@@ -205,7 +207,7 @@ class ModelTemplate extends ModelBase
                     }
 
                     $currentTitle = $build->get('Title');
-                    $build->set('Title', $currentTitle."\n"
+                    $build->set('Title', $currentTitle."\n\n"
                                  .'Security advisories based by composer.lock'."\n"
                                  .$advisories);
                 }
