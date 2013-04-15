@@ -55,6 +55,7 @@ class ModelTemplate extends ModelBase
             new Twig_SimpleFilter('toIcon', array(__CLASS__, 'setProjectIcon')),
             new Twig_SimpleFilter('toStatusIcon', array(__CLASS__, 'setLogStatusText')),
             new Twig_SimpleFilter('toVendorIcon', array(__CLASS__,'setVendorIcon')),
+            new Twig_SimpleFilter('toAlert', array(__CLASS__,'setAlert')),
             new Twig_SimpleFilter('isRedStatus', array(__CLASS__, 'isRepoOutOfDate')),
             new Twig_SimpleFilter('isYellowStatus', array(__CLASS__, 'isRepoNeedUpdate')),
             new Twig_SimpleFilter('isGreenStatus', array(__CLASS__,'isRepoUptodate')),
@@ -487,6 +488,13 @@ class ModelTemplate extends ModelBase
      */
     public function setVendorIcon($name) {
         return strtolower($name) == 'php' ? 'icon-cogs' : 'icon-inbox';
+    }
+
+    /**
+     * Custom Twig filter for generate bootstrap alert
+     */
+    public function setAlert($message = '', $type = 'error') {
+        return '<div class="alert alert-'.$type.'">'.$message.'</div>';
     }
 
     /**
