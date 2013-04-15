@@ -386,6 +386,10 @@ class ModelRepo extends ModelBase
 						case 3:
 							$status = 'uptodate';
 							break;
+
+						case 4:
+							$status = 'none';
+							break;
 						
 						default:
 							$status = 'unknown';
