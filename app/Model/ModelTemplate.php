@@ -20,6 +20,10 @@ use \Twig_Environment;
  */
 class ModelTemplate extends ModelBase 
 {
+    const PADDING_VENDOR = 50;
+    const PADDING_VERSION = 22;
+    const PADDING_VERSION_LEFT = 10;
+    const PADDING_VERSION_RIGHT = 11;
     protected $defaultData = array(
         'title' => 'Unknown Error',
         'content' => 'Something goes wrong. Please contact administrator.',
@@ -103,20 +107,20 @@ class ModelTemplate extends ModelBase
         // Default data
         $clock = '--:--';
         $label = new Parameter(array(
-            'Name' => str_pad('Description',28),
-            'UsedVersion' => str_pad('Used',10),
-            'LatestVersion' => str_pad('Latest',11),
+            'Name' => str_pad('Description',self::PADDING_VENDOR),
+            'UsedVersion' => str_pad('Used',self::PADDING_VERSION_LEFT),
+            'LatestVersion' => str_pad('Latest',self::PADDING_VERSION_RIGHT),
         ));
         $build = new Parameter(array(
             'Title' => '<span class="b-yellow">Scheduled</span>',
-            'ResultText' => str_pad('0 out of 0 passed',28),
-            'ResultStatus' => '<span class="b-red">'.str_pad('0%',22,' ',STR_PAD_BOTH).'</span>',
+            'ResultText' => str_pad('0 out of 0 passed',self::PADDING_VENDOR),
+            'ResultStatus' => '<span class="b-red">'.str_pad('0%',self::PADDING_VERSION,' ',STR_PAD_BOTH).'</span>',
         ));
         $vendors = array(
             new Parameter(array(
-                'Name' => str_pad('-',28),
-                'UsedVersion' => '<span class="b-red">'.str_pad('-',10).'</span>',
-                'LatestVersion' => '<span class="b-red">'.str_pad('-',11).'</span>',
+                'Name' => str_pad('-',self::PADDING_VENDOR),
+                'UsedVersion' => '<span class="b-red">'.str_pad('-',self::PADDING_VERSION_LEFT).'</span>',
+                'LatestVersion' => '<span class="b-red">'.str_pad('-',self::PADDING_VERSION_RIGHT).'</span>',
             )),
         );
 
@@ -147,12 +151,12 @@ class ModelTemplate extends ModelBase
 
                     foreach ($depsDiff as $dep) {
                         $diffStatus = ($dep['versionDiff'] < 0) ? 'red' : 'green';
-                        $rawVersion = $this->setLimitHash($dep['rawVersion'],10);
-                        $rawLatestVersion = $this->setLimitHash($dep['rawLatestVersion'],11);
+                        $rawVersion = $this->setLimitHash($dep['rawVersion'],self::PADDING_VERSION_LEFT);
+                        $rawLatestVersion = $this->setLimitHash($dep['rawLatestVersion'],self::PADDING_VERSION_RIGHT);
                         $vendors[] = new Parameter(array(
-                            'Name' => str_pad($dep['vendor'],28),
-                            'UsedVersion' => '<span class="b-'.$diffStatus.'">'.str_pad($rawVersion,10).'</span>',
-                            'LatestVersion' => '<span class="b-green">'.str_pad($rawLatestVersion,11).'</span>',
+                            'Name' => str_pad($dep['vendor'],self::PADDING_VENDOR),
+                            'UsedVersion' => '<span class="b-'.$diffStatus.'">'.str_pad($rawVersion,self::PADDING_VERSION_LEFT).'</span>',
+                            'LatestVersion' => '<span class="b-green">'.str_pad($rawLatestVersion,self::PADDING_VERSION_RIGHT).'</span>',
                         ));
 
                         if ($diffStatus == 'red') {
@@ -177,8 +181,8 @@ class ModelTemplate extends ModelBase
 
                     $statusText = count($depsDiff)-$outOfdatePackages.' out of '.count($depsDiff).' passed';
 
-                    $build->set('ResultText', str_pad($statusText,28));
-                    $build->set('ResultStatus','<span class="b-'.$status.'">'.str_pad($percentage.'%',22,' ',STR_PAD_BOTH).'</span>');
+                    $build->set('ResultText', str_pad($statusText,self::PADDING_VENDOR));
+                    $build->set('ResultStatus','<span class="b-'.$status.'">'.str_pad($percentage.'%',self::PADDING_VERSION,' ',STR_PAD_BOTH).'</span>');
 
                    
                 }
@@ -200,9 +204,7 @@ class ModelTemplate extends ModelBase
                                             .$this->setLimitHash($adviceArray['link'],20).'</a>';
                                     $adviceData .= ' (see '.$link.')';
                                 }
-                                $adviceData .= "\n";
                             }
-                            
                         }
 
                         $advisories .= $vendor.':'.$adviceData."\n";
