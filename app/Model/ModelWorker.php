@@ -158,7 +158,7 @@ class ModelWorker extends ModelBase
 			}
 
 			if ($outOfdatePackages == 0) {
-                $status = 3;
+                $status = count($depsDiff) == 0 ? 4 : 3;
                 $percentage = 100;
             } elseif (count($depsDiff) == $outOfdatePackages) {
                 $status = 1;
