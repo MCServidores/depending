@@ -389,7 +389,7 @@ class ModelTemplate extends ModelBase
      */
     public function isRepoUptodate($rid) {
         $t = ModelBase::factory('Template');
-        return ($t->getRepoLatestLogStatus($rid) == 'uptodate') ? ' c-green' : '-blank';
+        return (in_array($t->getRepoLatestLogStatus($rid),array('uptodate','none'))) ? ' c-green' : '-blank';
     }
 
     /**

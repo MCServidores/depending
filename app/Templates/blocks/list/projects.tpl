@@ -14,8 +14,8 @@
 		<td><i class="icon {{ repo.IsPackage|toIcon }}"></i> <a href="/{{ repo.FullName }}"  class="btn-link"><strong>{{ repo.FullName }}</strong></a></td>
 		<td class="span2">
 			<i class="icon-circle{{ repo.Rid|isGreenStatus }} has-tip" data-original-title="Up to date"></i>
-			<i class="icon-circle{{ repo.Rid|isYellowStatus }} has-tip" data-original-title="Need to date"></i>
-			<i class="icon-circle{{ repo.Rid|isRedStatus }} has-tip" data-original-title="Out to date"></i>
+			<i class="icon-circle{{ repo.Rid|isYellowStatus }} has-tip" data-original-title="Need to update"></i>
+			<i class="icon-circle{{ repo.Rid|isRedStatus }} has-tip" data-original-title="Out of date"></i>
 		</td>
 	</tr>
 	{% endfor %}
