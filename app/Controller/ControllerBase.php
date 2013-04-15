@@ -318,9 +318,13 @@ class ControllerBase {
 			// Try to see the session if login
 			if ($this->session->get('login') && $this->session->get('githubToken')) {
 				$token = $this->session->get('githubToken');
-			} else {
-				throw new \InvalidArgumentException('Token not found!');
+			} elseif ($this->session->get('login') && !$this->session->get('githubToken')) {
+				// Re-login
+				$this->setLogin($this->session->get('userId'));
+				$token = $this->session->get('githubToken');
 			}
+
+			if (empty($token)) throw new \InvalidArgumentException('Token not found!');
 		}
 
 		return $token;

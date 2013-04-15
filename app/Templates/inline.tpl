@@ -192,8 +192,11 @@ $(document).ready(function(){
 			enableHookToggle();
 		};
 		var errorHandler = function(data) {
-			console.log(data);
-			resultContainer.html('<div class="alert alert-error">Sorry, something goes really wrong. Please try again later.</div>');
+			if (data.exception) {
+				resultContainer.html(data.html);
+			} else {
+				resultContainer.html('<div class="alert alert-error">Sorry, something goes really wrong. Please try again later.</div>');
+			}
 		};
 
 		callInternalProvider(ImportUrl,btnHandler,errorHandler,successHandler,importData,resultContainer,$('.loader-btn'));

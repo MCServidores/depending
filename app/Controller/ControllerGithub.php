@@ -97,7 +97,7 @@ class ControllerGithub extends ControllerBase
 
 			// Clean up
 			$redirectAfterAuthenticated = $this->session->get('redirectAfterAuthenticated','/home');
-			$this->session->set('redirectAfterAuthenticated',NULL);
+			$this->session->remove('redirectAfterAuthenticated');
 
 			// Set notification
 			$this->setAlert('info', 'Gihub account updated!');

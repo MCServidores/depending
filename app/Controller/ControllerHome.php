@@ -155,32 +155,44 @@ class ControllerHome extends ControllerBase
 		$repos = array();
 
 		if ($this->session->get('login')) {
-			$uid = $this->session->get('userId');
-			$accessToken = $this->getToken();
-
 			// Check his repository
-			$repositories = ModelBase::factory('Github', new Parameter(array(
-				'githubToken' => $accessToken,
-				)))->getRepositories($type);
+			try {
+				$uid = $this->session->get('userId');
+				$accessToken = $this->getToken();
+				$repositories = ModelBase::factory('Github', new Parameter(array(
+					'githubToken' => $accessToken,
+					)))->getRepositories($type);
 
-			// Update the repositories data
-			if ($repositories instanceof Parameter) {
-				ModelBase::factory('Repo')->updateUserRepositories($uid,$accessToken,$repositories);
+				// Update the repositories data
+				if ($repositories instanceof Parameter) {
+					ModelBase::factory('Repo')->updateUserRepositories($uid,$accessToken,$repositories);
+				}
+
+				if (!empty($repositories)) {
+					$user = ModelBase::factory('User')->getQuery()->findPK($this->session->get('userId'));
+					$repos = $user->getReposs();
+				}
+
+				$success = ! empty($repos);
+				$html = ModelTemplate::render('blocks/list/repo.tpl',compact('repos'));
+			} catch (\Exception $e) {
+				$exception = true;
+				$success = false;
+
+				// Cast invalid token
+				if ($e instanceof \InvalidArgumentException && $e->getMessage() == 'Token not found!') {
+					$html = ModelTemplate::render('blocks/token.tpl');
+				} else {
+					$html = ModelBase::factory('Template')->setAlert($e->getMessage());
+				}
 			}
-
-			if (!empty($repositories)) {
-				$user = ModelBase::factory('User')->getQuery()->findPK($this->session->get('userId'));
-				$repos = $user->getReposs();
-			}
-
-			$success = ! empty($repos);
-			$html = ModelTemplate::render('blocks/list/repo.tpl',compact('repos'));
+			
 		}
 
 		// Just for the sake of jQuery ajax delay
 		sleep(1);
 
-		return $this->renderJson(compact('success','html'));
+		return $this->renderJson(compact('success','html', 'exception'));
 		// @codeCoverageIgnoreEnd
 	}
 }
