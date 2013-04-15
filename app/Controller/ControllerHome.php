@@ -146,6 +146,9 @@ class ControllerHome extends ControllerBase
 
 		// @codeCoverageIgnoreStart
 
+		// Get data param
+		$type = $this->data->get('postData[data]','all',true);
+
 		// Initialize result
 		$success = false;
 		$html = '';
@@ -158,7 +161,7 @@ class ControllerHome extends ControllerBase
 			// Check his repository
 			$repositories = ModelBase::factory('Github', new Parameter(array(
 				'githubToken' => $accessToken,
-				)))->getRepositories();
+				)))->getRepositories($type);
 
 			// Update the repositories data
 			if ($repositories instanceof Parameter) {

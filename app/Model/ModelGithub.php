@@ -88,24 +88,33 @@ class ModelGithub extends ModelBase
 
     /**
      * Get repository data
+     *
+     * @param string $type [all|user|organizations]
      */
-    public function getRepositories() {
+    public function getRepositories($type = 'all') {
         if (empty($this->accessToken)) return false;
 
         $orgsRepos = array();
-        $userRepos = $this->getGithubRepositories();
+        $userRepos = array();
+
+        // Get user repos
+        if ($type == 'all' || $type == 'user') {
+            $userRepos = $this->getGithubRepositories();
+        }
 
         // Try to get related organizations repo
-        $orgs = $this->getOrganizations();
+        if ($type == 'all' || $type == 'organizations') {
+            $orgs = $this->getOrganizations();
 
-        if ( ! empty($orgs)) {
-            // Fetch all organizations repos
-            foreach ($orgs as $org) {
-                if (property_exists($org, 'login')) {
-                     $organizationRepos = $this->getGithubRepositories($org->login,$this->accessToken,true);
+            if ( ! empty($orgs)) {
+                // Fetch all organizations repos
+                foreach ($orgs as $org) {
+                    if (property_exists($org, 'login')) {
+                         $organizationRepos = $this->getGithubRepositories($org->login,$this->accessToken,true);
 
-                    if ( ! empty($organizationRepos)) {
-                        $orgsRepos = array_merge($orgsRepos,$organizationRepos);
+                        if ( ! empty($organizationRepos)) {
+                            $orgsRepos = array_merge($orgsRepos,$organizationRepos);
+                        }
                     }
                 }
             }
