@@ -30,9 +30,12 @@ $(document).ready(function(){
 	{% endif %}
 
 	// Convinience reusable AJAX
-	var callInternalProvider = function(url,btnHandler,errorHandler,successHandler,postData,resultContainer) {
-		var thisBtn = btnHandler;
+	var callInternalProvider = function(url,btnHandler,errorHandler,successHandler,postData,resultContainer,btnGroup) {
+		var thisBtn = btnHandler,
+			otherBtn = btnGroup;
+
 		thisBtn.button('loading');
+		if (typeof otherBtn == 'object') otherBtn.attr('disabled','disabled');
 
 		if (typeof resultContainer !== 'undefined') {
 			resultContainer.html('<center><i class="icon-spinner icon-spin icon-3x"></i></center>');
@@ -44,6 +47,7 @@ $(document).ready(function(){
 				}
 
 				thisBtn.button('reset');
+				if (typeof otherBtn == 'object') otherBtn.removeAttr('disabled','disabled');
 			} 
 		})
 
@@ -57,8 +61,10 @@ $(document).ready(function(){
 
 			if (data.success) {
 				successHandler(data);
+				if (typeof otherBtn == 'object') otherBtn.removeAttr('disabled','disabled');
 			} else {
 				errorHandler(data);
+				if (typeof otherBtn == 'object') otherBtn.removeAttr('disabled','disabled');
 			}
 		});
 	};
@@ -174,7 +180,8 @@ $(document).ready(function(){
 
 	enableHookToggle();
 
-	$('#loader-btn').click(function(){
+	$('.loader-btn').click(function(){
+		var importData = {'data':$(this).data('partial')};
 		var resultContainer = $('#loader-result');
 		var ImportUrl = '/home/import';
 		var btnHandler = $(this);
@@ -189,6 +196,6 @@ $(document).ready(function(){
 			resultContainer.html('<div class="alert alert-error">Sorry, something goes really wrong. Please try again later.</div>');
 		};
 
-		callInternalProvider(ImportUrl,btnHandler,errorHandler,successHandler,{},resultContainer);
+		callInternalProvider(ImportUrl,btnHandler,errorHandler,successHandler,importData,resultContainer,$('.loader-btn'));
 	})
 })

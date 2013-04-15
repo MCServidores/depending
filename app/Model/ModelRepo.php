@@ -231,11 +231,6 @@ class ModelRepo extends ModelBase
 	public function updateUserRepositories($uid, $accessToken, Parameter $repositories) {
 		$user = ModelBase::factory('User')->getQuery()->findPK($uid);
 
-		// Delete all existing repositories links
-		$currentRepos = ModelBase::ormFactory('UsersReposQuery')->findByUsers($user);
-
-		if ( ! empty($currentRepos)) $currentRepos->delete();
-
 		if ( ! empty($user) && ! empty($repositories)) {
 			foreach ($repositories as $r) {
 				// Get the active repo
