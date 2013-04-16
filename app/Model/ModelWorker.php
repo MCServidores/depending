@@ -93,8 +93,14 @@ class ModelWorker extends ModelBase
 		// inspect the composer
 		$composer = new Parameter($this->getComposer($repo));
 
-		if (empty($composer)) {
-			throw new \RuntimeException('Error Processing Composer. '.$this->getLastJsonError());
+		if ($composer->isEmpty()) {
+			// TODO: Implement error build result
+			$result->set('logStatus', 4);
+			$result->set('logExecuted', time());
+
+			$this->terminateTask($log,$repo,$result);
+
+			return true;
 		}
 
 		$depsStatus = $this->determineStatus($composer);
@@ -343,9 +349,10 @@ class ModelWorker extends ModelBase
 
 		// Create temporary data
 		$composerJson = file_get_contents($this->getClonePath($repo).DIRECTORY_SEPARATOR.self::COMPOSER);
+		$decodedJson = json_decode($composerJson,true);
 
 		// We're done
-		return json_decode($composerJson, true);
+		return empty($decodedJson) ? array() : $decodedJson;
 	}
 
 	/**

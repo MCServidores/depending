@@ -168,7 +168,7 @@ class ControllerHome extends ControllerBase
 					ModelBase::factory('Repo')->updateUserRepositories($uid,$accessToken,$repositories);
 				}
 
-				if (!empty($repositories)) {
+				if (!$repositories->isEmpty()) {
 					$user = ModelBase::factory('User')->getQuery()->findPK($this->session->get('userId'));
 					$repos = $user->getReposs();
 				}
