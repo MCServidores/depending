@@ -144,6 +144,12 @@ class ControllerRepo extends ControllerBase
 		// Get latest repo's logs
 		$repoLogs = $this->repo->getLogss();
 
+		// If there is no logs, generate one
+		if (count($repoLogs) == 0) {
+			ModelBase::factory('Repo')->generateFirstLog($this->repo);
+			$repoLogs = ModelBase::factory('Repo')->getQuery()->findPK($this->repo->getRid())->getLogss();
+		}
+
 		if ($this->data->get('isAllowed')) {
 			if ( ! empty($repoLogs)) {
 				$lastLog = end($repoLogs);

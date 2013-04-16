@@ -222,6 +222,40 @@ class ModelRepo extends ModelBase
 	}
 
 	/**
+	 * Generate a log by hitting the hook
+	 *
+	 * @param Repo
+	 */
+	public function generateFirstLog(Repos $repo) {
+		// Get the owner, and extract their token
+		$owner = count($repo->getUserss()) == 1 ? current($repo->getUserss()) : NULL;
+		$ownerData = ModelBase::factory('User')->getUser($owner->getUid());
+        $token = $ownerData->get('GithubToken');
+
+        // Only process valid request
+		if (count($repo->getLogss()) == 0 && $ownerData->get('GithubToken')) {
+			$hooked = false;
+			$hook = ModelBase::factory('Github', new Parameter(array(
+						'githubToken' => $ownerData->get('GithubToken'),
+					)))->getHookData($repo->getFullName());
+
+			if ($hook instanceof Parameter) {
+				$hookUrl = $hook->get('test_url');
+
+				// Hit the hook
+				$response = ModelBase::factory('Github', new Parameter(array(
+								'githubToken' => $ownerData->get('GithubToken'),
+							)))->postData($hookUrl.'?access_token='.$ownerData->get('GithubToken'), array());
+
+				if ($response->get('result')) {
+					$httpCode = $response->get('head[http_code]',500,true);
+					$hooked = $httpCode == 204;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Update user's and its repositories data
 	 *
 	 * @param int User UID
