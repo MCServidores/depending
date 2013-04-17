@@ -90,6 +90,7 @@ class ModelGithub extends ModelBase
      * Get repository data
      *
      * @param string $type [all|user|organizations]
+     * @return Parameter
      */
     public function getRepositories($type = 'all') {
         if (empty($this->accessToken)) return false;

@@ -18,6 +18,15 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class Parameter extends ParameterBag
 {
 	/**
+	 * Additional method to validate parameter
+	 *
+	 * @return bool
+	 */
+	public function isEmpty() {
+		return empty($this->parameters);
+	}
+
+	/**
 	 * Overide sebagai property accessor
 	 */
 	public function __call($method, $arguments = array()) {

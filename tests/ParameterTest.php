@@ -17,6 +17,7 @@ class ParameterTest extends DependingInTestCase {
 	{
 		$parameter = new Parameter(array('foo' => 'bar'));
 		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\ParameterBag', $parameter);
+		$this->assertFalse($parameter->isEmpty());
 		$this->assertEquals('bar', $parameter->foo());
 		$this->assertEmpty($parameter->undefined());
 	}

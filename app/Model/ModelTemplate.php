@@ -474,7 +474,7 @@ class ModelTemplate extends ModelBase
      */
     public function setStatusMarkdown($repoId) {
         $repo = ModelBase::factory('Repo')->getQuery()->findPK($repoId);
-        $markdown = '[![Dependencies Status](https://www.wakuwakuw.com/d/'.$repoId.')](http://depending.in/'.$repo->getFullName().')';
+        $markdown = '[![Dependencies Status](https://d2xishtp1ojlk0.cloudfront.net/d/'.$repoId.')](http://depending.in/'.$repo->getFullName().')';
 
         return $markdown;
     }
