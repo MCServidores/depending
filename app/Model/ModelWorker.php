@@ -448,6 +448,10 @@ class ModelWorker extends ModelBase
 			$checkoutStatus = $this->execute('cd '.$this->getClonePath($repo).';git checkout '.$branch.' '.$revision);
 		}
 
+		if ( ! $checkoutStatus) {
+			$checkoutStatus = is_numeric($revision);
+		}
+
 		return $checkoutStatus;
 	}
 
