@@ -412,6 +412,9 @@ class ModelBase
 	 * @return Parameter
 	 */
 	protected function executeRequest() {
+		// Set the global UA
+		curl_setopt(static::$req,CURLOPT_USERAGENT, "Depending/GH-Service");
+
 		$result  = curl_exec(static::$req);
 		$err     = curl_errno(static::$req); 
 		$errmsg  = curl_error(static::$req) ;
