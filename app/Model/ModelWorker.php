@@ -107,7 +107,7 @@ class ModelWorker extends ModelBase
 
 		if (empty($depsStatus)) {
 			// TODO: Implement error that occured when comparing deps version
-			$result->set('logStatus', 0);
+			$result->set('logStatus', 4);
 			$result->set('logExecuted', time());
 
 			$this->terminateTask($log,$repo,$result);
