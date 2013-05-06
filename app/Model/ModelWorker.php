@@ -106,7 +106,13 @@ class ModelWorker extends ModelBase
 		$depsStatus = $this->determineStatus($composer);
 
 		if (empty($depsStatus)) {
-			throw new \RuntimeException('Error occured when comparing dependencies versions.');
+			// TODO: Implement error that occured when comparing deps version
+			$result->set('logStatus', 0);
+			$result->set('logExecuted', time());
+
+			$this->terminateTask($log,$repo,$result);
+
+			return true;
 		}
 
 		// inspect the lock
