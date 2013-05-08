@@ -3,6 +3,7 @@ composer.lock
 build.properties
 buildtime.xml
 connection.xml
+public/*.html
 vendor/*
 app/Model/Orm/*
 app/Controller/ControllerSandbox.php
