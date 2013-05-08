@@ -34,6 +34,18 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/asset/img/favicon/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="/asset/img/favicon/apple-touch-icon-57-precomposed.png">
         <link rel="shortcut icon" href="/asset/img/favicon/favicon.ico">
+        <script>
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-40742919-1']);
+        _gaq.push(['_setDomainName', 'depending.in']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+        </script>
     {% endblock %}
 </head>
 
