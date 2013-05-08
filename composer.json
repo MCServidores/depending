@@ -8,8 +8,8 @@
         "nikic/php-parser": "v0.9.3",
         "doctrine/annotations": "v1.1.1",
         "doctrine/cache": "v1.0",
-        "symfony/http-kernel": "v2.2.1",
-        "symfony/routing": "v2.2.1",
+        "symfony/http-kernel": ">v2.2.1",
+        "symfony/routing": ">v2.2.1",
         "propel/propel1": "1.6.9",
         "twig/twig": "v1.12.3",
         "kriswallsmith/assetic": "v1.1.0-alpha4",
@@ -17,6 +17,6 @@
         "leafo/lessphp": "v0.3.9",
         "phpunit/phpunit": "3.7.19",
         "phpunit/phpunit-selenium": "1.2.12",
-        "swiftmailer/swiftmailer": "v4.3.1"
+        "swiftmailer/swiftmailer": "v5.0.0"
     }
 }
