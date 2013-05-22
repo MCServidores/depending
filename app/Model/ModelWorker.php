@@ -76,6 +76,7 @@ class ModelWorker extends ModelBase
 
 		// Checkout the desired revision
 		if ( ! $this->checkOutTo($log->getRef(), $log->getAfter(), $repo)) {
+			// Try the branch
 			throw new \RuntimeException('Cannot checkout to : '.$repo->getFullName().'/'.$log->getRef().'/'.$log->getAfter());
 		}
 		
@@ -452,6 +453,11 @@ class ModelWorker extends ModelBase
 		if ( ! $checkoutStatus) {
 			// If last attemp failed, checkout to specific branch revision
 			$checkoutStatus = $this->execute('cd '.$this->getClonePath($repo).';git checkout '.$branch.' '.$revision);
+
+			if ( ! $checkoutStatus) {
+				// If still failed, checkout to specific branch and then pull the latest commits
+				$checkoutStatus = $this->execute('cd '.$this->getClonePath($repo).';git checkout '.$branch.';git pull origin '.$branch);
+			}
 		}
 
 		if ( ! $checkoutStatus) {
