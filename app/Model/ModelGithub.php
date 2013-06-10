@@ -20,6 +20,7 @@ class ModelGithub extends ModelBase
     const ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token';
     const AUTHORIZE_URL = 'https://github.com/login/oauth/authorize';
     const API_URL = 'https://api.github.com/';
+    const REPOSITORY_PER_PAGE = 100;
     protected $clientId = '460190b3cf77dd2305ec';
     protected $clientSecret = '4c34311721e46c38c342420b5d101dd5670f16f6';
     protected $scope = 'user:email,public_repo';
@@ -70,6 +71,7 @@ class ModelGithub extends ModelBase
      */
     public function getGithubRepositories($user = '', $token = '', $isOrganization = false) {
         $apiUrl = self::API_URL.($isOrganization ? 'orgs/'.$user.'/repos' : 'user/repos');
+        $apiUrl .= sprintf('?per_page=%d', self::REPOSITORY_PER_PAGE);
         $response = $this->getData($apiUrl, array('access_token' => $this->accessToken));
 
         if ($response->get('result') == false || strpos($response->get('body'),'full_name')===false) {
