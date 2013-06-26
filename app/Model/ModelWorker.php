@@ -52,10 +52,10 @@ class ModelWorker extends ModelBase
 
 		// Initialize the result skeleton
 		$result = new Parameter(array(
-			'logExecuted' => time(),	// Executed time
-			'logStatus' => 0, 			// Whether the log satisfy the dependencies metrix
-			'logData' => array(),		// The build results
-			'repoIsPackage' => 0,		// Wheter a repo is a package or not
+			'logExecuted' => time(),    // Executed time
+			'logStatus' => 0,           // Whether the log satisfy the dependencies metrix
+			'logData' => array(),       // The build results
+			'repoIsPackage' => 0,       // Wheter a repo is a package or not
 		));
 
 		// Get related repository information
@@ -76,6 +76,17 @@ class ModelWorker extends ModelBase
 
 		// Checkout the desired revision
 		if ( ! $this->checkOutTo($log->getRef(), $log->getAfter(), $repo)) {
+
+			if (strpos($log->getAfter(), 'refs/tag') !== false) {
+				// TODO: Implement error build result
+				$result->set('logStatus', 4);
+				$result->set('logExecuted', time());
+
+				$this->terminateTask($log,$repo,$result);
+
+				return true;
+			}
+			
 			// Try the branch
 			throw new \RuntimeException('Cannot checkout to : '.$repo->getFullName().'/'.$log->getRef().'/'.$log->getAfter());
 		}
