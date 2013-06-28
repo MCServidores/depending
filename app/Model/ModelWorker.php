@@ -473,7 +473,12 @@ class ModelWorker extends ModelBase
 
 		if ( ! $checkoutStatus) {
 			$checkoutStatus = is_numeric($revision);
-		}
+
+			if ( ! $checkoutStatus) {
+				// Check wheter this is possibly removed branch
+				$checkoutStatus = !in_array($branch, array('master', 'dev', 'develop'));
+			}
+		} 
 
 		return $checkoutStatus;
 	}
