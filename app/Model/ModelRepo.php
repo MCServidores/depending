@@ -272,8 +272,13 @@ class ModelRepo extends ModelBase
 				$activeRepo = $this->getRepo($repoId);
 
 				if ( ! $activeRepo) {
-					// Create
-					$activeRepo = $this->createRepo($r->id, $r->name, $r->full_name, $r->description, $r->fork, $r->private);
+					// Try to find by the full name
+					$activeRepo = $this->getQuery()->findOneByFullName($r->full_name);
+
+					if ( ! $activeRepo) {
+						// Create
+						$activeRepo = $this->createRepo($r->id, $r->name, $r->full_name, $r->description, $r->fork, $r->private);
+					}
 				} 
 
 				// Get the hook status
