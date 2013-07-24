@@ -169,7 +169,11 @@ class ModelRepo extends ModelBase
 			return false;
 		}
 
-		$repo->save();
+		try {
+			$repo->save();
+		} catch (\Exception $e) {
+			return false;
+		}
 
 		return $this->getRepo($repo->getRid());
 	}
