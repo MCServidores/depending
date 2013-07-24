@@ -275,7 +275,10 @@ class ModelRepo extends ModelBase
 					// Try to find by the full name
 					$activeRepo = $this->getQuery()->findOneByFullName($r->full_name);
 
-					if ( ! $activeRepo) {
+					if ($activeRepo) {
+						// Use the exists id
+						$repoId = $activeRepo->getRid();
+					} else {
 						// Create
 						$activeRepo = $this->createRepo($r->id, $r->name, $r->full_name, $r->description, $r->fork, $r->private);
 					}
