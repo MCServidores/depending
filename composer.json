@@ -12,7 +12,7 @@
         "symfony/routing": "~2.3.0",
         "propel/propel1": "1.6.9",
         "twig/twig": "v1.13.1",
-        "kriswallsmith/assetic": "~1.2.0",
+        "kriswallsmith/assetic": "~1.1.0",
         "toopay/assetic-minifier": "v1.0.0",
         "leafo/lessphp": "v0.3.9",
         "phpunit/phpunit": "3.7.21",
