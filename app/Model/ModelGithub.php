@@ -70,9 +70,10 @@ class ModelGithub extends ModelBase
      * @return array
      */
     public function getGithubRepositories($user = '', $token = '', $isOrganization = false) {
-        $apiUrl = self::API_URL.($isOrganization ? 'orgs/'.$user.'/repos' : 'user/repos');
+        $accessToken = empty($token) ? $this->accessToken : $token;
+        $apiUrl = self::API_URL.($isOrganization ? 'orgs/'.$user.'/repos' : 'users/'.$user.'/repos');
         $apiUrl .= sprintf('?per_page=%d', self::REPOSITORY_PER_PAGE);
-        $response = $this->getData($apiUrl, array('access_token' => $this->accessToken));
+        $response = $this->getData($apiUrl, array('access_token' => $accessToken));
 
         if ($response->get('result') == false || strpos($response->get('body'),'full_name')===false) {
             return array();
@@ -102,7 +103,8 @@ class ModelGithub extends ModelBase
 
         // Get user repos
         if ($type == 'all' || $type == 'user') {
-            $userRepos = $this->getGithubRepositories();
+            $currentUser = $this->getUser();
+            $userRepos = $this->getGithubRepositories($currentUser->get('login'), $this->accessToken,false);
         }
 
         // Try to get related organizations repo
