@@ -421,6 +421,9 @@ class ControllerBase {
 
 				$statusCode = 200;
 				$statusText = 'OK. Log ID:'.$latestLog->getId();
+			} catch (\InvalidArgumentException $e) {
+				$statusCode = 200;
+				$statusText = 'SKIPPED. Log ID:'.$latestLog->getId();
 			} catch (\RuntimeException $e) {
 				$statusCode = 500;
 				$statusText = 'FAIL. Reason :'.$e->getMessage();

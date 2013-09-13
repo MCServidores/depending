@@ -59,18 +59,30 @@ class ModelWorker extends ModelBase
 		));
 
 		// Get related repository information
-		$repo = current($log->getReposs());
+		$logRepos = $log->getReposs()->getData();
+		$repo = current($logRepos);
+
+		if ( ! $repo) {
+			// Skip orphaned log
+			$result->set('logStatus', 1);
+			$this->terminateLog($log,$result);
+
+			if ( ! $this->silent) {
+				throw new \InvalidArgumentException('Corresponding repository not found for : '.$log->getId());
+			}
+			return true;
+		}
 
 		// First, check if the repository exists
 		if ( ! $this->isCloneExists($repo)) {
 			// Clone the repo
-			if ( ! $this->doClone($repo)) {
+			if ( ! $this->doClone($repo) && !$this->silent) {
 				throw new \RuntimeException('Cannot clone the repository : '.$repo->getFullName());
 			}
 		}
 
 		// Fetch the latest HEAD
-		if ( ! $this->fetchOrigin($repo)) {
+		if ( ! $this->fetchOrigin($repo) && !$this->silent) {
 			throw new \RuntimeException('Cannot fetch the latest HEAD of repository : '.$repo->getFullName());
 		}
 
@@ -637,6 +649,17 @@ class ModelWorker extends ModelBase
 		$repo->setIsPackage($runResult->get('repoIsPackage'));
 		$repo->save();
 
+		$this->terminateLog($log, $runResult);
+	}
+
+	/**
+	 * End of log cycle 
+	 *
+	 * @param Logs $log
+	 * @param Parameter $runResult
+	 * @return void
+	 */
+	protected function terminateLog(Logs $log, Parameter $runResult) {
 		// Update the log blobs
 		ModelBase::factory('Log')->updateLogData($log->getId(),$runResult->get('logData'));
 
@@ -648,4 +671,6 @@ class ModelWorker extends ModelBase
 		// Send the report
 		ModelBase::factory('Log')->buildReport($log->getId());
 	}
+
 }
+
