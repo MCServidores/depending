@@ -269,7 +269,7 @@ class ModelRepo extends ModelBase
 	public function updateUserRepositories($uid, $accessToken, Parameter $repositories) {
 		$user = ModelBase::factory('User')->getQuery()->findPK($uid);
 
-		if ( ! empty($user) && ! empty($repositories)) {
+		if ( ! empty($user) && !$repositories->isEmpty()) {
 			foreach ($repositories as $r) {
 				// Get the active repo
 				$repoId = $r->id;

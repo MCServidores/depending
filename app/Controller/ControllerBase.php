@@ -507,7 +507,7 @@ class ControllerBase {
 
 			if ( ! $cm->has('tweet')) {
 				$url = "https://api.twitter.com/1/statuses/user_timeline/depending_in.xml?count=1";
-				$xml = simplexml_load_file($url);
+				$xml = @simplexml_load_file($url);
 
 				if ($xml) {
 					foreach($xml->status as $status){
