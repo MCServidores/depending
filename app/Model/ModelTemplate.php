@@ -44,25 +44,26 @@ class ModelTemplate extends ModelBase
      * @return string HTML representation
      */
     public static function render($template, $data = array()) {
+        $that = static::factory('template');
         // Inisialisasi Twig. Load template yang berkaitan dan assign data.
         $loader = new Twig_Loader_Filesystem(APPLICATION_PATH . DIRECTORY_SEPARATOR . 'Templates');
         $templateEngine = new Twig_Environment($loader);
 
         // Filter declaration
         $filters = array(
-            new Twig_SimpleFilter('limitHash', array(__CLASS__, 'setLimitHash')),
-            new Twig_SimpleFilter('limitTweet', array(__CLASS__, 'setLimitTweet')),
-            new Twig_SimpleFilter('translateToLogText', array(__CLASS__, 'setLogText')),
-            new Twig_SimpleFilter('translateToSuccessText', array(__CLASS__, 'setSuccessText')),
-            new Twig_SimpleFilter('toPackagist', array(__CLASS__, 'setPackagistUrl')),
-            new Twig_SimpleFilter('toStatus', array(__CLASS__, 'setStatusMarkdown')),
-            new Twig_SimpleFilter('toIcon', array(__CLASS__, 'setProjectIcon')),
-            new Twig_SimpleFilter('toStatusIcon', array(__CLASS__, 'setLogStatusText')),
-            new Twig_SimpleFilter('toVendorIcon', array(__CLASS__,'setVendorIcon')),
-            new Twig_SimpleFilter('toAlert', array(__CLASS__,'setAlert')),
-            new Twig_SimpleFilter('isRedStatus', array(__CLASS__, 'isRepoOutOfDate')),
-            new Twig_SimpleFilter('isYellowStatus', array(__CLASS__, 'isRepoNeedUpdate')),
-            new Twig_SimpleFilter('isGreenStatus', array(__CLASS__,'isRepoUptodate')),
+            new Twig_SimpleFilter('limitHash', array($that, 'setLimitHash')),
+            new Twig_SimpleFilter('limitTweet', array($that, 'setLimitTweet')),
+            new Twig_SimpleFilter('translateToLogText', array($that, 'setLogText')),
+            new Twig_SimpleFilter('translateToSuccessText', array($that, 'setSuccessText')),
+            new Twig_SimpleFilter('toPackagist', array($that, 'setPackagistUrl')),
+            new Twig_SimpleFilter('toStatus', array($that, 'setStatusMarkdown')),
+            new Twig_SimpleFilter('toIcon', array($that, 'setProjectIcon')),
+            new Twig_SimpleFilter('toStatusIcon', array($that, 'setLogStatusText')),
+            new Twig_SimpleFilter('toVendorIcon', array($that,'setVendorIcon')),
+            new Twig_SimpleFilter('toAlert', array($that,'setAlert')),
+            new Twig_SimpleFilter('isRedStatus', array($that, 'isRepoOutOfDate')),
+            new Twig_SimpleFilter('isYellowStatus', array($that, 'isRepoNeedUpdate')),
+            new Twig_SimpleFilter('isGreenStatus', array($that,'isRepoUptodate')),
         );
 
         // Register filter
