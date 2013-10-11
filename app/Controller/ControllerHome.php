@@ -53,20 +53,22 @@ class ControllerHome extends ControllerBase
 
 			$packages = ModelBase::factory('Repo')
 						->getQuery()
-						->joinReposLogs()
 						->filterByIsPackage(1)
 						->orderBy('Created',ModelCriteria::DESC)
+						->useReposLogsQuery()
 						->groupBy('Rid')
+						->endUse()
 						->limit(10)
 						->offset(0)
 						->find();
 
 			$projects = ModelBase::factory('Repo')
 						->getQuery()
-						->joinReposLogs()
 						->filterByIsPackage(0)
 						->orderBy('Created',ModelCriteria::DESC)
+						->useReposLogsQuery()
 						->groupBy('Rid')
+						->endUse()
 						->limit(10)
 						->offset(0)
 						->find();
