@@ -193,8 +193,8 @@ class ModelBase
 
 		// Building Page collection
 		$pages = array();
-		$maxPage = ($totalPage > 11) ? 11 : $totalPage;
-		$medianPage = (($totalPage/2) > 6) ? 6 : 0;
+		$maxPage = ($totalPage >= 11) ? 11 : $totalPage;
+		$medianPage = (($totalPage/2) >= 6) ? 6 : 0;
 
 		for ($i=1; $i < ($maxPage+1); $i++) { 
 			if ($i == $medianPage) {
