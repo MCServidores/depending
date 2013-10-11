@@ -11,6 +11,7 @@ namespace app\Controller;
 use app\Parameter;
 use app\Model\ModelBase;
 use app\Model\ModelTemplate;
+use \ModelCriteria;
 
 /**
  * ControllerHome
@@ -39,6 +40,38 @@ class ControllerHome extends ControllerBase
 			);
 
 			$repos = ModelBase::factory('Repo')->getAllRepo(50,1,$filter);
+		} else {
+			$actives = ModelBase::factory('Log')
+						->getQuery()
+						->useReposLogsQuery()
+						->groupBy('Rid')
+						->endUse()
+						->orderBy('Executed',ModelCriteria::DESC)
+						->limit(10)
+						->offset(0)
+						->find();
+
+			$packages = ModelBase::factory('Repo')
+						->getQuery()
+						->joinReposLogs()
+						->filterByIsPackage(1)
+						->orderBy('Created',ModelCriteria::DESC)
+						->groupBy('Rid')
+						->limit(10)
+						->offset(0)
+						->find();
+
+			$projects = ModelBase::factory('Repo')
+						->getQuery()
+						->joinReposLogs()
+						->filterByIsPackage(0)
+						->orderBy('Created',ModelCriteria::DESC)
+						->groupBy('Rid')
+						->limit(10)
+						->offset(0)
+						->find();
+
+			$repos = compact('packages','projects', 'actives');
 		}
 
 		// Template configuration

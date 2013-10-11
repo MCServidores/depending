@@ -24,3 +24,44 @@
 		<p><strong>Depending</strong> connects to your GitHub account, read your repositories information. Then, <strong>Depending</strong> determines your project dependencies status, and report back to you.</p><a href="/auth/login" class="btn btn-small btn-main"><i class="icon icon-circle-arrow-right"></i> Get Started</a>
 	</div>
 </div>
+<hr/>
+<div class="row-fluid">
+	<div class="span4">
+	<h4>Recent Builds</h4>
+	<ul class="nav nav-tabs nav-stacked">
+	{% for activeLog in repos.actives %}
+		{% set active = activeLog.getReposs.getFirst %}
+		<li><a href="/{{ active.FullName }}"  class="btn-link"><i class="icon {{ active.IsPackage|toIcon }}"></i> <strong>{{ active.FullName }}</strong> <span class="pull-right">
+		<i class="icon-circle{{ active.Rid|isGreenStatus }} has-tip" data-original-title="Up to date"></i>
+		<i class="icon-circle{{ active.Rid|isYellowStatus }} has-tip" data-original-title="Need to update"></i>
+		<i class="icon-circle{{ active.Rid|isRedStatus }} has-tip" data-original-title="Out of date"></i>
+		</span></a></li>
+	{% endfor %}
+	</ul>
+	</div>
+	<div class="span4">
+	<h4>Recent Projects</h4>
+	<ul class="nav nav-tabs nav-stacked">
+	{% for project in repos.projects %}
+		<li><a href="/{{ project.FullName }}"  class="btn-link"><i class="icon {{ project.IsPackage|toIcon }}"></i> <strong>{{ project.FullName }}</strong> <span class="pull-right">
+		<i class="icon-circle{{ project.Rid|isGreenStatus }} has-tip" data-original-title="Up to date"></i>
+		<i class="icon-circle{{ project.Rid|isYellowStatus }} has-tip" data-original-title="Need to update"></i>
+		<i class="icon-circle{{ project.Rid|isRedStatus }} has-tip" data-original-title="Out of date"></i>
+		</span></a></li>
+	{% endfor %}
+	</ul>
+	</div>
+	<div class="span4">
+	<h4>Recent Packages</h4>
+	<ul class="nav nav-tabs nav-stacked">
+	{% for package in repos.packages %}
+		<li><a href="/{{ package.FullName }}"  class="btn-link"><i class="icon {{ package.IsPackage|toIcon }}"></i> <strong>{{ package.FullName }}</strong> <span class="pull-right">
+		<i class="icon-circle{{ package.Rid|isGreenStatus }} has-tip" data-original-title="Up to date"></i>
+		<i class="icon-circle{{ package.Rid|isYellowStatus }} has-tip" data-original-title="Need to update"></i>
+		<i class="icon-circle{{ package.Rid|isRedStatus }} has-tip" data-original-title="Out of date"></i>
+		</span></a></li>
+	{% endfor %}
+	</ul>
+	</div>
+</div>
+{{ something }}
