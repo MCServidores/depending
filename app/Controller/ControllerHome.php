@@ -43,10 +43,10 @@ class ControllerHome extends ControllerBase
 		} else {
 			$actives = ModelBase::factory('Log')
 						->getQuery()
+						->orderBy('Executed',ModelCriteria::DESC)
 						->useReposLogsQuery()
 						->groupBy('Rid')
 						->endUse()
-						->orderBy('Executed',ModelCriteria::DESC)
 						->limit(10)
 						->offset(0)
 						->find();
