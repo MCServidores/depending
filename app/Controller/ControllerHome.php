@@ -230,4 +230,30 @@ class ControllerHome extends ControllerBase
 		return $this->renderJson(compact('success','html', 'exception'));
 		// @codeCoverageIgnoreEnd
 	}
+
+	/**
+	 * Handler for GET /send_batch
+	 */
+	public function actionBatch()
+	{
+		// Get user's
+		$users = ModelBase::factory('user')->getQuery()->find();
+
+		// Fetch news
+		if (($news = realpath(APPLICATION_PATH.'/../news.json')) && is_file($news)) {
+			$data = json_decode(file_get_contents($news), true);
+
+			foreach ($users as $user) {
+				$emailParameter = new Parameter(array(
+					'toName' => $user->getName(),
+					'toEmail' => $user->getMail(),
+				));
+
+				ModelBase::factory('Mailer', $emailParameter)->sendReport('Depending.in News [Update]', $data);
+
+				// Delete the news
+				@unlink($news);
+			}
+		}
+	}
 }
