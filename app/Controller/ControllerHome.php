@@ -236,37 +236,50 @@ class ControllerHome extends ControllerBase
 	 */
 	public function actionBatch()
 	{
-		// Get user's
-		$users = ModelBase::factory('User')->getQuery()->find();
+		$userAgent = $this->request->server->get('HTTP_USER_AGENT');
 
-		// Fetch news
-		if (($news = realpath(APPLICATION_PATH.'/../news.json')) && is_file($news)) {
-			$data = json_decode(file_get_contents($news), true);
-			$signature = filemtime($news);
+		// @codeCoverageIgnoreStart
+		if (strpos($userAgent, 'curl') !== FALSE) {
+			// Get user's
+			$users = ModelBase::factory('User')->getQuery()->find();
 
-			foreach ($users as $user) {
-				$uid = $user->getUid();
-				$userData = ModelBase::factory('User')->getUser($uid);
-				$receiveNews = $userData->get('AdditionalData[news]',0,true);
+			// Fetch news
+			if (($news = realpath(APPLICATION_PATH.'/../news.json')) && is_file($news)) {
+				$data = json_decode(file_get_contents($news), true);
+				$signature = filemtime($news);
 
-				if ($receiveNews < $signature) {
-					$emailParameter = new Parameter(array(
-						'toName' => $user->getName(),
-						'toEmail' => $user->getMail(),
-					));
+				foreach ($users as $user) {
+					$uid = $user->getUid();
+					$userData = ModelBase::factory('User')->getUser($uid);
+					$receiveNews = $userData->get('AdditionalData[news]',0,true);
 
-					$sent = true;
+					if ($receiveNews < $signature) {
+						$emailParameter = new Parameter(array(
+							'toName' => $user->getName(),
+							'toEmail' => $user->getMail(),
+						));
 
-					if ($sent) {
-						$updated = ModelBase::factory('User')->updateUserData($uid, array('news' => $signature));
+						$sent = ModelBase::factory('Mailer', $emailParameter)->sendReport('Depending.in News [Update]', $data);
 
-						if (!empty($updated)) {
-							return $this->render('Sent to :'.$user->getMail(), 201);
-							break;
+						if ($sent) {
+							$updated = ModelBase::factory('User')->updateUserData($uid, array('news' => $signature));
+
+							if (!empty($updated)) {
+								return $this->render('Sent to :'.$user->getMail(), 201);
+								break;
+							}
 						}
 					}
 				}
+
+				return $this->render('All user already get the news');
 			}
+
+			return $this->render('No newsfeed available.');
+		} else {
+		// @codeCoverageIgnoreEnd
+			// Redirect to regular page
+			return $this->redirect('/home');
 		}
 	}
 }
