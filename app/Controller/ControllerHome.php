@@ -237,22 +237,35 @@ class ControllerHome extends ControllerBase
 	public function actionBatch()
 	{
 		// Get user's
-		$users = ModelBase::factory('user')->getQuery()->find();
+		$users = ModelBase::factory('User')->getQuery()->find();
 
 		// Fetch news
 		if (($news = realpath(APPLICATION_PATH.'/../news.json')) && is_file($news)) {
 			$data = json_decode(file_get_contents($news), true);
+			$signature = filemtime($news);
 
 			foreach ($users as $user) {
-				$emailParameter = new Parameter(array(
-					'toName' => $user->getName(),
-					'toEmail' => $user->getMail(),
-				));
+				$uid = $user->getUid();
+				$userData = ModelBase::factory('User')->getUser($uid);
+				$receiveNews = $userData->get('AdditionalData[news]',0,true);
 
-				ModelBase::factory('Mailer', $emailParameter)->sendReport('Depending.in News [Update]', $data);
+				if ($receiveNews < $signature) {
+					$emailParameter = new Parameter(array(
+						'toName' => $user->getName(),
+						'toEmail' => $user->getMail(),
+					));
 
-				// Delete the news
-				@unlink($news);
+					$sent = true;
+
+					if ($sent) {
+						$updated = ModelBase::factory('User')->updateUserData($uid, array('news' => $signature));
+
+						if (!empty($updated)) {
+							return $this->render('Sent to :'.$user->getMail(), 201);
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
