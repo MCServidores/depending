@@ -626,7 +626,9 @@ class ModelWorker extends ModelBase
 				$version = $major.'.999.999';
 			} elseif (strpos($operator, '<') !== false) {
 				// Decrease the patch and minor version to the min
-				if ($patch == 0) {
+				if ($major == 0 && $minor > 0) {
+					$version = $major.'.'.(((int)$minor)-1).'.999';
+				} elseif ($patch == 0) {
 					$version = (((int)$major)-1).'.999.999';
 				} else {
 					$version = $major.'.0.0';
