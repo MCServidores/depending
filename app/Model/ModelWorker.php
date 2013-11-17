@@ -591,7 +591,8 @@ class ModelWorker extends ModelBase
 	 */
 	public function determineVersionValue($rawVersion) {
 		// Transform any wildcard into possible highest value
-		$version = trim(str_replace('*', '999', $rawVersion));
+		// and remove any space(s)
+		$version = str_replace(array('*',' '), array('999',''), $rawVersion);
 
 		// Handle operator
 		if (preg_match('/^([\~\>\<\=\!]+)([0-9\.]+)$/', $version, $m) && count($m) == 3) {
