@@ -10,6 +10,10 @@ RewriteBase /
 	Deny From All
 </Files>
 
+# Non www
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
 # Allow any files or directories that exist to be displayed directly
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
