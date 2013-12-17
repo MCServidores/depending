@@ -479,7 +479,8 @@ class ModelWorker extends ModelBase
 
 			if ( ! $checkoutStatus) {
 				// If still failed, checkout to specific branch and then pull the latest commits
-				$checkoutStatus = $this->execute('cd '.$this->getClonePath($repo).';git checkout '.$branch.';git pull origin '.$branch);
+				$this->execute('cd '.$this->getClonePath($repo).';git checkout '.$branch.';git pull origin '.$branch.';git reset --hard;git rebase origin/'.$branch);
+				$checkoutStatus = $this->execute('cd '.$this->getClonePath($repo).';git checkout '.$revision);
 			}
 		}
 
