@@ -479,7 +479,6 @@ class ModelWorker extends ModelBase
 
 			if ( ! $checkoutStatus) {
 				// If still failed, checkout to specific branch and then pull the latest commits
-				$this->execute('cd '.$this->getClonePath($repo).';git checkout '.$branch.';git pull origin '.$branch.';git reset --hard;git rebase origin/'.$branch);
 				$checkoutStatus = $this->execute('cd '.$this->getClonePath($repo).';git checkout '.$revision);
 			}
 		}
@@ -490,6 +489,11 @@ class ModelWorker extends ModelBase
 			if ( ! $checkoutStatus) {
 				// Check wheter this is possibly removed branch
 				$checkoutStatus = !in_array($branch, array('master', 'dev', 'develop'));
+			}
+
+			if ( ! $checkoutStatus) {
+				// Check wheter this is possibly corrupted git
+				$checkoutStatus = !$this->execute('cd '.$this->getClonePath($repo).';ls .git');
 			}
 		} 
 
