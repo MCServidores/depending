@@ -166,11 +166,22 @@ class ModelSetting extends ModelBase
         $post = new Parameter($data->get('postData', array()));
 
         // @codeCoverageIgnoreStart
-        if ($post->get('email')) {
+        if ($post->get('email') || $post->get('configuration')) {
+            $uid = $user->get('Uid');
             $email = filter_var($post->get('email'), FILTER_VALIDATE_EMAIL);
+            $config = $post->get('configuration', array());
+
+            if (count($config) == 1 && ($selected = current($config))) {
+                // Update custom data
+                $updated = ModelBase::factory('User')->updateUserData($uid, array('configuration' => $selected));
+
+                if ( ! empty($updated)) {
+                    $content->set('updated', true);
+                    $user = $updated;
+                }
+            }
 
             if ($email) {
-                $uid = $user->get('Uid');
 
                 // Update regular data
                 $updated = ModelBase::factory('User')->updateUser($uid, array('mail' => $post->get('email')));
@@ -180,14 +191,16 @@ class ModelSetting extends ModelBase
                     $content->set('updated', true);
                     $user = $updated;
                 }
-            } else {
+            } else 
+
+            if (empty($email) && empty($configuration)) {
                 $content->set('error', 'Invalid email!');
             }
         }
         // @codeCoverageIgnoreEnd
 
         $email = $user->get('Mail');
-
+        $configuration = $user->get('AdditionalData[configuration]', 'each_failed', true);
        
         // Build inputs
         $inputs = array(
@@ -197,6 +210,18 @@ class ModelSetting extends ModelBase
                 'name' => 'email',
                 'placeholder' => 'Email that used by this account',
                 'value' => $email,
+            )),
+            new Parameter(array(
+                'type' => 'radio',
+                'size' => '4',
+                'name' => 'configuration',
+                'placeholder' => 'Send email report on: ',
+                'value' => $configuration,
+                'options' => array(
+                    new Parameter(array('label' => 'Each Build', 'value' => 'each_build')),
+                    new Parameter(array('label' => 'Only each build that contains out-of-date dependency status', 'value' => 'each_failed')),
+                    new Parameter(array('label' => 'Only each build that contains dependency status changes', 'value' => 'each_changed')),
+                ),
             )),
         );
 

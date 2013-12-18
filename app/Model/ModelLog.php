@@ -247,9 +247,10 @@ class ModelLog extends ModelBase
 	 * Build a report preview about a log
 	 *
 	 * @param $id The log id
+	 * @param $previousLog The previous log (if exists)
 	 * @return string The generated html content
 	 */
-	public function buildReport($id) {
+	public function buildReport($id, Orm\Logs $previousLog = null) {
 		$log = $this->getQuery()->findPK($id);
 
 		if ( ! empty($log)) {
@@ -282,7 +283,24 @@ class ModelLog extends ModelBase
 				'toEmail' => $user->getMail(),
 			));
 
-			ModelBase::factory('Mailer', $emailParameter)->sendReport($title, $data);
+			// Only send report if the condition meets user's configuration
+			switch (self::factory('User')->getUser($user->getUid())->get('AdditionalData[configuration]','each_failed',true)) {
+				case 'each_changed':
+					$sendReport = ! empty($previousLog) && $previousLog->getStatus() != $log->getStatus();
+					break;
+
+				case 'each_failed':
+					$sendReport = ($statusText === 'OUT OF DATE');
+					break;
+				
+				default:
+					$sendReport = true;
+					break;
+			}
+			
+			if ($sendReport) {
+				ModelBase::factory('Mailer', $emailParameter)->sendReport($title, $data);
+			}
 
 			return true;
 		}

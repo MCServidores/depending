@@ -668,6 +668,8 @@ class ModelWorker extends ModelBase
 	 * @return void
 	 */
 	protected function terminateLog(Logs $log, Parameter $runResult) {
+		$previousLog = ModelBase::factory('Log')->getQuery()->findOneByAfter($log->getBefore());
+
 		// Update the log blobs
 		ModelBase::factory('Log')->updateLogData($log->getId(),$runResult->get('logData'));
 
@@ -677,7 +679,7 @@ class ModelWorker extends ModelBase
 		$log->save();
 
 		// Send the report
-		ModelBase::factory('Log')->buildReport($log->getId());
+		ModelBase::factory('Log')->buildReport($log->getId(), $previousLog);
 	}
 
 }

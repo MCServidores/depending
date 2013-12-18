@@ -31,6 +31,12 @@
 					<p><input name="{{ input.name }}" type="{{ input.type }}" placeholder="{{ input.placeholder }}" class="span{{ input.size }}" value="{{ input.value }}"></p>
 					{% elseif input.type == "textarea" %}
 					<p><textarea name="{{ input.name }}" placeholder="{{ input.placeholder }}" class="span{{ input.size }}">{{ input.value }}</textarea></p>
+					{% elseif input.type == "radio" %}
+					<p>{{ input.placeholder }} 
+						{% for option in input.options %}
+						<label class="checkbox"><input name="{{ input.name }}[]" type="radio" placeholder="" value="{{ option.value }}" {{ option.value == input.value ? 'checked' : '' }}> {{ option.label }}</label>
+						{% endfor %}
+					</p>
 					{% endif %}
 				{% endfor %}
 				<hr>
