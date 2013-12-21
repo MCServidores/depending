@@ -44,7 +44,7 @@ Now we could run :
 	vendor/bin/propel-gen . diff migrate
 	vendor/bin/propel-gen -quiet
 
-If everything goes well, then you're ready. See [Propel Documentation](http://propelorm.org/documentation/) furthermore, if you have some issue with above step.
+If everything goes well, then you're ready. See [Propel Documentation](http://propelorm.org/Propel/) furthermore, if you have some issue with above step.
 
 Last, make a **VirtualHost** with **DocumentRoot** pointing to **public/**
 
