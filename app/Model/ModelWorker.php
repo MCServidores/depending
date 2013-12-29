@@ -89,18 +89,16 @@ class ModelWorker extends ModelBase
 		// Checkout the desired revision
 		if ( ! $this->checkOutTo($log->getRef(), $log->getAfter(), $repo)) {
 
-			if (strpos($log->getAfter(), 'refs/tag') !== false) {
-				// TODO: Implement error build result
-				$result->set('logStatus', 4);
-				$result->set('logExecuted', time());
+			// TODO: Implement error build result
+			$result->set('logStatus', 4);
+			$result->set('logExecuted', time());
 
-				$this->terminateTask($log,$repo,$result);
+			$this->terminateTask($log,$repo,$result);
 
-				return true;
-			}
+			return true;
 			
 			// Try the branch
-			throw new \RuntimeException('Cannot checkout to : '.$repo->getFullName().'/'.$log->getRef().'/'.$log->getAfter());
+			// throw new \RuntimeException('Cannot checkout to : '.$repo->getFullName().'/'.$log->getRef().'/'.$log->getAfter());
 		}
 		
 		// Now, inspect the composer if exists
