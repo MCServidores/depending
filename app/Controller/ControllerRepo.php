@@ -231,7 +231,9 @@ class ControllerRepo extends ControllerBase
 		$content = file_get_contents($statusImageFile);
 
 		// Return image response
-		return $this->render($content, 200, array('Content-Type' => $mime));
+		header('Content-Type: '.$mime);
+		die($content);
+		//return $this->render($content, 200, array('Content-Type' => $mime));
 	}
 
 	/**

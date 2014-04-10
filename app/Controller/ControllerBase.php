@@ -100,7 +100,7 @@ class ControllerBase {
 		// Initialize the session
 		if ( ! $this->request->hasPreviousSession()) {
 			$this->session = new Session();
-			$this->session->start();
+			//$this->session->start();
 			$this->request->setSession($this->session);
 		} else {
 			$this->session = $this->request->getSession();
